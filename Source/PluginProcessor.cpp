@@ -95,6 +95,7 @@ void ViiveAudioProcessor::changeProgramName (int index, const juce::String& newN
 void ViiveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	m_params.prepareToPlay(sampleRate);
+    m_params.reset();
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 }
@@ -146,6 +147,7 @@ void ViiveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+    m_params.update();
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
     // Make sure to reset the state if your inner loop is processing
@@ -154,6 +156,8 @@ void ViiveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
+        m_params.smoothen();
+
         auto* channelData = buffer.getWritePointer (channel);
 
         // ..do something to the data...
