@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="ANMYdk" name="viive" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildStandalone,buildVST3"
+              pluginManufacturer="trsctr" pluginVST3Category="Delay" cppLanguageStandard="20">
   <MAINGROUP id="LCtwvr" name="viive">
     <GROUP id="{058ECC9C-9529-0D6B-B949-15DE645D6A88}" name="Source">
+      <FILE id="g1ZVap" name="Parameters.cpp" compile="1" resource="0" file="Source/Parameters.cpp"/>
+      <FILE id="XiG6a7" name="Parameters.h" compile="0" resource="0" file="Source/Parameters.h"/>
       <FILE id="A1sab2" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="Ln7HBM" name="PluginProcessor.h" compile="0" resource="0"
@@ -35,7 +38,8 @@
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="viive"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="viive" enablePluginBinaryCopyStep="1"
+                       vst3BinaryLocation_x64="C:\dev\vst3_debug"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="viive"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
