@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Parameters.h"
 
 //==============================================================================
 /**
@@ -19,6 +20,10 @@ public:
     //==============================================================================
     ViiveAudioProcessor();
     ~ViiveAudioProcessor() override;
+
+    juce::AudioProcessorValueTreeState apvts{
+    *this, nullptr, "Parameters", Parameters::createParameterLayout()
+    };
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -54,6 +59,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    Parameters m_params;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessor)
 };

@@ -10,7 +10,6 @@ const juce::ParameterID highCutParamID{ "highCut", 1 };
 
 class Parameters {
 public:
-
 	Parameters(juce::AudioProcessorValueTreeState& apvts);
 
 	static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();

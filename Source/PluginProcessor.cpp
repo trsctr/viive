@@ -19,7 +19,8 @@ ViiveAudioProcessor::ViiveAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+    m_params(apvts)
 #endif
 {
 }
@@ -93,6 +94,7 @@ void ViiveAudioProcessor::changeProgramName (int index, const juce::String& newN
 //==============================================================================
 void ViiveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+	m_params.prepareToPlay(sampleRate);
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 }
