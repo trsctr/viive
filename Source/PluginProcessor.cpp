@@ -15,11 +15,11 @@ ViiveAudioProcessor::ViiveAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+                     .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
                       #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                     .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ),
+    ),
     m_params(apvts)
 #endif
 {
@@ -178,6 +178,7 @@ juce::AudioProcessorEditor* ViiveAudioProcessor::createEditor()
 //==============================================================================
 void ViiveAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
+    copyXmlToBinary(*apvts.copyState().createXml(), destData);
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
@@ -185,6 +186,10 @@ void ViiveAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 
 void ViiveAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
+    std::unique_ptr<juce::XmlElement> xml(getXmlFromBinary(data, sizeInBytes));
+    if (xml.get() != nullptr && xml->hasTagName(apvts.state.getType())) {
+        apvts.replaceState(juce::ValueTree::fromXml(*xml));
+    }
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 }
