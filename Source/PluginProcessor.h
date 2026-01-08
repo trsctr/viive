@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "Parameters.h"
+#include "DelayEngine.h"
 
 //==============================================================================
 /**
@@ -60,6 +61,7 @@ public:
 
 private:
     Parameters m_params;
+    DelayEngine m_delayEngine;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessor)
 };

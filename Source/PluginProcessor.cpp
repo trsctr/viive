@@ -91,6 +91,8 @@ void ViiveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	m_params.prepareToPlay(sampleRate);
     m_params.reset();
+	m_delayEngine.prepareToPlay(sampleRate, samplesPerBlock);
+	m_delayEngine.reset();
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 }
@@ -131,6 +133,8 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
     {
         m_params.smoothen();
+		m_delayEngine.processSample(inputDataL[sample], inputDataR[sample],
+			outputDataL[sample], outputDataR[sample], m_params);
     }
 
 #if JUCE_DEBUG
