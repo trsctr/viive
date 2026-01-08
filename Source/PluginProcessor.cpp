@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "ProtectYourEars.h"
 
 //==============================================================================
 ViiveAudioProcessor::ViiveAudioProcessor()
@@ -131,6 +132,10 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     {
         m_params.smoothen();
     }
+
+#if JUCE_DEBUG
+	protectYourEars(buffer);
+#endif
 }
 
 //==============================================================================

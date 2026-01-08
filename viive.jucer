@@ -5,6 +5,8 @@
               pluginManufacturer="trsctr" pluginVST3Category="Delay" cppLanguageStandard="20">
   <MAINGROUP id="LCtwvr" name="viive">
     <GROUP id="{058ECC9C-9529-0D6B-B949-15DE645D6A88}" name="Source">
+      <FILE id="Tv2YFK" name="ProtectYourEars.h" compile="0" resource="0"
+            file="Source/ProtectYourEars.h"/>
       <FILE id="YJj8wt" name="DelayEngine.cpp" compile="1" resource="0" file="Source/DelayEngine.cpp"/>
       <FILE id="C7f0WB" name="DelayEngine.h" compile="0" resource="0" file="Source/DelayEngine.h"/>
       <FILE id="g1ZVap" name="Parameters.cpp" compile="1" resource="0" file="Source/Parameters.cpp"/>
