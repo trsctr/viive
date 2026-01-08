@@ -15,8 +15,8 @@ public:
 	void setLowCutFreq(const float freq);
 	void setHighCutFreq(const float freq);
 	void setDelayTime(const float delayInMs);
-	void setFeedbackLevel(const float value) { m_mixLevel = value; }
-	void setMixLevel(const float value) { m_feedbackLevel = value; }
+	void setFeedbackLevel(const float value) { m_feedbackLevel = value; }
+	void setMixLevel(const float value) { m_mixLevel = value; }
 	void setGainLevel(const float value) { m_gainLevel = value; }
 
 private:
