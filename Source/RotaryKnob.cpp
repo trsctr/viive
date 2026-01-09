@@ -12,8 +12,19 @@
 #include "RotaryKnob.h"
 
 //==============================================================================
-RotaryKnob::RotaryKnob()
+RotaryKnob::RotaryKnob(const juce::String& text, juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& parameterID, bool drawFromMiddle)
+	: m_attachment(apvts, parameterID.getParamID(), m_slider)
 {
+    m_slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    m_slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 70, 16);
+    m_slider.setBounds(0, 0, 70, 86);
+    addAndMakeVisible(m_slider);
+    m_label.setText(text, juce::NotificationType::dontSendNotification);
+    m_label.setJustificationType(juce::Justification::horizontallyCentred);
+    m_label.setBorderSize(juce::BorderSize<int>(0));
+    m_label.attachToComponent(&m_slider, false);
+    addAndMakeVisible(m_label);
+    setSize(70, 110);
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
@@ -23,29 +34,7 @@ RotaryKnob::~RotaryKnob()
 {
 }
 
-void RotaryKnob::paint (juce::Graphics& g)
-{
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (14.0f));
-    g.drawText ("RotaryKnob", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
-}
-
 void RotaryKnob::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
+    m_slider.setTopLeftPosition(0, 24);
 }
