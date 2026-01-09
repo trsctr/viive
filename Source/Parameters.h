@@ -6,7 +6,9 @@ const juce::ParameterID delayTimeParamID{ "delayTime", 1 };
 const juce::ParameterID mixParamID{ "mix", 1 };
 const juce::ParameterID feedbackParamID{ "feedback", 1 };
 const juce::ParameterID lowCutFreqParamID{ "lowCutFreq", 1 };
+const juce::ParameterID lowCutQParamID{ "lowCutQ", 1 };
 const juce::ParameterID highCutFreqParamID{ "highCutFreq", 1 };
+const juce::ParameterID highCutQParamID{ "highCutQ", 1 };
 
 class Parameters {
 public:
@@ -15,6 +17,7 @@ public:
 	static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 	static constexpr float minDelayTime = 5.0f;
 	static constexpr float maxDelayTime = 5000.0f;
+
 
 	void prepareToPlay(double sampleRate) noexcept;
 	void update() noexcept;
@@ -26,7 +29,9 @@ public:
 	float mix() const { return m_mix; }
 	float feedback() const { return m_feedback; }
 	float lowCutFreq() const { return m_lowCutFreq; }
+	float lowCutQ() const { return m_lowCutQ; }
 	float highCutFreq() const { return m_highCutFreq; }
+	float highCutQ() const { return m_highCutQ; }
 
 private:
 	juce::AudioParameterFloat* m_gainParam;
@@ -34,13 +39,17 @@ private:
 	juce::AudioParameterFloat* m_mixParam;
 	juce::AudioParameterFloat* m_feedbackParam;
 	juce::AudioParameterFloat* m_lowCutFreqParam;
+	juce::AudioParameterFloat* m_lowCutQParam;
 	juce::AudioParameterFloat* m_highCutFreqParam;
+	juce::AudioParameterFloat* m_highCutQParam;
 
 	juce::LinearSmoothedValue<float> m_gainSmoother;
 	juce::LinearSmoothedValue<float> m_mixSmoother;
 	juce::LinearSmoothedValue<float> m_feedbackSmoother;
 	juce::LinearSmoothedValue<float> m_lowCutFreqSmoother;
+	juce::LinearSmoothedValue<float> m_lowCutQSmoother;
 	juce::LinearSmoothedValue<float> m_highCutFreqSmoother;
+	juce::LinearSmoothedValue<float> m_highCutQSmoother;
 
 	float m_targetDelayTime = 0.0f;
 	float m_coeff = 0.0f;
@@ -50,7 +59,9 @@ private:
 	float m_mix = 0.5f;
 	float m_feedback = 0.0f;
 	float m_lowCutFreq = 20.0f;
+	float m_lowCutQ = 0.707f;
 	float m_highCutFreq = 20000.0f;
+	float m_highCutQ = 0.707f;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Parameters)
 };
