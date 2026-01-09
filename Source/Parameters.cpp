@@ -27,7 +27,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		gainParamID.getParamID(),
 		"Gain",
-		juce::NormalisableRange<float>(-12.0f, 12.0f),
+		juce::NormalisableRange<float>(-12.0f, 6.0f),
 		0.0f));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		delayTimeParamID.getParamID(),
