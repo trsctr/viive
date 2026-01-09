@@ -10,6 +10,8 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "Parameters.h"
+#include "Rotaryknob.h"
 
 //==============================================================================
 /**
@@ -25,9 +27,11 @@ public:
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     ViiveAudioProcessor& audioProcessor;
+
+	RotaryKnob m_gainKnob{ "Gain", audioProcessor.apvts, gainParamID.getParamID() };
+    
+    juce::GroupComponent m_delayGroup, m_feedbackGroup, m_filterGroup, m_outputGroup;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)
 };

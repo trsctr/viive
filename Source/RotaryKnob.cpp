@@ -12,11 +12,11 @@
 #include "RotaryKnob.h"
 
 //==============================================================================
-RotaryKnob::RotaryKnob(const juce::String& text, juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& parameterID, bool drawFromMiddle)
+RotaryKnob::RotaryKnob(const juce::String& text, juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& parameterID)
 	: m_attachment(apvts, parameterID.getParamID(), m_slider)
 {
     m_slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    m_slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 70, 16);
+    m_slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 16);
     m_slider.setBounds(0, 0, 70, 86);
     addAndMakeVisible(m_slider);
     m_label.setText(text, juce::NotificationType::dontSendNotification);
@@ -25,9 +25,6 @@ RotaryKnob::RotaryKnob(const juce::String& text, juce::AudioProcessorValueTreeSt
     m_label.attachToComponent(&m_slider, false);
     addAndMakeVisible(m_label);
     setSize(70, 110);
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-
 }
 
 RotaryKnob::~RotaryKnob()
