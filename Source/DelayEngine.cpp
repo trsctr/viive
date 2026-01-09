@@ -29,24 +29,34 @@ void DelayEngine::reset() noexcept
 	m_feedbackL = 0.0f;
 	m_feedbackR = 0.0f;
 	m_lowCutFreq = -1.0f;
+	m_lowCutQ = -1.0f;
 	m_highCutFreq = -1.0f;
+	m_highCutQ = -1.0f;
 	m_delayTimeMs = -1.0f;
 	m_mixLevel = 0.5f;
 	m_feedbackLevel = 0.0f;
 	m_gainLevel = 1.0f;
 }
 
-void DelayEngine::setLowCutFreq(const float freq) {
+void DelayEngine::setLowCut(const float freq, const float q) {
 	if (freq != m_lowCutFreq) {
 		m_lowCutFilter.setCutoffFrequency(freq);
 		m_lowCutFreq = freq;
 	}
+	if (q != m_lowCutQ) {
+		m_lowCutFilter.setResonance(q);
+		m_lowCutQ = q;
+	}
 }
 
-void DelayEngine::setHighCutFreq(const float freq) {
+void DelayEngine::setHighCut(const float freq, const float q) {
 	if (freq != m_highCutFreq) {
 		m_highCutFilter.setCutoffFrequency(freq);
 		m_highCutFreq = freq;
+	}
+	if (q != m_highCutQ) {
+		m_highCutFilter.setResonance(q);
+		m_highCutQ = q;
 	}
 }
 
@@ -61,8 +71,8 @@ void DelayEngine::setDelayTime(const float delayInMs) {
 void DelayEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
 {
 	setDelayTime(params.delayTime());
-	setLowCutFreq(params.lowCutFreq());
-	setHighCutFreq(params.highCutFreq());
+	setLowCut(params.lowCutFreq(), params.lowCutQ());
+	setHighCut(params.highCutFreq(), params.highCutQ());
 	setMixLevel(params.mix());
 	setGainLevel(params.gain());
 	setFeedbackLevel(params.feedback());

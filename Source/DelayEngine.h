@@ -12,8 +12,8 @@ public:
 	void reset() noexcept;
 
 	void processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params);
-	void setLowCutFreq(const float freq);
-	void setHighCutFreq(const float freq);
+	void setLowCut(const float freq, const float q);
+	void setHighCut(const float freq, const float q);
 	void setDelayTime(const float delayInMs);
 	void setFeedbackLevel(const float value) { m_feedbackLevel = value; }
 	void setMixLevel(const float value) { m_mixLevel = value; }
@@ -34,7 +34,9 @@ private:
 	float m_gainLevel = 1.0f;
 	float m_delayTimeMs = -1.0f;
 	float m_lowCutFreq = -1.0f;
+	float m_lowCutQ = -1.0f;
 	float m_highCutFreq = -1.0f;
+	float m_highCutQ = -1.0f;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayEngine)
 };
