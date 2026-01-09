@@ -1,4 +1,5 @@
 #include "Parameters.h"
+#include "DSP.h"
 
 template<typename T>
 static void castParameter(juce::AudioProcessorValueTreeState& apvts,
@@ -76,7 +77,7 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_lowCutQSmoother.reset(sampleRate, duration);
 	m_highCutFreqSmoother.reset(sampleRate, duration);
 	m_highCutQSmoother.reset(sampleRate, duration);
-	m_coeff = 1.0f - std::exp(-1.0f / (0.1f * static_cast<float>(sampleRate)));
+	m_coeff = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
 }
 
 void Parameters::reset() noexcept
@@ -122,5 +123,5 @@ void Parameters::smoothen() noexcept
 	m_lowCutQ = m_lowCutQSmoother.getNextValue();
 	m_highCutFreq = m_highCutFreqSmoother.getNextValue();
 	m_highCutQ = m_highCutQSmoother.getNextValue();
-	m_delayTime += (m_targetDelayTime - m_delayTime) * m_coeff;
+	m_delayTime = onePoleLowpass(m_targetDelayTime, m_delayTime, m_coeff);
 }
