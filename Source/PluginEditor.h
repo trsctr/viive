@@ -27,11 +27,18 @@ public:
     void resized() override;
 
 private:
-    ViiveAudioProcessor& audioProcessor;
+    ViiveAudioProcessor& m_audioProcessor;
 
-	RotaryKnob m_gainKnob{ "Gain", audioProcessor.apvts, gainParamID.getParamID() };
-    
-    juce::GroupComponent m_delayGroup, m_feedbackGroup, m_filterGroup, m_outputGroup;
+    RotaryKnob m_delayTimeKnob{ "Time", m_audioProcessor.apvts, delayTimeParamID.getParamID() };
+    RotaryKnob m_feedbackKnob{ "Feedback", m_audioProcessor.apvts, feedbackParamID.getParamID() };
+    RotaryKnob m_lowCutFreqKnob{ "Low Cut Freq", m_audioProcessor.apvts, lowCutFreqParamID.getParamID() };
+    RotaryKnob m_lowCutQKnob{ "Low Cut Q", m_audioProcessor.apvts, lowCutQParamID.getParamID() };
+    RotaryKnob m_highCutFreqKnob{ "High Cut Freq", m_audioProcessor.apvts, highCutFreqParamID.getParamID() };
+    RotaryKnob m_highCutQKnob{ "High Cut Q", m_audioProcessor.apvts, highCutQParamID.getParamID() };
+    RotaryKnob m_mixKnob{ "Mix", m_audioProcessor.apvts, mixParamID.getParamID() };
+    RotaryKnob m_gainKnob{ "Gain", m_audioProcessor.apvts, gainParamID.getParamID() };
+
+    juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)
 };

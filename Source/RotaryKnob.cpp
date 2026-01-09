@@ -16,7 +16,7 @@ RotaryKnob::RotaryKnob(const juce::String& text, juce::AudioProcessorValueTreeSt
 	: m_attachment(apvts, parameterID.getParamID(), m_slider)
 {
     m_slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    m_slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 16);
+    m_slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 70, 16);
     m_slider.setBounds(0, 0, 70, 86);
     addAndMakeVisible(m_slider);
     m_label.setText(text, juce::NotificationType::dontSendNotification);
