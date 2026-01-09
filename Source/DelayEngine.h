@@ -2,6 +2,8 @@
 #include <JuceHeader.h>
 #include "Parameters.h"
 
+using Filter = juce::dsp::StateVariableTPTFilter<float>;
+
 class DelayEngine
 {
 public:
@@ -21,8 +23,8 @@ public:
 
 private:
 	juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> m_delayLine;
-	juce::dsp::StateVariableTPTFilter<float> m_lowCutFilter;
-	juce::dsp::StateVariableTPTFilter<float> m_highCutFilter;
+	Filter m_lowCutFilter;
+	Filter m_highCutFilter;
 
 	float m_sampleRate = 0.0f;
 
