@@ -27,6 +27,8 @@ private:
 	juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> m_delayLine;
 	Filter m_lowCutFilter;
 	Filter m_highCutFilter;
+	Filter m_feedbackHighpass;
+	juce::dsp::Compressor<float> m_feedbackCompressor;
 
 	float m_sampleRate = 0.0f;
 

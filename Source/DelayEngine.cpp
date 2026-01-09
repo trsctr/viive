@@ -4,6 +4,11 @@ DelayEngine::DelayEngine()
 {
 	m_lowCutFilter.setType(juce::dsp::StateVariableTPTFilterType::highpass);
 	m_highCutFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
+	m_feedbackHighpass.setType(juce::dsp::StateVariableTPTFilterType::highpass);
+	m_feedbackCompressor.setAttack(.1f);
+	m_feedbackCompressor.setRelease(50.f);
+	m_feedbackCompressor.setRatio(8.0f);
+	m_feedbackCompressor.setThreshold(-6.0f);
 }
 
 void DelayEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
@@ -14,8 +19,10 @@ void DelayEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 	spec.numChannels = 2;
 	m_sampleRate = static_cast<float>(sampleRate);
 	m_delayLine.prepare(spec);
+	m_feedbackCompressor.prepare(spec);
 	m_lowCutFilter.prepare(spec);
 	m_highCutFilter.prepare(spec);
+	m_feedbackHighpass.prepare(spec);
 	double numSamples = Parameters::maxDelayTime / 1000.0 * m_sampleRate;
 	int maxDelayInSamples = int(std::ceil(numSamples));
 	m_delayLine.setMaximumDelayInSamples(maxDelayInSamples);
@@ -26,6 +33,9 @@ void DelayEngine::reset() noexcept
 	m_delayLine.reset();
 	m_lowCutFilter.reset();
 	m_highCutFilter.reset();
+	m_feedbackHighpass.reset();
+	m_feedbackHighpass.setCutoffFrequency(60.0f); // just to remove rumble from fb loop
+	m_feedbackHighpass.setResonance(Parameters::defaultFilterQ);
 	m_feedbackL = 0.0f;
 	m_feedbackR = 0.0f;
 	m_lowCutFreq = -1.0f;
@@ -94,8 +104,14 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	wetR = m_lowCutFilter.processSample(1, wetR);
 	wetR = m_highCutFilter.processSample(1, wetR);
 
-	m_feedbackL = wetL * m_feedbackLevel;
-	m_feedbackR = wetR * m_feedbackLevel;
+	wetL = m_feedbackHighpass.processSample(0, wetL);
+	wetR = m_feedbackHighpass.processSample(1, wetR);
+
+	m_feedbackL = m_feedbackCompressor.processSample(0, wetL * m_feedbackLevel);
+	m_feedbackR = m_feedbackCompressor.processSample(1, wetR * m_feedbackLevel);
+
+	m_feedbackL = std::tanh(m_feedbackL);
+	m_feedbackR = std::tanh(m_feedbackR);
 
 	float mixL = dryL * (1.0f - m_mixLevel) + wetL * m_mixLevel;
 	float mixR = dryR * (1.0f - m_mixLevel) + wetR * m_mixLevel;
