@@ -9,6 +9,62 @@ static void castParameter(juce::AudioProcessorValueTreeState& apvts,
 	jassert(destination);
 }
 
+static juce::String stringFromDecibels(float value, int)
+{
+	return juce::String(value, 2) + " dB";
+}
+
+static juce::String stringFromMilliseconds(float value, int)
+{
+	if (value < 10.0f)
+		return juce::String(value, 2) + " ms";
+	else if (value < 100.0f)
+		return juce::String(value, 1) + " ms";
+	else if (value < 1000.0f)
+		return juce::String(int(value)) + " ms";
+	else
+		return juce::String(value * 0.001f, 2) + " s";
+}
+
+static juce::String stringFromPercent(float value, int)
+{
+	return juce::String(int(value)) + " %";
+}
+
+static juce::String stringFromHertz(float value, int)
+{
+	if (value < 1000.0f) {
+		return juce::String(int(value)) + " Hz";
+	}
+	else if (value < 10000.0f) {
+		return juce::String(value * 0.001f, 1) + " kHz";
+	}
+	else {
+		return juce::String(value * 0.001f, 2) + " kHz";
+	}
+}
+
+static float millisecondsFromString(const juce::String& text)
+{
+	float value = text.getFloatValue();
+
+	if (!text.endsWithIgnoreCase("ms")) {
+		if (text.endsWithIgnoreCase("s") || value < Parameters::minDelayTime) {
+			return value * 1000.0f;
+		}
+	}
+	return value;
+}
+
+static float hzFromString(const juce::String& text)
+{
+	float value = text.getFloatValue();
+	if (value < 20.0f) {
+		return value * 1000.0f;
+	}
+	return value;
+}
+
 Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 {
 	castParameter(apvts, gainParamID, m_gainParam);
@@ -28,42 +84,65 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		gainParamID.getParamID(),
 		"Gain",
 		juce::NormalisableRange<float>(-12.0f, 6.0f),
-		0.0f));
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromDecibels)
+	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		delayTimeParamID.getParamID(),
 		"Delay Time",
 		juce::NormalisableRange<float>(minDelayTime, maxDelayTime, 0.001f, 0.25f),
-		defaultDelayTime));
+		defaultDelayTime,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromMilliseconds)
+			.withValueFromStringFunction(millisecondsFromString)
+	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		mixParamID.getParamID(),
 		"Mix",
 		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
-		50.0f));
+		50.0f,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromPercent)
+	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		feedbackParamID.getParamID(),
 		"Feedback",
 		juce::NormalisableRange<float>(-100.0f, 100.0f, 1.0f),
-		0.0f));
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromPercent)
+	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutFreqParamID.getParamID(),
 		"Low Cut Frequency",
 		juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f),
-		20.0f));
+		20.0f,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromHertz)
+			.withValueFromStringFunction(hzFromString)
+		));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutQParamID.getParamID(),
 		"Low Cut Q",
 		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.1f),
-		defaultFilterQ));
+		defaultFilterQ
+	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutFreqParamID.getParamID(),
 		"High Cut Frequency",
 		juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f),
-		20000.0f));
+		20000.0f,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromHertz)
+			.withValueFromStringFunction(hzFromString)
+	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutQParamID.getParamID(),
 		"High Cut Q",
 		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.1f),
-		defaultFilterQ));
+		defaultFilterQ
+	));
 	return layout;
 }
 
