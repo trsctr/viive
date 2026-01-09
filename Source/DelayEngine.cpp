@@ -38,27 +38,28 @@ void DelayEngine::reset() noexcept
 	m_gainLevel = 1.0f;
 }
 
-void DelayEngine::setLowCut(const float freq, const float q) {
-	if (freq != m_lowCutFreq) {
-		m_lowCutFilter.setCutoffFrequency(freq);
-		m_lowCutFreq = freq;
-	}
-	float newQ = std::min(q, Parameters::maxFilterQ);
-	if (newQ != m_lowCutQ) {
-		m_lowCutFilter.setResonance(newQ);
-		m_lowCutQ = newQ;
+void DelayEngine::setLowCut(const Parameters& params) {
+	setFilterFreq(params.lowCutFreq(), m_lowCutFreq, m_lowCutFilter);
+	setFilterQ(params.lowCutQ(), m_lowCutQ, m_lowCutFilter);
+}
+
+void DelayEngine::setHighCut(const Parameters& params) {
+	setFilterFreq(params.highCutFreq(), m_highCutFreq, m_highCutFilter);
+	setFilterQ(params.highCutQ(), m_highCutQ, m_highCutFilter);
+}
+
+void DelayEngine::setFilterFreq(const float freq, float& currentFreq, Filter& filter) {
+	if (freq != currentFreq) {
+		filter.setCutoffFrequency(freq);
+		currentFreq = freq;
 	}
 }
 
-void DelayEngine::setHighCut(const float freq, const float q) {
-	if (freq != m_highCutFreq) {
-		m_highCutFilter.setCutoffFrequency(freq);
-		m_highCutFreq = freq;
-	}
+void DelayEngine::setFilterQ(const float q, float& currentQ, Filter& filter) {
 	float newQ = std::min(q, Parameters::maxFilterQ);
-	if (newQ != m_highCutQ) {
-		m_highCutFilter.setResonance(newQ);
-		m_highCutQ = newQ;
+	if (newQ != currentQ) {
+		filter.setResonance(newQ);
+		currentQ = newQ;
 	}
 }
 
@@ -73,8 +74,8 @@ void DelayEngine::setDelayTime(const float delayInMs) {
 void DelayEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
 {
 	setDelayTime(params.delayTime());
-	setLowCut(params.lowCutFreq(), params.lowCutQ());
-	setHighCut(params.highCutFreq(), params.highCutQ());
+	setLowCut(params);
+	setHighCut(params);
 	setMixLevel(params.mix());
 	setGainLevel(params.gain());
 	setFeedbackLevel(params.feedback());

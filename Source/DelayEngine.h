@@ -14,8 +14,10 @@ public:
 	void reset() noexcept;
 
 	void processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params);
-	void setLowCut(const float freq, const float q);
-	void setHighCut(const float freq, const float q);
+	void setLowCut(const Parameters& params);
+	void setHighCut(const Parameters& params);
+	void setFilterFreq(const float freq, float& currentFreq, Filter& filter);
+	void setFilterQ(const float q, float& currentQ, Filter& filter);
 	void setDelayTime(const float delayInMs);
 	void setFeedbackLevel(const float value) { m_feedbackLevel = value; }
 	void setMixLevel(const float value) { m_mixLevel = value; }
