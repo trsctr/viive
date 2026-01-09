@@ -32,7 +32,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		delayTimeParamID.getParamID(),
 		"Delay Time",
 		juce::NormalisableRange<float>(minDelayTime, maxDelayTime, 0.001f, 0.25f),
-		100.0f));
+		defaultDelayTime));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		mixParamID.getParamID(),
 		"Mix",
@@ -51,8 +51,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutQParamID.getParamID(),
 		"Low Cut Q",
-		juce::NormalisableRange<float>(0.1f, 10.0f, 0.1f),
-		0.707f));
+		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.1f),
+		defaultFilterQ));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutFreqParamID.getParamID(),
 		"High Cut Frequency",
@@ -61,8 +61,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutQParamID.getParamID(),
 		"High Cut Q",
-		juce::NormalisableRange<float>(0.1f, 10.0f, 0.1f),
-		0.707f));
+		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.1f),
+		defaultFilterQ));
 	return layout;
 }
 
@@ -86,9 +86,9 @@ void Parameters::reset() noexcept
 	m_mix = .5f;
 	m_feedback = 0.0f;
 	m_lowCutFreq = 20.0f;
-	m_lowCutQ = 0.707f;
+	m_lowCutQ = defaultFilterQ;
 	m_highCutFreq = 20000.0f;
-	m_highCutQ = 0.707f;
+	m_highCutQ = defaultFilterQ;
 	m_gainSmoother.setCurrentAndTargetValue(juce::Decibels::decibelsToGain(m_gainParam->get()));
 	m_mixSmoother.setCurrentAndTargetValue(m_mixParam->get() * 0.01f);
 	m_feedbackSmoother.setCurrentAndTargetValue(m_feedbackParam->get() * 0.01f);

@@ -17,7 +17,10 @@ public:
 	static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 	static constexpr float minDelayTime = 5.0f;
 	static constexpr float maxDelayTime = 5000.0f;
-
+	static constexpr float defaultDelayTime = 100.0f;
+	static constexpr float maxFilterQ = 4.0f;
+	static constexpr float minFilterQ = 0.1f;
+	static constexpr float defaultFilterQ = 0.707f;
 
 	void prepareToPlay(double sampleRate) noexcept;
 	void update() noexcept;
@@ -59,9 +62,9 @@ private:
 	float m_mix = 0.5f;
 	float m_feedback = 0.0f;
 	float m_lowCutFreq = 20.0f;
-	float m_lowCutQ = 0.707f;
+	float m_lowCutQ = defaultFilterQ;
 	float m_highCutFreq = 20000.0f;
-	float m_highCutQ = 0.707f;
+	float m_highCutQ = defaultFilterQ;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Parameters)
 };
