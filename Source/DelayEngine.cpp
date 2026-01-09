@@ -43,9 +43,10 @@ void DelayEngine::setLowCut(const float freq, const float q) {
 		m_lowCutFilter.setCutoffFrequency(freq);
 		m_lowCutFreq = freq;
 	}
-	if (q != m_lowCutQ) {
-		m_lowCutFilter.setResonance(q);
-		m_lowCutQ = q;
+	float newQ = std::min(q, Parameters::maxFilterQ);
+	if (newQ != m_lowCutQ) {
+		m_lowCutFilter.setResonance(newQ);
+		m_lowCutQ = newQ;
 	}
 }
 
@@ -54,9 +55,10 @@ void DelayEngine::setHighCut(const float freq, const float q) {
 		m_highCutFilter.setCutoffFrequency(freq);
 		m_highCutFreq = freq;
 	}
-	if (q != m_highCutQ) {
-		m_highCutFilter.setResonance(q);
-		m_highCutQ = q;
+	float newQ = std::min(q, Parameters::maxFilterQ);
+	if (newQ != m_highCutQ) {
+		m_highCutFilter.setResonance(newQ);
+		m_highCutQ = newQ;
 	}
 }
 
