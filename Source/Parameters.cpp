@@ -77,6 +77,8 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, lowCutQParamID, m_lowCutQParam);
 	castParameter(apvts, highCutFreqParamID, m_highCutFreqParam);
 	castParameter(apvts, highCutQParamID, m_highCutQParam);
+	castParameter(apvts, fxParam1ParamID, m_fxParam1Param);
+	castParameter(apvts, fxParam2ID, m_fxParam2Param);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
@@ -161,6 +163,19 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.1f),
 		defaultFilterQ
 	));
+	// Placeholder FX parameters
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		fxParam1ParamID.getParamID(),
+		"FX Param 1",
+		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
+		0.0f
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		fxParam2ID.getParamID(),
+		"FX Param 2",
+		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
+		0.0f
+	));
 	return layout;
 }
 
@@ -191,6 +206,8 @@ void Parameters::reset() noexcept
 	m_lowCutQ = defaultFilterQ;
 	m_highCutFreq = 20000.0f;
 	m_highCutQ = defaultFilterQ;
+	m_fxParam1 = 0.0f;
+	m_fxParam2 = 0.0f;
 	m_gainSmoother.setCurrentAndTargetValue(juce::Decibels::decibelsToGain(m_gainParam->get()));
 	m_mixSmoother.setCurrentAndTargetValue(m_mixParam->get() * 0.01f);
 	m_feedbackSmoother.setCurrentAndTargetValue(m_feedbackParam->get() * 0.01f);
@@ -214,6 +231,8 @@ void Parameters::update() noexcept
 	m_highCutFreqSmoother.setTargetValue(m_highCutFreqParam->get());
 	m_highCutQSmoother.setTargetValue(m_highCutQParam->get());
 	m_targetDelayTime = m_delayTimeParam->get();
+	m_fxParam1 = m_fxParam1Param->get();
+	m_fxParam2 = m_fxParam2Param->get();
 	if (m_delayTime == 0.0f) {
 		m_delayTime = m_targetDelayTime;
 	}

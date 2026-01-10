@@ -39,7 +39,9 @@ private:
     RotaryKnob m_lowCutQKnob{ "Low Cut Q", m_audioProcessor.apvts, lowCutQParamID.getParamID() };
     RotaryKnob m_highCutFreqKnob{ "High Cut Freq", m_audioProcessor.apvts, highCutFreqParamID.getParamID() };
     RotaryKnob m_highCutQKnob{ "High Cut Q", m_audioProcessor.apvts, highCutQParamID.getParamID() };
-    
+	RotaryKnob m_fxParam1Knob{ "FX Param 1", m_audioProcessor.apvts, fxParam1ParamID.getParamID() };
+	RotaryKnob m_fxParam2Knob{ "FX Param 2", m_audioProcessor.apvts, fxParam2ID.getParamID() };
+
     juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_fxGroup;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)

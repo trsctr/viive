@@ -39,6 +39,8 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor (ViiveAudioProcessor& p)
 
     m_fxGroup.setText("FX");
 	m_fxGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
+	m_fxGroup.addAndMakeVisible(m_fxParam1Knob);
+	m_fxGroup.addAndMakeVisible(m_fxParam2Knob);
 	addAndMakeVisible(m_fxGroup);
 
     setSize (670, 330);
@@ -76,6 +78,8 @@ void ViiveAudioProcessorEditor::resized()
 	m_highCutQKnob.setTopLeftPosition(m_highCutFreqKnob.getRight() + 20, 20);
 	m_mixKnob.setTopLeftPosition(20, 20);
 	m_gainKnob.setTopLeftPosition(m_mixKnob.getRight() + 20, 20);
+	m_fxParam1Knob.setTopLeftPosition(20, 20);
+	m_fxParam2Knob.setTopLeftPosition(m_fxParam1Knob.getRight() + 20, 20);
 
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..

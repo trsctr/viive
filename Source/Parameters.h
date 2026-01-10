@@ -11,6 +11,8 @@ const juce::ParameterID lowCutFreqParamID{ "lowCutFreq", 1 };
 const juce::ParameterID lowCutQParamID{ "lowCutQ", 1 };
 const juce::ParameterID highCutFreqParamID{ "highCutFreq", 1 };
 const juce::ParameterID highCutQParamID{ "highCutQ", 1 };
+const juce::ParameterID fxParam1ParamID{ "fxParam1", 1 };
+const juce::ParameterID fxParam2ID{ "fxParam2", 1 };
 
 class Parameters {
 public:
@@ -39,6 +41,8 @@ public:
 	float lowCutQ() const { return m_lowCutQ; }
 	float highCutFreq() const { return m_highCutFreq; }
 	float highCutQ() const { return m_highCutQ; }
+	float fxParam1() const { return 0.0f; } // Placeholder
+	float fxParam2() const { return 0.0f; } // Placeholder
 
 private:
 	juce::AudioParameterFloat* m_gainParam;
@@ -51,6 +55,8 @@ private:
 	juce::AudioParameterFloat* m_lowCutQParam;
 	juce::AudioParameterFloat* m_highCutFreqParam;
 	juce::AudioParameterFloat* m_highCutQParam;
+	juce::AudioParameterFloat* m_fxParam1Param; // Placeholder
+	juce::AudioParameterFloat* m_fxParam2Param; // Placeholder
 
 	juce::LinearSmoothedValue<float> m_gainSmoother;
 	juce::LinearSmoothedValue<float> m_mixSmoother;
@@ -75,6 +81,8 @@ private:
 	float m_lowCutQ = defaultFilterQ;
 	float m_highCutFreq = 20000.0f;
 	float m_highCutQ = defaultFilterQ;
+	float m_fxParam1 = 0.0f; // Placeholder
+	float m_fxParam2 = 0.0f; // Placeholder
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Parameters)
 };
