@@ -37,7 +37,11 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor (ViiveAudioProcessor& p)
 	m_outputGroup.addAndMakeVisible(m_gainKnob);
     addAndMakeVisible(m_outputGroup);
 
-    setSize (650, 330);
+    m_fxGroup.setText("FX");
+	m_fxGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
+	addAndMakeVisible(m_fxGroup);
+
+    setSize (670, 330);
 }
 
 ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
@@ -57,10 +61,11 @@ void ViiveAudioProcessorEditor::resized()
     int y = 10;
 	int height = bounds.getHeight() - 20;
 
-    m_outputGroup.setBounds(bounds.getWidth() - 240, y, 200, height / 2 - 10);
-    m_delayGroup.setBounds(10, y, m_outputGroup.getX() - 20, height / 2 - 10);
-    m_filterGroup.setBounds(10, height / 2 + 10, m_outputGroup.getX() - 20, height / 2);
-    
+    m_fxGroup.setBounds(bounds.getWidth() - 260, y, 200, height / 2 - 10);
+    m_delayGroup.setBounds(10, y, m_fxGroup.getX() - 20, height / 2 - 10);
+    m_filterGroup.setBounds(10, height / 2 + 10, m_fxGroup.getX() - 20, height / 2);
+	m_outputGroup.setBounds(m_fxGroup.getX(), height / 2 + 10, 200, height / 2);
+
 	m_delayTimeKnob.setTopLeftPosition(20, 20);
 	m_feedbackKnob.setTopLeftPosition(m_delayTimeKnob.getRight() + 20, 20);
 	m_stereoKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
