@@ -71,6 +71,8 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, delayTimeParamID, m_delayTimeParam);
 	castParameter(apvts, mixParamID, m_mixParam);
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
+	castParameter(apvts, stereoParamID, m_stereoParam);
+	castParameter(apvts, effectAmtParamID, m_effectAmtParam);
 	castParameter(apvts, lowCutFreqParamID, m_lowCutFreqParam);
 	castParameter(apvts, lowCutQParamID, m_lowCutQParam);
 	castParameter(apvts, highCutFreqParamID, m_highCutFreqParam);
@@ -114,6 +116,22 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 			.withStringFromValueFunction(stringFromPercent)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		stereoParamID.getParamID(),
+		"Stereo",
+		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+		.withStringFromValueFunction(stringFromPercent)
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		effectAmtParamID.getParamID(),
+		"Effect Amount",
+		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+		.withStringFromValueFunction(stringFromPercent)
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutFreqParamID.getParamID(),
 		"Low Cut Frequency",
 		juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f),
@@ -152,6 +170,8 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_gainSmoother.reset(sampleRate, duration);
 	m_mixSmoother.reset(sampleRate, duration);
 	m_feedbackSmoother.reset(sampleRate, duration);
+	m_stereoSmoother.reset(sampleRate, duration);
+	m_effectAmtSmoother.reset(sampleRate, duration);
 	m_lowCutFreqSmoother.reset(sampleRate, duration);
 	m_lowCutQSmoother.reset(sampleRate, duration);
 	m_highCutFreqSmoother.reset(sampleRate, duration);
@@ -165,6 +185,8 @@ void Parameters::reset() noexcept
 	m_delayTime = 0.0f;
 	m_mix = .5f;
 	m_feedback = 0.0f;
+	m_stereo = 0.0f;
+	m_effectAmt = 0.0f;
 	m_lowCutFreq = 20.0f;
 	m_lowCutQ = defaultFilterQ;
 	m_highCutFreq = 20000.0f;
@@ -172,6 +194,8 @@ void Parameters::reset() noexcept
 	m_gainSmoother.setCurrentAndTargetValue(juce::Decibels::decibelsToGain(m_gainParam->get()));
 	m_mixSmoother.setCurrentAndTargetValue(m_mixParam->get() * 0.01f);
 	m_feedbackSmoother.setCurrentAndTargetValue(m_feedbackParam->get() * 0.01f);
+	m_stereoSmoother.setCurrentAndTargetValue(m_stereoParam->get() * 0.01f);
+	m_effectAmtSmoother.setCurrentAndTargetValue(m_effectAmtParam->get() * 0.01f);
 	m_lowCutFreqSmoother.setCurrentAndTargetValue(m_lowCutFreqParam->get());
 	m_lowCutQSmoother.setCurrentAndTargetValue(m_lowCutQParam->get());
 	m_highCutFreqSmoother.setCurrentAndTargetValue(m_highCutFreqParam->get());
@@ -183,6 +207,8 @@ void Parameters::update() noexcept
 	m_gainSmoother.setTargetValue(juce::Decibels::decibelsToGain(m_gainParam->get()));
 	m_mixSmoother.setTargetValue(m_mixParam->get() * 0.01f);
 	m_feedbackSmoother.setTargetValue(m_feedbackParam->get() * 0.01f);
+	m_stereoSmoother.setTargetValue(m_stereoParam->get() * 0.01f);
+	m_effectAmtSmoother.setTargetValue(m_effectAmtParam->get() * 0.01f);
 	m_lowCutFreqSmoother.setTargetValue(m_lowCutFreqParam->get());
 	m_lowCutQSmoother.setTargetValue(m_lowCutQParam->get());
 	m_highCutFreqSmoother.setTargetValue(m_highCutFreqParam->get());
@@ -198,6 +224,8 @@ void Parameters::smoothen() noexcept
 	m_gain = m_gainSmoother.getNextValue();
 	m_mix = m_mixSmoother.getNextValue();
 	m_feedback = m_feedbackSmoother.getNextValue();
+	m_stereo = m_stereoSmoother.getNextValue();
+	m_effectAmt = m_effectAmtSmoother.getNextValue();
 	m_lowCutFreq = m_lowCutFreqSmoother.getNextValue();
 	m_lowCutQ = m_lowCutQSmoother.getNextValue();
 	m_highCutFreq = m_highCutFreqSmoother.getNextValue();
