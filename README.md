@@ -1,11 +1,14 @@
 # viive
 
 A VST3 delay plugin built with JUCE. Work in progress.
-Personal playground for experimenting with different effects in feedback loop and just learning audio programming.
-Currently developed and tested on Windows with JUCE Audioplugin host and Ableton Live Suite 10.
+Personal playground for learning audio DSP and experimenting with feedback-loop effects.
+Currently developed and tested on Windows (JUCE AudioPluginHost, Ableton Live Suite 10).
+
+![screenshot](./viive.png)
 
 ## Features
 
+- Functional GUI with parameter controls and output level metering
 - Saves and retrieves plugin state
 - Adjustable delay time (5ms - 5000ms)
 - Mix and feedback controls with feedback stabilization
@@ -13,11 +16,12 @@ Currently developed and tested on Windows with JUCE Audioplugin host and Ableton
 - Cross-channel feedback for stereo effects
 - Feedback loop protection: HPF, compressor, soft clipping
 
-Despite of the feedback protection, it can get quite loud and nasty.
+Despite the feedback protection, it can get quite loud and nasty.
 
-## Possibly planned features
+Note: GUI is not final. Current knobs and their parameters are placeholders: Stereo, Effect Amt, FX Param 1, FX Param 2
 
-- GUI
+## Potential future features
+
 - Effects in feedback loop (phaser?, chorus?)
 - LFO/modulation
 - Tempo sync
@@ -29,4 +33,4 @@ Requires JUCE and a C++20 compiler. Use the Projucer to generate build files for
 
 ## Based On
 
-Built on concepts and patterns from "The Complete Beginner's Guide to Audio Plug-in Development" by Matthijs Hollemans.
+Based on concepts and example code from *The Complete Beginner’s Guide to Audio Plug-in Development* by Matthijs Hollemans.
