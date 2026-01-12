@@ -83,7 +83,5 @@ void ViiveAudioProcessorEditor::resized()
 	m_fxParam1Knob.setTopLeftPosition(20, 20);
 	m_fxParam2Knob.setTopLeftPosition(m_fxParam1Knob.getRight() + 20, 20);
 
-	m_meter.setBounds(m_outputGroup.getRight() + 15, 20, 30, height - 10);
-	// This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+	m_meter.setBounds(m_outputGroup.getRight() + 15, 20, 35, height - 15);
 }
