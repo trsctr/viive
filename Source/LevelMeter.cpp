@@ -10,13 +10,15 @@
 
 #include <JuceHeader.h>
 #include "LevelMeter.h"
+#include "DSP.h"
 
 //==============================================================================
 LevelMeter::LevelMeter(std::atomic<float>& measurementL, std::atomic<float>& measurementR)
     : m_measurementL(measurementL), m_measurementR(measurementR), m_dbLevelL(clampdB), m_dbLevelR(clampdB)
 {
+    m_decay = onePoleLowpassCoeff(100, static_cast<float>(refreshRate));
     setOpaque(true);
-    startTimerHz(1);
+    startTimerHz(refreshRate);
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
@@ -52,8 +54,9 @@ void LevelMeter::resized()
 
 void LevelMeter::timerCallback()
 {
-    m_dbLevelL = juce::Decibels::gainToDecibels(m_measurementL.load(), clampdB);
-    m_dbLevelR = juce::Decibels::gainToDecibels(m_measurementR.load(), clampdB);
+    updateLevel(m_measurementL.load(), m_levelL, m_dbLevelL);
+    updateLevel(m_measurementR.load(), m_levelR, m_dbLevelR);
+    
     repaint();
 }
 
@@ -70,5 +73,21 @@ void LevelMeter::drawLevel(juce::Graphics& g, float level, int x, int width)
     else if (y < getHeight()) {
         g.setColour(juce::Colours::lightgreen);
         g.fillRect(x, y, width, getHeight() - y);
+    }
+}
+
+void LevelMeter::updateLevel(float newLevel, float& smoothedLevel, float& leveldB) const
+{
+    if (newLevel > smoothedLevel) {
+        smoothedLevel = newLevel; // instantaneous attack
+    }
+    else {
+        smoothedLevel += (newLevel - smoothedLevel) * m_decay;
+    }
+    if (smoothedLevel > clampLevel) {
+        leveldB = juce::Decibels::gainToDecibels(smoothedLevel);
+    }
+    else {
+        leveldB = clampdB;
     }
 }
