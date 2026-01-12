@@ -93,6 +93,8 @@ void ViiveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     m_params.reset();
 	m_delayEngine.prepareToPlay(sampleRate, samplesPerBlock);
 	m_delayEngine.reset();
+    m_outputLevelL.store(0.0f);
+    m_outputLevelR.store(0.0f);
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 }
@@ -121,7 +123,7 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
 
     m_params.update();
 
-    float sampleRate = float(getSampleRate());
+    //float sampleRate = float(getSampleRate());
 
     auto mainInput = getBusBuffer(buffer, true, 0);
     const float* inputDataL = mainInput.getReadPointer(0);
@@ -130,12 +132,25 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     float* outputDataL = mainOutput.getWritePointer(0);
     float* outputDataR = mainOutput.getWritePointer(1);
 
+    float maxL = 0.0f;
+    float maxR = 0.0f;
+    
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
     {
+        float outL, outR = 0.0f;
         m_params.smoothen();
 		m_delayEngine.processSample(inputDataL[sample], inputDataR[sample],
-			outputDataL[sample], outputDataR[sample], m_params);
+			outL, outR, m_params);
+
+        outputDataL[sample] = outL;
+        outputDataR[sample] = outR;
+
+        maxL = std::max(maxL, std::abs(outL));
+        maxR = std::max(maxR, std::abs(outL));
     }
+
+    m_outputLevelL.store(maxL);
+    m_outputLevelR.store(maxR);
 
 #if JUCE_DEBUG
 	protectYourEars(buffer);

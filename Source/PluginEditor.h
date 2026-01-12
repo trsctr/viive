@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "Parameters.h"
 #include "Rotaryknob.h"
+#include "LevelMeter.h"
 
 //==============================================================================
 /**
@@ -28,6 +29,7 @@ public:
 
 private:
     ViiveAudioProcessor& m_audioProcessor;
+    LevelMeter m_meter;
 
     RotaryKnob m_gainKnob{ "Gain", m_audioProcessor.apvts, gainParamID.getParamID() };
     RotaryKnob m_delayTimeKnob{ "Time", m_audioProcessor.apvts, delayTimeParamID.getParamID() };

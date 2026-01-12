@@ -10,8 +10,8 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-ViiveAudioProcessorEditor::ViiveAudioProcessorEditor (ViiveAudioProcessor& p)
-    : AudioProcessorEditor (&p), m_audioProcessor (p)
+ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
+	: AudioProcessorEditor(&p), m_audioProcessor(p), m_meter{ p.getOutputLevelL(), p.getOutputLevelR() }
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -42,6 +42,8 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor (ViiveAudioProcessor& p)
 	m_fxGroup.addAndMakeVisible(m_fxParam1Knob);
 	m_fxGroup.addAndMakeVisible(m_fxParam2Knob);
 	addAndMakeVisible(m_fxGroup);
+
+	addAndMakeVisible(m_meter);
 
     setSize (670, 330);
 }
@@ -81,6 +83,7 @@ void ViiveAudioProcessorEditor::resized()
 	m_fxParam1Knob.setTopLeftPosition(20, 20);
 	m_fxParam2Knob.setTopLeftPosition(m_fxParam1Knob.getRight() + 20, 20);
 
-    // This is generally where you'll want to lay out the positions of any
+	m_meter.setBounds(m_outputGroup.getRight() + 15, 20, 30, height - 10);
+	// This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 }
