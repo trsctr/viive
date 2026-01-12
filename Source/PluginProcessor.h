@@ -1,11 +1,3 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include <JuceHeader.h>
@@ -48,6 +40,9 @@ public:
     bool isMidiEffect() const override;
     double getTailLengthSeconds() const override;
 
+    std::atomic<float>& getOutputLevelL() { return m_outputLevelL; }
+    std::atomic<float>& getOutputLevelR() { return m_outputLevelR; }
+
     //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
@@ -62,6 +57,8 @@ public:
 private:
     Parameters m_params;
     DelayEngine m_delayEngine;
+
+    std::atomic<float> m_outputLevelL, m_outputLevelR;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessor)
 };
