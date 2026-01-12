@@ -29,7 +29,43 @@ Note: GUI is not final. Current knobs and their parameters are placeholders: Ste
 
 ## Building
 
-Requires JUCE and a C++20 compiler. Use the Projucer to generate build files for your platform.
+### Requirements
+
+* C++20 compiler (Visual Studio 2022 on Windows, Xcode on macOS)
+* JUCE **8.0.11**
+* Projucer
+
+### 1) Get JUCE 8.0.11
+
+Download JUCE **8.0.11** from the [official JUCE GitHub releases](https://github.com/juce-framework/JUCE/releases/tag/8.0.11)
+
+You should end up with a folder that contains:
+
+* `JUCE/modules/`
+* `Projucer` (the Projucer app)
+
+### 2) Set the JUCE module path in Projucer
+
+Open **Projucer** → FILE → **Global paths...**:
+
+Make sure the JUCE Modules path points to:
+* `<path-to-JUCE>/modules`
+
+### 3) Generate IDE project files
+
+* Open `viive.jucer` in Projucer
+* Click **Save Project**
+
+This generates platform-specific projects under `Builds/`
+
+### 4) Build
+
+Select your exporter from the menu in projucer and click the logo to open the project in Xcode/Visual Studio
+Once the project opens, build the `Release` configuration.
+
+### Output
+
+* VST3 will be produced under the corresponding `Builds/...` directory (search for `*.vst3` if you’re unsure).
 
 ## Based On
 
