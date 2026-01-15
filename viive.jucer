@@ -5,6 +5,8 @@
               pluginManufacturer="trsctr" pluginVST3Category="Delay" cppLanguageStandard="20">
   <MAINGROUP id="LCtwvr" name="viive">
     <GROUP id="{058ECC9C-9529-0D6B-B949-15DE645D6A88}" name="Source">
+      <FILE id="x4zmVQ" name="Chorus.cpp" compile="1" resource="0" file="Source/Chorus.cpp"/>
+      <FILE id="kjgs03" name="Chorus.h" compile="0" resource="0" file="Source/Chorus.h"/>
       <FILE id="dD11tY" name="LevelMeter.cpp" compile="1" resource="0" file="Source/LevelMeter.cpp"/>
       <FILE id="uoBXSB" name="LevelMeter.h" compile="0" resource="0" file="Source/LevelMeter.h"/>
       <FILE id="bd7ZqI" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>
