@@ -14,3 +14,7 @@ inline float onePoleLowpass(float input, float& state, float coeff) {
 	state += (input - state) * coeff;
 	return state;
 }
+
+inline float msToSamples(float ms, float sampleRate) {
+	return ms * sampleRate * 0.001f;
+}
