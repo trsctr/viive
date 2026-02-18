@@ -1,14 +1,17 @@
 #pragma once
 #include <JuceHeader.h>
 
-enum class LFOShape { Sine };
+enum class LFOShape { Sine, Triangle };
 class LFO {
 public:
-	LFO();
+	LFO(float frequency, float offset, LFOShape shape);
 	~LFO() = default;
 
 	void prepareToPlay(float sampleRate) noexcept;
 	void reset() noexcept;
+	void setFrequency(float frequency);
+	void setOffset(float offset);
+	void setShape(LFOShape shape);
 	float process();
 
 private:
@@ -23,4 +26,5 @@ private:
 
 	void setIncrement();
 	float processSine(float phase);
+	float processTriangle(float phase);
 };
