@@ -55,7 +55,5 @@ float LFO::processSine(float phase) {
 }
 
 float LFO::processTriangle(float phase) {
-	float out = 1.0f - 4.0f * std::abs(phase - 0.5f);
-	DBG("phase: " << phase << ", out: " << out);
-	return out;
+	return 1.0f - 4.0f * std::abs(phase - 0.5f);
 }
