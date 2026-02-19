@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Parameters.h"
+#include "ChorusEngine.h"
 
 using Filter = juce::dsp::StateVariableTPTFilter<float>;
 
@@ -29,6 +30,7 @@ private:
 	Filter m_highCutFilter;
 	Filter m_feedbackHighpass;
 	juce::dsp::Compressor<float> m_feedbackCompressor;
+	ChorusEngine m_chorusEngine;
 
 	float m_sampleRate = 0.0f;
 

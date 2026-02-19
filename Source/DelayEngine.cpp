@@ -23,6 +23,7 @@ void DelayEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 	m_lowCutFilter.prepare(spec);
 	m_highCutFilter.prepare(spec);
 	m_feedbackHighpass.prepare(spec);
+	m_chorusEngine.prepareToPlay(sampleRate, samplesPerBlock);
 	double numSamples = Parameters::maxDelayTime / 1000.0 * m_sampleRate;
 	int maxDelayInSamples = int(std::ceil(numSamples));
 	m_delayLine.setMaximumDelayInSamples(maxDelayInSamples);
@@ -33,6 +34,7 @@ void DelayEngine::reset() noexcept
 	m_delayLine.reset();
 	m_lowCutFilter.reset();
 	m_highCutFilter.reset();
+	m_chorusEngine.reset();
 	m_feedbackHighpass.reset();
 	m_feedbackHighpass.setCutoffFrequency(60.0f); // just to remove rumble from fb loop
 	m_feedbackHighpass.setResonance(Parameters::defaultFilterQ);
@@ -93,6 +95,7 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	float dryL = inL;
 	float dryR = inR;
 
+	//cross feedback
 	m_delayLine.pushSample(0, dryL + m_feedbackR);
 	m_delayLine.pushSample(1, dryR + m_feedbackL);
 
@@ -102,6 +105,7 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	// this is where we could place the fb loop effect
 	// experiment whether it works better before or after filters
 	// or make it switchable
+	m_chorusEngine.processSample(wetL, wetR, wetL, wetR, params);
 
 	// sculpting filters, first left and then right channel
 	wetL = m_lowCutFilter.processSample(0, wetL);
