@@ -15,10 +15,10 @@ public:
 
 	void processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params);
 private:
-	Chorus m_chorus1L{ 0.2f, 4.0f, 0.0f };
-	Chorus m_chorus1R{ 0.2f, 4.f, .5f };
-	Chorus m_chorus2L{ 0.45f, 4.f, .5f };
-	Chorus m_chorus2R{ 0.45f, 4.f, 0.0f };
+	Chorus m_chorus1L{ 7.0f, 0.2f, 4.0f, 0.0f };
+	Chorus m_chorus1R{ 7.0f, 0.2f, 4.f, .5f };
+	Chorus m_chorus2L{ 11.0f, 0.45f, 4.f, .5f };
+	Chorus m_chorus2R{ 11.0f, 0.45f, 4.f, 0.0f };
 
 	Filter m_highpass;
 
