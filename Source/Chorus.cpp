@@ -1,9 +1,8 @@
 #include "Chorus.h"
 #include "DSP.h"
-Chorus::Chorus(float lfoFrequency = 1.0f, float modDepth = 1.0f, float lfoOffset = 0.0f)
-	: m_lfo{lfoFrequency, lfoOffset, LFOShape::Triangle }, m_modDepthMs(modDepth)
+Chorus::Chorus(float delayTimeMs = defaultDelayMs, float lfoFrequency = 1.0f, float modDepth = 1.0f, float lfoOffset = 0.0f)
+	: m_baseDelayMs(delayTimeMs), m_lfo{lfoFrequency, lfoOffset, LFOShape::Triangle }, m_modDepthMs(modDepth)
 {
-	m_baseDelayMs = defaultDelayMs;
 }
 
 void Chorus::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept

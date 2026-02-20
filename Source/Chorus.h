@@ -5,12 +5,12 @@
 class Chorus
 {
 public:
-	Chorus(float lfoFrequency, float modDepth, float lfoOffset);
+	Chorus(float delayTimeMs, float lfoFrequency, float modDepth, float lfoOffset);
 	~Chorus() = default;
 
 	static constexpr float chorusMaxDelayMs = 60.0f;
-	static constexpr float chorusMinDelayMs = 5.0f;
-	static constexpr float defaultDelayMs = 11.0f;
+	static constexpr float chorusMinDelayMs = 1.0f;
+	static constexpr float defaultDelayMs = 7.0f;
 
 
 	void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept;
