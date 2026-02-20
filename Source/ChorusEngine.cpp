@@ -14,7 +14,7 @@ void ChorusEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcep
 	spec.maximumBlockSize = juce::uint32(samplesPerBlock);
 	spec.numChannels = 2;
 	m_highpass.prepare(spec);
-	m_coeff = coeffFromFrequency(5.0f, static_cast<float>(sampleRate));
+	m_dcBlockCoeff = coeffFromFrequency(5.0f, static_cast<float>(sampleRate));
 	m_chorus1L.prepareToPlay(sampleRate, samplesPerBlock);
 	m_chorus1R.prepareToPlay(sampleRate, samplesPerBlock);
 	m_chorus2L.prepareToPlay(sampleRate, samplesPerBlock);
@@ -34,25 +34,51 @@ void ChorusEngine::reset() noexcept
 	m_highpass.setResonance(Parameters::defaultFilterQ);
 }
 
+void ChorusEngine::setLfoFreq(float freq)
+{
+	if (freq != m_lfoFreq) {
+		m_lfoFreq = freq;
+		m_chorus1L.setLfoFreq(m_lfoFreq);
+		m_chorus1R.setLfoFreq(m_lfoFreq);
+		m_chorus2L.setLfoFreq(m_lfoFreq * m_lfoFreqRatio);
+		m_chorus2L.setLfoFreq(m_lfoFreq * m_lfoFreqRatio);
+	}
+}
+
+void ChorusEngine::setModDepth(float modDepth)
+{
+	if (modDepth != m_modDepth)
+	{
+		m_modDepth = modDepth;
+		m_chorus1L.setModDepthMs(m_modDepth);
+		m_chorus1R.setModDepthMs(m_modDepth);
+		m_chorus2L.setModDepthMs(m_modDepth);
+		m_chorus2R.setModDepthMs(m_modDepth);
+	}
+}
+
 void ChorusEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
 {
-	setMixLevel(params.effectAmt());
+	setEffectAmt(params.effectAmt());
+	setLfoFreq(params.fxParam1());
+	setModDepth(params.fxParam2());
+
 	float hpL = m_highpass.processSample(0, inL);
 	float hpR = m_highpass.processSample(1, inR);
 
 	float wetL = m_chorus1L.processSample(hpL);
 	float wetR = m_chorus1R.processSample(hpR);
-	wetL -= onePoleLowpass(wetL, m_dcBlockStateL, m_coeff);
-	wetR -= onePoleLowpass(wetR, m_dcBlockStateR, m_coeff);
+	wetL -= onePoleLowpass(wetL, m_dcBlockStateL, m_dcBlockCoeff);
+	wetR -= onePoleLowpass(wetR, m_dcBlockStateR, m_dcBlockCoeff);
 
 	wetL += m_chorus2L.processSample(hpL);
 	wetR += m_chorus2R.processSample(hpR);
-	wetL -= onePoleLowpass(wetL, m_dcBlockStateL, m_coeff);
-	wetR -= onePoleLowpass(wetR, m_dcBlockStateR, m_coeff);
+	wetL -= onePoleLowpass(wetL, m_dcBlockStateL, m_dcBlockCoeff);
+	wetR -= onePoleLowpass(wetR, m_dcBlockStateR, m_dcBlockCoeff);
 
-	outL = inL + (wetL * m_mixLevel);
-	outR = inR + (wetR * m_mixLevel);
-	float makeupGain = 1.0f / (1.0f + m_mixLevel * 0.5f);
+	outL = inL + (wetL * m_effectAmt);
+	outR = inR + (wetR * m_effectAmt);
+	float makeupGain = 1.0f / (1.0f + m_effectAmt * 0.5f);
 
 	outL *= makeupGain;
 	outR *= makeupGain;
