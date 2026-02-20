@@ -78,7 +78,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, highCutFreqParamID, m_highCutFreqParam);
 	castParameter(apvts, highCutQParamID, m_highCutQParam);
 	castParameter(apvts, fxParam1ParamID, m_fxParam1Param);
-	castParameter(apvts, fxParam2ID, m_fxParam2Param);
+	castParameter(apvts, fxParam2ParamID, m_fxParam2Param);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
@@ -166,15 +166,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	// Placeholder FX parameters
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		fxParam1ParamID.getParamID(),
-		"FX Param 1",
-		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
-		0.0f
+		"Chorus Mod Freq",
+		juce::NormalisableRange<float>(0.01f, 1.0f, 0.01f),
+		0.2f
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		fxParam2ID.getParamID(),
-		"FX Param 2",
-		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
-		0.0f
+		fxParam2ParamID.getParamID(),
+		"Chorus Mod Depth",
+		juce::NormalisableRange<float>(.5f, 6.0f, 0.01f),
+		4.0f
 	));
 	return layout;
 }

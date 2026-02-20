@@ -12,7 +12,7 @@ const juce::ParameterID lowCutQParamID{ "lowCutQ", 1 };
 const juce::ParameterID highCutFreqParamID{ "highCutFreq", 1 };
 const juce::ParameterID highCutQParamID{ "highCutQ", 1 };
 const juce::ParameterID fxParam1ParamID{ "fxParam1", 1 };
-const juce::ParameterID fxParam2ID{ "fxParam2", 1 };
+const juce::ParameterID fxParam2ParamID{ "fxParam2", 1 };
 
 class Parameters {
 public:
@@ -41,8 +41,8 @@ public:
 	float lowCutQ() const { return m_lowCutQ; }
 	float highCutFreq() const { return m_highCutFreq; }
 	float highCutQ() const { return m_highCutQ; }
-	float fxParam1() const { return 0.0f; } // Placeholder
-	float fxParam2() const { return 0.0f; } // Placeholder
+	float fxParam1() const { return m_fxParam1; } // Placeholder
+	float fxParam2() const { return m_fxParam2; } // Placeholder
 
 private:
 	juce::AudioParameterFloat* m_gainParam;
@@ -67,6 +67,8 @@ private:
 	juce::LinearSmoothedValue<float> m_lowCutQSmoother;
 	juce::LinearSmoothedValue<float> m_highCutFreqSmoother;
 	juce::LinearSmoothedValue<float> m_highCutQSmoother;
+	juce::LinearSmoothedValue<float> m_fxParam1Smoother;
+	juce::LinearSmoothedValue<float> m_fxParam2Smoother;
 
 	float m_targetDelayTime = 0.0f;
 	float m_coeff = 0.0f;
