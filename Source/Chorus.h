@@ -9,16 +9,16 @@ public:
 	~Chorus() = default;
 
 	static constexpr float chorusMaxDelayMs = 60.0f;
-	static constexpr float chorusMinDelayMs = 1.0f;
+	static constexpr float chorusMinDelayMs = .64f;
 	static constexpr float defaultDelayMs = 7.0f;
-
 
 	void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept;
 	void reset() noexcept;
 	void update();
 	float processSample(const float& in);
-
 	void setBaseDelay(float delayInMs);
+	void setLfoFreq(float freq) { m_lfo.setFrequency(freq); };
+	void setModDepthMs(float modDepthMs);
 
 private:
 	juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> m_delayLine;
@@ -39,6 +39,7 @@ private:
 	float m_lpState = 0.0f;
 
 	void setBaseDelaySamples();
+	void setModDepthSamples();
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Chorus);
 };

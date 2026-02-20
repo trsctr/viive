@@ -42,6 +42,19 @@ void Chorus::setBaseDelaySamples() {
 	m_baseDelaySamples = msToSamples(m_baseDelayMs, m_sampleRate);
 }
 
+void Chorus::setModDepthMs(float modDepthMs)
+{
+	if (modDepthMs != m_modDepthMs) {
+		m_modDepthMs = modDepthMs;
+		setModDepthSamples();
+	}
+}
+
+void Chorus::setModDepthSamples()
+{
+	m_modDepthSamples = std::ceil(msToSamples(m_modDepthMs, m_sampleRate));
+}
+
 float Chorus::processSample(const float& in) {
 	float modulatedDelay = m_baseDelaySamples + (m_lfo.process() * m_modDepthSamples);
 	modulatedDelay = std::clamp(modulatedDelay, m_minDelaySamples, m_maxDelaySamples);
