@@ -22,6 +22,10 @@ private:
 
 	Filter m_highpass;
 
+	float m_coeff = 0.0f;
+	float m_dcBlockStateL = 0.0f;
+	float m_dcBlockStateR = 0.0f;
+
 	float m_mixLevel = 0.0f;;
 
 	void setMixLevel(float value) { m_mixLevel = value; };
