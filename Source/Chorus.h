@@ -25,6 +25,7 @@ private:
 	LFO	m_lfo;
 
 	float m_sampleRate = 0.0f;
+	float m_coeff = 0.0f;
 
 	float m_baseDelayMs = 0.0f;
 	float m_baseDelaySamples = 0.0f;
@@ -34,6 +35,8 @@ private:
 
 	float m_modDepthMs = 1.0f;
 	float m_modDepthSamples = 1.0f;
+
+	float m_lpState = 0.0f;
 
 	void setBaseDelaySamples();
 
