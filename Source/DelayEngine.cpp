@@ -99,13 +99,14 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	m_delayLine.pushSample(0, dryL + m_feedbackR);
 	m_delayLine.pushSample(1, dryR + m_feedbackL);
 
-	float wetL = m_delayLine.popSample(0);
-	float wetR = m_delayLine.popSample(1);
+	float popL = m_delayLine.popSample(0);
+	float popR = m_delayLine.popSample(1);
+	float wetL = 0.0f, wetR = 0.0f;
 
 	// this is where we could place the fb loop effect
 	// experiment whether it works better before or after filters
 	// or make it switchable
-	m_chorusEngine.processSample(wetL, wetR, wetL, wetR, params);
+	m_chorusEngine.processSample(popL, popR, wetL, wetR, params);
 
 	// sculpting filters, first left and then right channel
 	wetL = m_lowCutFilter.processSample(0, wetL);
