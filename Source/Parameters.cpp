@@ -191,6 +191,8 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_lowCutQSmoother.reset(sampleRate, duration);
 	m_highCutFreqSmoother.reset(sampleRate, duration);
 	m_highCutQSmoother.reset(sampleRate, duration);
+	m_fxParam1Smoother.reset(sampleRate, duration);
+	m_fxParam2Smoother.reset(sampleRate, duration);
 	m_coeff = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
 }
 
@@ -206,8 +208,8 @@ void Parameters::reset() noexcept
 	m_lowCutQ = defaultFilterQ;
 	m_highCutFreq = 20000.0f;
 	m_highCutQ = defaultFilterQ;
-	m_fxParam1 = 0.0f;
-	m_fxParam2 = 0.0f;
+	m_fxParam1 = 0.2f;
+	m_fxParam2 = 4.0f;
 	m_gainSmoother.setCurrentAndTargetValue(juce::Decibels::decibelsToGain(m_gainParam->get()));
 	m_mixSmoother.setCurrentAndTargetValue(m_mixParam->get() * 0.01f);
 	m_feedbackSmoother.setCurrentAndTargetValue(m_feedbackParam->get() * 0.01f);
@@ -217,6 +219,9 @@ void Parameters::reset() noexcept
 	m_lowCutQSmoother.setCurrentAndTargetValue(m_lowCutQParam->get());
 	m_highCutFreqSmoother.setCurrentAndTargetValue(m_highCutFreqParam->get());
 	m_highCutQSmoother.setCurrentAndTargetValue(m_highCutQParam->get());
+	m_fxParam1Smoother.setCurrentAndTargetValue(m_fxParam1Param->get());
+	m_fxParam2Smoother.setCurrentAndTargetValue(m_fxParam2Param->get());
+
 }
 
 void Parameters::update() noexcept
@@ -230,9 +235,9 @@ void Parameters::update() noexcept
 	m_lowCutQSmoother.setTargetValue(m_lowCutQParam->get());
 	m_highCutFreqSmoother.setTargetValue(m_highCutFreqParam->get());
 	m_highCutQSmoother.setTargetValue(m_highCutQParam->get());
+	m_fxParam1Smoother.setTargetValue(m_fxParam1Param->get());
+	m_fxParam2Smoother.setTargetValue(m_fxParam2Param->get());
 	m_targetDelayTime = m_delayTimeParam->get();
-	m_fxParam1 = m_fxParam1Param->get();
-	m_fxParam2 = m_fxParam2Param->get();
 	if (m_delayTime == 0.0f) {
 		m_delayTime = m_targetDelayTime;
 	}
@@ -249,5 +254,7 @@ void Parameters::smoothen() noexcept
 	m_lowCutQ = m_lowCutQSmoother.getNextValue();
 	m_highCutFreq = m_highCutFreqSmoother.getNextValue();
 	m_highCutQ = m_highCutQSmoother.getNextValue();
+	m_fxParam1 = m_fxParam1Smoother.getNextValue();
+	m_fxParam2 = m_fxParam2Smoother.getNextValue();
 	m_delayTime = onePoleLowpass(m_targetDelayTime, m_delayTime, m_coeff);
 }
