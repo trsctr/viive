@@ -23,7 +23,6 @@ void LFO::setFrequency(float frequency) {
 
 void LFO::setOffset(float offset) {
 	m_offset = offset;
-	DBG(m_offset);
 }
 
 void LFO::setShape(LFOShape shape) {
@@ -47,6 +46,8 @@ float LFO::process() {
 			return processSine(offsetPhase);
 		case (LFOShape::Triangle):
 			return processTriangle(offsetPhase);
+		default:
+			return 0.0f;
 	}
 }
 
