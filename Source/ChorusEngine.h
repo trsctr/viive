@@ -5,6 +5,8 @@
 
 using Filter = juce::dsp::StateVariableTPTFilter<float>;
 
+
+
 class ChorusEngine {
 public:
 	ChorusEngine();
@@ -12,9 +14,6 @@ public:
 
 	static constexpr float chorus1DefaultTime = 7.0f;
 	static constexpr float chorus2DefaultTime = 11.0f;
-	static constexpr float chorus1DefaultFreq = 0.2f;
-	static constexpr float chorus2DefaultFreq = 0.45f;
-	static constexpr float defaultModDepth = 4.0f;
 
 
 	void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept;
@@ -23,10 +22,10 @@ public:
 	void processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params);
 
 private:
-	Chorus m_chorus1L{ chorus1DefaultTime, chorus1DefaultFreq, defaultModDepth, 0.0f }; // delay time, lfo frequency, mod depth, phase offset
-	Chorus m_chorus1R{ chorus1DefaultTime, chorus1DefaultFreq, defaultModDepth, .5f };
-	Chorus m_chorus2L{ chorus2DefaultTime, chorus2DefaultFreq, defaultModDepth, .5f };
-	Chorus m_chorus2R{ chorus2DefaultTime, chorus2DefaultFreq, defaultModDepth, 0.0f };
+	Chorus m_chorus1L{ chorus1DefaultTime, Parameters::defaultChorusModRate, Parameters::defaultChorusModDepth, 0.0f };
+	Chorus m_chorus1R{ chorus1DefaultTime, Parameters::defaultChorusModRate, Parameters::defaultChorusModDepth, .5f };
+	Chorus m_chorus2L{ chorus2DefaultTime, Parameters::defaultChorusModRate2, Parameters::defaultChorusModDepth, .5f };
+	Chorus m_chorus2R{ chorus2DefaultTime, Parameters::defaultChorusModRate2, Parameters::defaultChorusModDepth, 0.0f };
 
 	Filter m_highpass;
 
@@ -34,12 +33,14 @@ private:
 	float m_dcBlockStateL = 0.0f;
 	float m_dcBlockStateR = 0.0f;
 
-	float m_effectAmt = 0.0f;
-	float m_lfoFreq = chorus1DefaultFreq;
-	float m_lfoFreqRatio = chorus2DefaultFreq / chorus1DefaultFreq;
-	float m_modDepth = defaultModDepth;
+	float m_intensity = 0.0f;
+	float m_multiplier = 2.0f;
 
-	void setEffectAmt(float value) { m_effectAmt = value; }
-	void setModDepth(float modDepthMs);
-	void setLfoFreq(float lfoFreq);
+	float m_modRate = Parameters::defaultChorusModRate;
+	float m_modRateRatio = Parameters::defaultChorusModRate2 / Parameters::defaultChorusModRate;
+	float m_modDepth = Parameters::defaultChorusModDepth;
+
+	void setIntensity(float value) { m_intensity = value; }
+	void setModDepth(float newModDepth);
+	void setModRate(float newRate);
 };

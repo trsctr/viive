@@ -34,14 +34,14 @@ void ChorusEngine::reset() noexcept
 	m_highpass.setResonance(Parameters::defaultFilterQ);
 }
 
-void ChorusEngine::setLfoFreq(float freq)
+void ChorusEngine::setModRate(float newRate)
 {
-	if (freq != m_lfoFreq) {
-		m_lfoFreq = freq;
-		m_chorus1L.setLfoFreq(m_lfoFreq);
-		m_chorus1R.setLfoFreq(m_lfoFreq);
-		m_chorus2L.setLfoFreq(m_lfoFreq * m_lfoFreqRatio);
-		m_chorus2L.setLfoFreq(m_lfoFreq * m_lfoFreqRatio);
+	if (newRate != m_modRate) {
+		m_modRate = newRate;
+		m_chorus1L.setModRate(m_modRate);
+		m_chorus1R.setModRate(m_modRate);
+		m_chorus2L.setModRate(m_modRate * m_modRateRatio);
+		m_chorus2L.setModRate(m_modRate * m_modRateRatio);
 	}
 }
 
@@ -59,9 +59,9 @@ void ChorusEngine::setModDepth(float modDepth)
 
 void ChorusEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
 {
-	setEffectAmt(params.effectAmt());
-	setLfoFreq(params.fxParam1());
-	setModDepth(params.fxParam2());
+	setIntensity(params.chorusIntensity());
+	setModRate(params.chorusModRate());
+	setModDepth(params.chorusModDepth());
 
 	float hpL = m_highpass.processSample(0, inL);
 	float hpR = m_highpass.processSample(1, inR);
@@ -79,14 +79,13 @@ void ChorusEngine::processSample(const float& inL, const float& inR, float& outL
 	// using additive mixing to blend chorused signal with the dry signal
 	// to make sure feedback does not spiral out of control when chorus
 	// intensity is full.
-	// 2.0 multiplyer for the wetIntensity seems to be a nice sweetspot
+	// 2.0f multiplier seems to be a nice sweetspot
 	// so the modulated signal is louder than dry signal
 	// so we get some of that sweet chorus action
-	float wetIntensity = 2.0f;
 
-	outL = inL + (wetL * m_effectAmt * wetIntensity);
-	outR = inR + (wetR * m_effectAmt * wetIntensity);
-	float makeupGain = 1.0f / (1.0f + m_effectAmt * wetIntensity);
+	outL = inL + (wetL * m_intensity * m_multiplier);
+	outR = inR + (wetR * m_intensity * m_multiplier);
+	float makeupGain = 1.0f / (1.0f + m_intensity * m_multiplier);
 
 	outL *= makeupGain;
 	outR *= makeupGain;

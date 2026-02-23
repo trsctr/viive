@@ -33,6 +33,9 @@ static juce::String stringFromPercent(float value, int)
 
 static juce::String stringFromHertz(float value, int)
 {
+	if (value < 10) {
+		return juce::String(value, 2) + " Hz";
+	}
 	if (value < 1000.0f) {
 		return juce::String(int(value)) + " Hz";
 	}
@@ -72,13 +75,13 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, mixParamID, m_mixParam);
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
 	castParameter(apvts, stereoParamID, m_stereoParam);
-	castParameter(apvts, effectAmtParamID, m_effectAmtParam);
+	castParameter(apvts, chorusIntensityParamID, m_chorusIntensityParam);
 	castParameter(apvts, lowCutFreqParamID, m_lowCutFreqParam);
 	castParameter(apvts, lowCutQParamID, m_lowCutQParam);
 	castParameter(apvts, highCutFreqParamID, m_highCutFreqParam);
 	castParameter(apvts, highCutQParamID, m_highCutQParam);
-	castParameter(apvts, fxParam1ParamID, m_fxParam1Param);
-	castParameter(apvts, fxParam2ParamID, m_fxParam2Param);
+	castParameter(apvts, chorusModRateParamID, m_chorusModRateParam);
+	castParameter(apvts, chorusModDepthParamID, m_chorusModDepthParam);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
@@ -126,12 +129,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		.withStringFromValueFunction(stringFromPercent)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		effectAmtParamID.getParamID(),
-		"Effect Amount",
-		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
-		0.0f,
-		juce::AudioParameterFloatAttributes()
-		.withStringFromValueFunction(stringFromPercent)
+		chorusIntensityParamID.getParamID(),
+		"Chorus Intensity",
+		juce::NormalisableRange<float>(0.0f, 1.0f, .01f),
+		0.0f
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutFreqParamID.getParamID(),
@@ -163,18 +164,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.1f),
 		defaultFilterQ
 	));
-	// Placeholder FX parameters
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		fxParam1ParamID.getParamID(),
-		"Chorus Mod Freq",
+		chorusModRateParamID.getParamID(),
+		"Chorus Mod Rate",
 		juce::NormalisableRange<float>(0.01f, 1.0f, 0.01f),
-		0.2f
+		defaultChorusModRate
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		fxParam2ParamID.getParamID(),
+		chorusModDepthParamID.getParamID(),
 		"Chorus Mod Depth",
 		juce::NormalisableRange<float>(.5f, 6.0f, 0.01f),
-		4.0f
+		defaultChorusModDepth
 	));
 	return layout;
 }
@@ -186,13 +186,13 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_mixSmoother.reset(sampleRate, duration);
 	m_feedbackSmoother.reset(sampleRate, duration);
 	m_stereoSmoother.reset(sampleRate, duration);
-	m_effectAmtSmoother.reset(sampleRate, duration);
+	m_chorusIntensitySmoother.reset(sampleRate, duration);
 	m_lowCutFreqSmoother.reset(sampleRate, duration);
 	m_lowCutQSmoother.reset(sampleRate, duration);
 	m_highCutFreqSmoother.reset(sampleRate, duration);
 	m_highCutQSmoother.reset(sampleRate, duration);
-	m_fxParam1Smoother.reset(sampleRate, duration);
-	m_fxParam2Smoother.reset(sampleRate, duration);
+	m_chorusModRateSmoother.reset(sampleRate, duration);
+	m_chorusModDepthSmoother.reset(sampleRate, duration);
 	m_coeff = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
 }
 
@@ -203,24 +203,24 @@ void Parameters::reset() noexcept
 	m_mix = .5f;
 	m_feedback = 0.0f;
 	m_stereo = 0.0f;
-	m_effectAmt = 0.0f;
+	m_chorusIntensity = 0.0f;
 	m_lowCutFreq = 20.0f;
 	m_lowCutQ = defaultFilterQ;
 	m_highCutFreq = 20000.0f;
 	m_highCutQ = defaultFilterQ;
-	m_fxParam1 = 0.2f;
-	m_fxParam2 = 4.0f;
+	m_chorusModRate = defaultChorusModRate;
+	m_chorusModDepth = defaultChorusModDepth;
 	m_gainSmoother.setCurrentAndTargetValue(juce::Decibels::decibelsToGain(m_gainParam->get()));
 	m_mixSmoother.setCurrentAndTargetValue(m_mixParam->get() * 0.01f);
 	m_feedbackSmoother.setCurrentAndTargetValue(m_feedbackParam->get() * 0.01f);
 	m_stereoSmoother.setCurrentAndTargetValue(m_stereoParam->get() * 0.01f);
-	m_effectAmtSmoother.setCurrentAndTargetValue(m_effectAmtParam->get() * 0.01f);
+	m_chorusIntensitySmoother.setCurrentAndTargetValue(m_chorusIntensityParam->get());
 	m_lowCutFreqSmoother.setCurrentAndTargetValue(m_lowCutFreqParam->get());
 	m_lowCutQSmoother.setCurrentAndTargetValue(m_lowCutQParam->get());
 	m_highCutFreqSmoother.setCurrentAndTargetValue(m_highCutFreqParam->get());
 	m_highCutQSmoother.setCurrentAndTargetValue(m_highCutQParam->get());
-	m_fxParam1Smoother.setCurrentAndTargetValue(m_fxParam1Param->get());
-	m_fxParam2Smoother.setCurrentAndTargetValue(m_fxParam2Param->get());
+	m_chorusModRateSmoother.setCurrentAndTargetValue(m_chorusModRateParam->get());
+	m_chorusModDepthSmoother.setCurrentAndTargetValue(m_chorusModDepthParam->get());
 
 }
 
@@ -230,13 +230,13 @@ void Parameters::update() noexcept
 	m_mixSmoother.setTargetValue(m_mixParam->get() * 0.01f);
 	m_feedbackSmoother.setTargetValue(m_feedbackParam->get() * 0.01f);
 	m_stereoSmoother.setTargetValue(m_stereoParam->get() * 0.01f);
-	m_effectAmtSmoother.setTargetValue(m_effectAmtParam->get() * 0.01f);
+	m_chorusIntensitySmoother.setTargetValue(m_chorusIntensityParam->get());
 	m_lowCutFreqSmoother.setTargetValue(m_lowCutFreqParam->get());
 	m_lowCutQSmoother.setTargetValue(m_lowCutQParam->get());
 	m_highCutFreqSmoother.setTargetValue(m_highCutFreqParam->get());
 	m_highCutQSmoother.setTargetValue(m_highCutQParam->get());
-	m_fxParam1Smoother.setTargetValue(m_fxParam1Param->get());
-	m_fxParam2Smoother.setTargetValue(m_fxParam2Param->get());
+	m_chorusModRateSmoother.setTargetValue(m_chorusModRateParam->get());
+	m_chorusModDepthSmoother.setTargetValue(m_chorusModDepthParam->get());
 	m_targetDelayTime = m_delayTimeParam->get();
 	if (m_delayTime == 0.0f) {
 		m_delayTime = m_targetDelayTime;
@@ -249,12 +249,12 @@ void Parameters::smoothen() noexcept
 	m_mix = m_mixSmoother.getNextValue();
 	m_feedback = m_feedbackSmoother.getNextValue();
 	m_stereo = m_stereoSmoother.getNextValue();
-	m_effectAmt = m_effectAmtSmoother.getNextValue();
+	m_chorusIntensity = m_chorusIntensitySmoother.getNextValue();
 	m_lowCutFreq = m_lowCutFreqSmoother.getNextValue();
 	m_lowCutQ = m_lowCutQSmoother.getNextValue();
 	m_highCutFreq = m_highCutFreqSmoother.getNextValue();
 	m_highCutQ = m_highCutQSmoother.getNextValue();
-	m_fxParam1 = m_fxParam1Smoother.getNextValue();
-	m_fxParam2 = m_fxParam2Smoother.getNextValue();
+	m_chorusModRate = m_chorusModRateSmoother.getNextValue();
+	m_chorusModDepth = m_chorusModDepthSmoother.getNextValue();
 	m_delayTime = onePoleLowpass(m_targetDelayTime, m_delayTime, m_coeff);
 }

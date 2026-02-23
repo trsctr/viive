@@ -17,7 +17,7 @@ public:
 	void update();
 	float processSample(const float& in);
 	void setBaseDelay(float delayInMs);
-	void setLfoFreq(float freq) { m_lfo.setFrequency(freq); };
+	void setModRate(float rate) { m_lfo.setFrequency(rate); };
 	void setModDepthMs(float modDepthMs);
 
 private:
