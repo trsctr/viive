@@ -75,10 +75,18 @@ void ChorusEngine::processSample(const float& inL, const float& inR, float& outL
 	wetR += m_chorus2R.processSample(hpR);
 	wetL -= onePoleLowpass(wetL, m_dcBlockStateL, m_dcBlockCoeff);
 	wetR -= onePoleLowpass(wetR, m_dcBlockStateR, m_dcBlockCoeff);
+	
+	// using additive mixing to blend chorused signal with the dry signal
+	// to make sure feedback does not spiral out of control when chorus
+	// intensity is full.
+	// 2.0 multiplyer for the wetIntensity seems to be a nice sweetspot
+	// so the modulated signal is louder than dry signal
+	// so we get some of that sweet chorus action
+	float wetIntensity = 2.0f;
 
-	outL = inL + (wetL * m_effectAmt);
-	outR = inR + (wetR * m_effectAmt);
-	float makeupGain = 1.0f / (1.0f + m_effectAmt * 0.5f);
+	outL = inL + (wetL * m_effectAmt * wetIntensity);
+	outR = inR + (wetR * m_effectAmt * wetIntensity);
+	float makeupGain = 1.0f / (1.0f + m_effectAmt * wetIntensity);
 
 	outL *= makeupGain;
 	outR *= makeupGain;
