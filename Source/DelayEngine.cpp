@@ -38,6 +38,7 @@ void DelayEngine::reset() noexcept
 	m_feedbackHighpass.reset();
 	m_feedbackHighpass.setCutoffFrequency(60.0f); // just to remove rumble from fb loop
 	m_feedbackHighpass.setResonance(Parameters::defaultFilterQ);
+	m_feedbackCompressor.reset();
 	m_feedbackL = 0.0f;
 	m_feedbackR = 0.0f;
 	m_lowCutFreq = -1.0f;
