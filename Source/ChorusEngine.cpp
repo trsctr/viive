@@ -32,6 +32,8 @@ void ChorusEngine::reset() noexcept
 	m_dcBlockStateR = 0.0f;
 	m_highpass.setCutoffFrequency(100.0f);
 	m_highpass.setResonance(Parameters::defaultFilterQ);
+	m_modRate = -1.0f;
+	m_modDepth = -1.0f;
 }
 
 void ChorusEngine::setModRate(float newRate)
@@ -41,7 +43,7 @@ void ChorusEngine::setModRate(float newRate)
 		m_chorus1L.setModRate(m_modRate);
 		m_chorus1R.setModRate(m_modRate);
 		m_chorus2L.setModRate(m_modRate * m_modRateRatio);
-		m_chorus2L.setModRate(m_modRate * m_modRateRatio);
+		m_chorus2R.setModRate(m_modRate * m_modRateRatio);
 	}
 }
 
@@ -68,11 +70,14 @@ void ChorusEngine::processSample(const float& inL, const float& inR, float& outL
 
 	float wetL = m_chorus1L.processSample(hpL);
 	float wetR = m_chorus1R.processSample(hpR);
+	
+	// dc block with onePoleHighpass
 	wetL -= onePoleLowpass(wetL, m_dcBlockStateL, m_dcBlockCoeff);
 	wetR -= onePoleLowpass(wetR, m_dcBlockStateR, m_dcBlockCoeff);
 
 	wetL += m_chorus2L.processSample(hpL);
 	wetR += m_chorus2R.processSample(hpR);
+	
 	wetL -= onePoleLowpass(wetL, m_dcBlockStateL, m_dcBlockCoeff);
 	wetR -= onePoleLowpass(wetR, m_dcBlockStateR, m_dcBlockCoeff);
 	
