@@ -2,7 +2,7 @@
 
 A VST3 delay plugin built with JUCE. Work in progress.
 Personal playground for learning audio DSP and experimenting with feedback-loop effects.
-Currently developed and tested on Windows (JUCE AudioPluginHost, Ableton Live Suite 10).
+Currently developed and tested on Windows (JUCE AudioPluginHost, Ableton Live Suite 10, Reaper).
 
 ![screenshot](./viive.png)
 
