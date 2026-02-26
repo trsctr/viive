@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Planned
 - Tempo sync for delay and chorus modulation
-- Cross feedback control refinement
+- Cross feedback control parameter
 - Additional effects in feedback loop (phaser, bitcrusher, etc.)
 - Preset manager
 
