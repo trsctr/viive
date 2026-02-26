@@ -1,4 +1,4 @@
-#include "ChorusEngine.h"
+﻿#include "ChorusEngine.h"
 #include "Parameters.h"
 #include "DSP.h"
 
@@ -65,32 +65,43 @@ void ChorusEngine::processSample(const float& inL, const float& inR, float& outL
 	setModRate(params.chorusModRate());
 	setModDepth(params.chorusModDepth());
 
+	// Dual chorus intensity mapping: c1 peaks early (at ~0.6 intensity),
+	// c2 ramps exponentially, staying subtle until higher intensities.
+	// This creates a smooth character progression: barely audible -> chorus1 dominant
+	// -> gradual blend with chorus2 at full intensity.
+	float c1Intensity = std::min(m_intensity * 1.667f, 1.0f);
+	float c2Intensity = std::pow(m_intensity, 2.5f);
+
 	float hpL = m_highpass.processSample(0, inL);
 	float hpR = m_highpass.processSample(1, inR);
 
-	float wetL = m_chorus1L.processSample(hpL);
-	float wetR = m_chorus1R.processSample(hpR);
+	float chorus1L = m_chorus1L.processSample(hpL);
+	float chorus1R = m_chorus1R.processSample(hpR);
 	
-	// dc block with onePoleHighpass
-	wetL -= onePoleLowpass(wetL, m_dcBlockStateL, m_dcBlockCoeff);
-	wetR -= onePoleLowpass(wetR, m_dcBlockStateR, m_dcBlockCoeff);
+	// dcBlocker using one pole highpass
+	chorus1L -= onePoleLowpass(chorus1L, m_dcBlockStateL, m_dcBlockCoeff);
+	chorus1R -= onePoleLowpass(chorus1R, m_dcBlockStateR, m_dcBlockCoeff);
 
-	wetL += m_chorus2L.processSample(hpL);
-	wetR += m_chorus2R.processSample(hpR);
+	float chorus2L = m_chorus2L.processSample(hpL);
+	float chorus2R= m_chorus2R.processSample(hpR);
 	
-	wetL -= onePoleLowpass(wetL, m_dcBlockStateL, m_dcBlockCoeff);
-	wetR -= onePoleLowpass(wetR, m_dcBlockStateR, m_dcBlockCoeff);
+	chorus2L -= onePoleLowpass(chorus2L, m_dcBlockStateL, m_dcBlockCoeff);
+	chorus2R -= onePoleLowpass(chorus2R, m_dcBlockStateR, m_dcBlockCoeff);
 	
-	// using additive mixing to blend chorused signal with the dry signal
-	// to make sure feedback does not spiral out of control when chorus
-	// intensity is full.
-	// 2.0f multiplier seems to be a nice sweetspot
-	// so the modulated signal is louder than dry signal
-	// so we get some of that sweet chorus action
+	
+	// Blend both chorus voices according to their intensity curves
+	float wetL = (chorus1L * c1Intensity) + (chorus2L * c2Intensity);
+	float wetR = (chorus1R * c1Intensity) + (chorus2R * c2Intensity);
 
-	outL = inL + (wetL * m_intensity * m_multiplier);
-	outR = inR + (wetR * m_intensity * m_multiplier);
-	float makeupGain = 1.0f / (1.0f + m_intensity * m_multiplier);
+	float wetIntensity = (c1Intensity + c2Intensity) *.5f;
+
+	// Additive mix with preserved dry signal prevents feedback spiral in the delay loop.
+	// m_multiplier controls how loud the wet chorus signal is relative to dry signal.
+	// Makeup gain normalizes output to prevent clipping.
+
+	outL = inL + (wetL * m_multiplier);
+	outR = inR + (wetR * m_multiplier);
+	float makeupGain = 1.0f / (1.0f + wetIntensity * m_multiplier);
 
 	outL *= makeupGain;
 	outR *= makeupGain;

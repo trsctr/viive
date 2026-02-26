@@ -34,7 +34,7 @@ private:
 	float m_dcBlockStateR = 0.0f;
 
 	float m_intensity = 0.0f;
-	float m_multiplier = 2.0f;
+	float m_multiplier = 1.5f;
 
 	float m_modRate = Parameters::defaultChorusModRate;
 	float m_modRateRatio = Parameters::defaultChorusModRate2 / Parameters::defaultChorusModRate;
