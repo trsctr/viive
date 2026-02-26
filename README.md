@@ -14,17 +14,21 @@ Currently developed and tested on Windows (JUCE AudioPluginHost, Ableton Live Su
 - Mix and feedback controls with feedback stabilization
 - Sculpting Low/high-cut filters with adjustable resonance on delayed signal / feedback loop
 - Cross-channel feedback for stereo effects
+- Dual-voice chorus effect in feedback loop with intensity, modulation rate, and modulation depth controls
 - Feedback loop protection: HPF, compressor, soft clipping
 
 Despite the feedback protection, it can get quite loud and nasty.
 
-Note: GUI is not final. Current knobs and their parameters are placeholders: Stereo, Effect Amt, FX Param 1, FX Param 2
+Note: GUI is not final. Stereo knob is placeholder and non-functional.
+
+See [CHANGELOG.md](./CHANGELOG.md) for version history and detailed changes.
 
 ## Potential future features
 
-- Effects in feedback loop (phaser?, chorus?)
-- LFO/modulation
-- Tempo sync
+- Tempo sync for delay time
+- LFO/modulation for general parameters (such as filter cutoffs)
+- Cross feedback amount control
+- Additional effects in feedback loop (phaser?)
 - Preset manager
 
 ## Building
