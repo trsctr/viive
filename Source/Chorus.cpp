@@ -26,8 +26,7 @@ void Chorus::reset() noexcept
 	m_lfo.reset();
 	m_lpState = 0.0f;
 	setBaseDelaySamples();
-	m_delayLine.setDelay(m_baseDelaySamples);
-	m_modDepthSamples = std::ceil(msToSamples(m_modDepthMs, m_sampleRate));
+	m_modDepthMs = -1.0f;
 }
 
 void Chorus::setBaseDelay(float delayInMs)
