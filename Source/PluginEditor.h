@@ -3,7 +3,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "Parameters.h"
-#include "Rotaryknob.h"
+#include "RotaryKnob.h"
 #include "LevelMeter.h"
 
 //==============================================================================
