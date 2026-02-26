@@ -10,7 +10,16 @@ inline float onePoleLowpassCoeff(float timeConstantMs, float sampleRate) {
 	return 1.0f - x;
 }
 
+inline float coeffFromFrequency(float cutoffHz, float sampleRate) {
+	float wc = 2.0f * juce::MathConstants<float>::pi * cutoffHz / sampleRate;
+	return 1.0f - std::exp(-wc);
+}
+
 inline float onePoleLowpass(float input, float& state, float coeff) {
 	state += (input - state) * coeff;
 	return state;
+}
+
+inline float msToSamples(float ms, float sampleRate) {
+	return ms * sampleRate * 0.001f;
 }

@@ -124,21 +124,19 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     float* outputDataL = mainOutput.getWritePointer(0);
     float* outputDataR = mainOutput.getWritePointer(1);
 
-    float maxL = 0.0f;
-    float maxR = 0.0f;
+    float maxL = 0.0f, maxR = 0.0f;
     
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
     {
-        float outL, outR = 0.0f;
+        float outL = 0.0f, outR = 0.0f;
         m_params.smoothen();
 		m_delayEngine.processSample(inputDataL[sample], inputDataR[sample],
 			outL, outR, m_params);
-
         outputDataL[sample] = outL;
         outputDataR[sample] = outR;
 
         maxL = std::max(maxL, std::abs(outL));
-        maxR = std::max(maxR, std::abs(outL));
+        maxR = std::max(maxR, std::abs(outR));
     }
 
     m_outputLevelL.store(maxL);
