@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - Additional effects in feedback loop (phaser, bitcrusher, etc.)
 - Preset manager
 
-## [0.1.0] - 2026-02-26
+## [0.0.5] - 2026-02-26
 
 ### Added
 - Delay engine with adjustable delay time (5ms - 5000ms)
