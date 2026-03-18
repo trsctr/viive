@@ -92,6 +92,7 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	setMixLevel(params.mix());
 	setGainLevel(params.gain());
 	setFeedbackLevel(params.feedback());
+	setWidthLevel(params.stereo());
 
 	float dryL = inL;
 	float dryR = inR;
@@ -128,6 +129,16 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	// soft clipping to smoothen things and to ensure it doesnt overload
 	m_feedbackL = std::tanh(m_feedbackL);
 	m_feedbackR = std::tanh(m_feedbackR);
+
+	float mid = (wetL + wetR) * .5;
+	float side = (wetL - wetR) * .5;
+
+	side *= m_widthLevel;
+
+	wetL = mid + side;
+	wetR = mid - side;
+
+	//autopan could be here
 
 	float mixL = dryL * (1.0f - m_mixLevel) + wetL * m_mixLevel;
 	float mixR = dryR * (1.0f - m_mixLevel) + wetR * m_mixLevel;
