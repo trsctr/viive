@@ -18,20 +18,17 @@ void DelayEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 	spec.maximumBlockSize = juce::uint32(samplesPerBlock);
 	spec.numChannels = 2;
 	m_sampleRate = static_cast<float>(sampleRate);
-	m_delayLine.prepare(spec);
 	m_feedbackCompressor.prepare(spec);
 	m_lowCutFilter.prepare(spec);
 	m_highCutFilter.prepare(spec);
 	m_feedbackHighpass.prepare(spec);
 	m_chorusEngine.prepareToPlay(sampleRate, samplesPerBlock);
-	double numSamples = Parameters::maxDelayTime / 1000.0 * m_sampleRate;
-	int maxDelayInSamples = int(std::ceil(numSamples));
-	m_delayLine.setMaximumDelayInSamples(maxDelayInSamples);
+	m_stereoDelay.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 void DelayEngine::reset() noexcept
 {
-	m_delayLine.reset();
+	m_stereoDelay.reset();
 	m_lowCutFilter.reset();
 	m_highCutFilter.reset();
 	m_chorusEngine.reset();
@@ -77,11 +74,8 @@ void DelayEngine::setFilterQ(const float q, float& currentQ, Filter& filter) {
 }
 
 void DelayEngine::setDelayTime(const float delayInMs) {
-	if (delayInMs != m_delayTimeMs) {
-		m_delayTimeMs = delayInMs;
-		float delayInSamples = m_delayTimeMs / 1000.0f * m_sampleRate;
-		m_delayLine.setDelay(delayInSamples);
-	}
+	m_stereoDelay.setDelayTime(delayInMs, Channel::Left);
+	m_stereoDelay.setDelayTime(delayInMs, Channel::Right);
 }
 
 void DelayEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
@@ -97,17 +91,10 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	float dryL = inL;
 	float dryR = inR;
 
-	//cross feedback
-	m_delayLine.pushSample(0, dryL + m_feedbackR);
-	m_delayLine.pushSample(1, dryR + m_feedbackL);
-
-	float popL = m_delayLine.popSample(0);
-	float popR = m_delayLine.popSample(1);
-	float wetL = 0.0f, wetR = 0.0f;
-
-	// this is where we could place the fb loop effect
-	// experiment whether it works better before or after filters
-	// or make it switchable
+	float popL = 0.0f, popR = 0.0f, wetL = 0.0f, wetR = 0.0f;
+	m_stereoDelay.processSample(dryL + m_feedbackR, popR, Channel::Left);
+	m_stereoDelay.processSample(dryR + m_feedbackL, popL, Channel::Right);
+	
 	m_chorusEngine.processSample(popL, popR, wetL, wetR, params);
 
 	// sculpting filters, first left and then right channel

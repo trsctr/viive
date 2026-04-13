@@ -2,6 +2,7 @@
 #include <JuceHeader.h>
 #include "Parameters.h"
 #include "ChorusEngine.h"
+#include "StereoDelay.h"
 
 using Filter = juce::dsp::StateVariableTPTFilter<float>;
 
@@ -26,7 +27,8 @@ public:
 	void setWidthLevel(const float value) { m_widthLevel = value; }
 
 private:
-	juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> m_delayLine;
+	//juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> m_delayLine;
+	StereoDelay m_stereoDelay;
 	Filter m_lowCutFilter;
 	Filter m_highCutFilter;
 	Filter m_feedbackHighpass;
