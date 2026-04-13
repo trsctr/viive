@@ -5,6 +5,8 @@
               pluginManufacturer="trsctr" pluginVST3Category="Delay" cppLanguageStandard="20">
   <MAINGROUP id="LCtwvr" name="viive">
     <GROUP id="{058ECC9C-9529-0D6B-B949-15DE645D6A88}" name="Source">
+      <FILE id="bNCrMB" name="StereoDelay.cpp" compile="1" resource="0" file="Source/StereoDelay.cpp"/>
+      <FILE id="xsj0H9" name="StereoDelay.h" compile="0" resource="0" file="Source/StereoDelay.h"/>
       <FILE id="JjqJk9" name="ChorusEngine.cpp" compile="1" resource="0"
             file="Source/ChorusEngine.cpp"/>
       <FILE id="pPkAds" name="ChorusEngine.h" compile="0" resource="0" file="Source/ChorusEngine.h"/>
