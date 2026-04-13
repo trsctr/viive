@@ -9,9 +9,9 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
     // editor's size to whatever you need it to be.
     m_delayGroup.setText("Delay");
     m_delayGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
-    m_delayGroup.addAndMakeVisible(m_delayTimeKnob);
+    m_delayGroup.addAndMakeVisible(m_delayTimeLKnob);
+	m_delayGroup.addAndMakeVisible(m_delayTimeRKnob);
     m_delayGroup.addAndMakeVisible(m_feedbackKnob);
-	//m_delayGroup.addAndMakeVisible(m_stereoKnob);
 	m_delayGroup.addAndMakeVisible(m_spreadKnob);
     addAndMakeVisible(m_delayGroup);
 
@@ -25,6 +25,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	m_outputGroup.setText("Output");
 	m_outputGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
+	m_outputGroup.addAndMakeVisible(m_stereoKnob);
 	m_outputGroup.addAndMakeVisible(m_mixKnob);
 	m_outputGroup.addAndMakeVisible(m_gainKnob);
     addAndMakeVisible(m_outputGroup);
@@ -38,7 +39,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	addAndMakeVisible(m_meter);
 
-    setSize (670, 330);
+    setSize (770, 330);
 }
 
 ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
@@ -58,20 +59,21 @@ void ViiveAudioProcessorEditor::resized()
     int y = 10;
 	int height = bounds.getHeight() - 20;
 
-    m_chorusGroup.setBounds(bounds.getWidth() - 360, y, 300, height / 2 - 10);
-    m_delayGroup.setBounds(10, y, m_chorusGroup.getX() - 20, height / 2 - 10);
-	m_outputGroup.setBounds(bounds.getWidth() - 260, height / 2 + 10, 200, height / 2);
-	m_filterGroup.setBounds(10, height / 2 + 10, m_outputGroup.getX() - 20, height / 2);
+    m_chorusGroup.setBounds(bounds.getWidth() - 360, y, 300, height / 2);
+    m_delayGroup.setBounds(10, y, m_chorusGroup.getX() - 20, height / 2);
+	m_outputGroup.setBounds(bounds.getWidth() - 360, height / 2 + 20, 300, height / 2 - 10);
+	m_filterGroup.setBounds(10, height / 2 + 20, m_outputGroup.getX() - 20, height / 2 - 10);
 
-	m_delayTimeKnob.setTopLeftPosition(20, 20);
-	m_feedbackKnob.setTopLeftPosition(m_delayTimeKnob.getRight() + 20, 20);
-	//m_stereoKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
+	m_delayTimeLKnob.setTopLeftPosition(20, 20);
+	m_delayTimeRKnob.setTopLeftPosition(m_delayTimeLKnob.getRight() + 20, 20);
+	m_feedbackKnob.setTopLeftPosition(m_delayTimeRKnob.getRight() + 20, 20);
 	m_spreadKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
 	m_lowCutFreqKnob.setTopLeftPosition(20, 20);
 	m_lowCutQKnob.setTopLeftPosition(m_lowCutFreqKnob.getRight() + 20, 20);
 	m_highCutFreqKnob.setTopLeftPosition(m_lowCutQKnob.getRight() + 20, 20);
 	m_highCutQKnob.setTopLeftPosition(m_highCutFreqKnob.getRight() + 20, 20);
-	m_mixKnob.setTopLeftPosition(20, 20);
+	m_stereoKnob.setTopLeftPosition(20, 20);
+	m_mixKnob.setTopLeftPosition(m_stereoKnob.getRight() + 20, 20);
 	m_gainKnob.setTopLeftPosition(m_mixKnob.getRight() + 20, 20);
 	m_chorusIntensityKnob.setTopLeftPosition(20, 20);
 	m_chorusModRateKnob.setTopLeftPosition(m_chorusIntensityKnob.getRight() + 20, 20);

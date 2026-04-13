@@ -20,7 +20,7 @@ public:
 	void setHighCut(const Parameters& params);
 	void setFilterFreq(const float freq, float& currentFreq, Filter& filter);
 	void setFilterQ(const float q, float& currentQ, Filter& filter);
-	void setDelayTime(const float delayInMs);
+	void setDelayTimes(const float delayInMsL, const float delayInMsR);
 	void setFeedbackLevel(const float value) { m_feedbackLevel = value; }
 	void setMixLevel(const float value) { m_mixLevel = value; }
 	void setGainLevel(const float value) { m_gainLevel = value; }
@@ -41,12 +41,15 @@ private:
 	float m_feedbackL = 0.0f;
 	float m_feedbackR = 0.0f;
 
+	float m_baseDelayTimeMs = -1.0f;
+	float m_delayTimeMsL = -1.0f;
+	float m_delayTimeMsR = -1.0f;
+
 	float m_mixLevel = 0.5f;
 	float m_feedbackLevel = 0.0f;
 	float m_gainLevel = 1.0f;
 	float m_widthLevel = 1.0f;
 	float m_spreadMs = 0.0f;
-	float m_delayTimeMs = -1.0f;
 	float m_lowCutFreq = -1.0f;
 	float m_lowCutQ = -1.0f;
 	float m_highCutFreq = -1.0f;

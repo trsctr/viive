@@ -71,7 +71,8 @@ static float hzFromString(const juce::String& text)
 Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 {
 	castParameter(apvts, gainParamID, m_gainParam);
-	castParameter(apvts, delayTimeParamID, m_delayTimeParam);
+	castParameter(apvts, delayTimeLParamID, m_delayTimeLParam);
+	castParameter(apvts, delayTimeRParamID, m_delayTimeRParam);
 	castParameter(apvts, mixParamID, m_mixParam);
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
 	castParameter(apvts, stereoParamID, m_stereoParam);
@@ -97,13 +98,22 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 			.withStringFromValueFunction(stringFromDecibels)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		delayTimeParamID.getParamID(),
-		"Delay Time",
+		delayTimeLParamID.getParamID(),
+		"Delay Time L",
 		juce::NormalisableRange<float>(minDelayTime, maxDelayTime, 0.001f, 0.25f),
 		defaultDelayTime,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromMilliseconds)
 			.withValueFromStringFunction(millisecondsFromString)
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		delayTimeRParamID.getParamID(),
+		"Delay Time R",
+		juce::NormalisableRange<float>(minDelayTime, maxDelayTime, 0.001f, 0.25f),
+		defaultDelayTime,
+		juce::AudioParameterFloatAttributes()
+		.withStringFromValueFunction(stringFromMilliseconds)
+		.withValueFromStringFunction(millisecondsFromString)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		spreadParamID.getParamID(),
@@ -204,13 +214,15 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_highCutQSmoother.reset(sampleRate, duration);
 	m_chorusModRateSmoother.reset(sampleRate, duration);
 	m_chorusModDepthSmoother.reset(sampleRate, duration);
-	m_coeff = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
+	m_coeffL = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
+	m_coeffR = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
 }
 
 void Parameters::reset() noexcept
 {
 	m_gain = 0.0f;
-	m_delayTime = 0.0f;
+	m_delayTimeL = 0.0f;
+	m_delayTimeR = 0.0f;
 	m_mix = .5f;
 	m_feedback = 0.0f;
 	m_stereo = 0.0f;
@@ -250,9 +262,13 @@ void Parameters::update() noexcept
 	m_highCutQSmoother.setTargetValue(m_highCutQParam->get());
 	m_chorusModRateSmoother.setTargetValue(m_chorusModRateParam->get());
 	m_chorusModDepthSmoother.setTargetValue(m_chorusModDepthParam->get());
-	m_targetDelayTime = m_delayTimeParam->get();
-	if (m_delayTime == 0.0f) {
-		m_delayTime = m_targetDelayTime;
+	m_targetDelayTimeL = m_delayTimeLParam->get();
+	if (m_delayTimeL == 0.0f) {
+		m_delayTimeL = m_targetDelayTimeL;
+	}
+	m_targetDelayTimeR = m_delayTimeRParam->get();
+	if (m_delayTimeR == 0.0f) {
+		m_delayTimeR = m_targetDelayTimeR;
 	}
 }
 
@@ -270,5 +286,6 @@ void Parameters::smoothen() noexcept
 	m_highCutQ = m_highCutQSmoother.getNextValue();
 	m_chorusModRate = m_chorusModRateSmoother.getNextValue();
 	m_chorusModDepth = m_chorusModDepthSmoother.getNextValue();
-	m_delayTime = onePoleLowpass(m_targetDelayTime, m_delayTime, m_coeff);
+	m_delayTimeL = onePoleLowpass(m_targetDelayTimeL, m_delayTimeL, m_coeffL);
+	m_delayTimeR = onePoleLowpass(m_targetDelayTimeR, m_delayTimeR, m_coeffR);
 }

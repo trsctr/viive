@@ -23,7 +23,8 @@ private:
     ViiveAudioProcessor& m_audioProcessor;
     LevelMeter m_meter;
 
-    RotaryKnob m_delayTimeKnob{ "Time", m_audioProcessor.apvts, delayTimeParamID.getParamID() };
+    RotaryKnob m_delayTimeLKnob{ "Time L", m_audioProcessor.apvts, delayTimeLParamID.getParamID() };
+    RotaryKnob m_delayTimeRKnob{ "Time R", m_audioProcessor.apvts, delayTimeRParamID.getParamID() };
     RotaryKnob m_feedbackKnob{ "Feedback", m_audioProcessor.apvts, feedbackParamID.getParamID() };
     RotaryKnob m_stereoKnob{ "Stereo", m_audioProcessor.apvts, stereoParamID.getParamID() };
     RotaryKnob m_spreadKnob{ "Spread", m_audioProcessor.apvts, spreadParamID.getParamID() };

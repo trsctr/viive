@@ -2,7 +2,8 @@
 #include <JuceHeader.h>
 
 const juce::ParameterID gainParamID{ "gain", 1 };
-const juce::ParameterID delayTimeParamID{ "delayTime", 1 };
+const juce::ParameterID delayTimeLParamID{ "delayTimeL", 1 };
+const juce::ParameterID delayTimeRParamID{ "delayTimeR", 1 };
 const juce::ParameterID mixParamID{ "mix", 1 };
 const juce::ParameterID feedbackParamID{ "feedback", 1 };
 const juce::ParameterID stereoParamID{ "stereo", 1 };
@@ -37,7 +38,8 @@ public:
 	void smoothen() noexcept;
 
 	float gain() const { return m_gain; }
-	float delayTime() const { return m_delayTime; }
+	float delayTimeL() const { return m_delayTimeL; }
+	float delayTimeR() const { return m_delayTimeR; }
 	float mix() const { return m_mix; }
 	float feedback() const { return m_feedback; }
 	float stereo() const { return m_stereo; }
@@ -52,7 +54,8 @@ public:
 
 private:
 	juce::AudioParameterFloat* m_gainParam;
-	juce::AudioParameterFloat* m_delayTimeParam;
+	juce::AudioParameterFloat* m_delayTimeLParam;
+	juce::AudioParameterFloat* m_delayTimeRParam;
 	juce::AudioParameterFloat* m_mixParam;
 	juce::AudioParameterFloat* m_feedbackParam;
 	juce::AudioParameterFloat* m_stereoParam;
@@ -78,11 +81,15 @@ private:
 	juce::LinearSmoothedValue<float> m_chorusModRateSmoother;
 	juce::LinearSmoothedValue<float> m_chorusModDepthSmoother;
 
-	float m_targetDelayTime = 0.0f;
-	float m_coeff = 0.0f;
+	float m_targetDelayTimeL = 0.0f;
+	float m_targetDelayTimeR = 0.0f;
+
+	float m_coeffL = 0.0f;
+	float m_coeffR = 0.0f;
 
 	float m_gain = 0.0f;
-	float m_delayTime = 0.0f;
+	float m_delayTimeL = 0.0f;
+	float m_delayTimeR = 0.0f;
 	float m_mix = 0.5f;
 	float m_feedback = 0.0f;
 	float m_stereo = 0.0f;

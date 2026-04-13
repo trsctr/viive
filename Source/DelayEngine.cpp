@@ -42,7 +42,7 @@ void DelayEngine::reset() noexcept
 	m_lowCutQ = -1.0f;
 	m_highCutFreq = -1.0f;
 	m_highCutQ = -1.0f;
-	m_delayTimeMs = -1.0f;
+	m_baseDelayTimeMs = -1.0f;
 	m_mixLevel = 0.5f;
 	m_feedbackLevel = 0.0f;
 	m_gainLevel = 1.0f;
@@ -73,10 +73,11 @@ void DelayEngine::setFilterQ(const float q, float& currentQ, Filter& filter) {
 	}
 }
 
-void DelayEngine::setDelayTime(const float delayInMs) {
-	m_delayTimeMs = delayInMs;
-	float leftMs = juce::jlimit(1.0f, Parameters::maxDelayTime, m_delayTimeMs - m_spreadMs);
-	float rightMs = juce::jlimit(1.0f, Parameters::maxDelayTime, m_delayTimeMs + m_spreadMs);
+void DelayEngine::setDelayTimes(const float delayInMsL, const float delayInMsR) {
+	m_delayTimeMsL = delayInMsL;
+	m_delayTimeMsR = delayInMsR;
+	float leftMs = juce::jlimit(1.0f, Parameters::maxDelayTime, m_delayTimeMsL - m_spreadMs);
+	float rightMs = juce::jlimit(1.0f, Parameters::maxDelayTime, m_delayTimeMsR + m_spreadMs);
 	m_stereoDelay.setDelayTime(leftMs, Channel::Left);
 	m_stereoDelay.setDelayTime(rightMs, Channel::Right);
 }
@@ -90,7 +91,7 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	setFeedbackLevel(params.feedback());
 	setWidthLevel(params.stereo());
 	setSpreadMs(params.spread());
-	setDelayTime(params.delayTime());
+	setDelayTimes(params.delayTimeL(), params.delayTimeR());
 
 	float dryL = inL;
 	float dryR = inR;
