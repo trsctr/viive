@@ -25,6 +25,7 @@ public:
 	void setMixLevel(const float value) { m_mixLevel = value; }
 	void setGainLevel(const float value) { m_gainLevel = value; }
 	void setWidthLevel(const float value) { m_widthLevel = value; }
+	void setSpreadMs(const float value) { m_spreadMs = value * .5f; }
 
 private:
 	//juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> m_delayLine;
@@ -44,6 +45,7 @@ private:
 	float m_feedbackLevel = 0.0f;
 	float m_gainLevel = 1.0f;
 	float m_widthLevel = 1.0f;
+	float m_spreadMs = 0.0f;
 	float m_delayTimeMs = -1.0f;
 	float m_lowCutFreq = -1.0f;
 	float m_lowCutQ = -1.0f;

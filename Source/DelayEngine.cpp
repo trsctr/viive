@@ -74,26 +74,33 @@ void DelayEngine::setFilterQ(const float q, float& currentQ, Filter& filter) {
 }
 
 void DelayEngine::setDelayTime(const float delayInMs) {
-	m_stereoDelay.setDelayTime(delayInMs, Channel::Left);
-	m_stereoDelay.setDelayTime(delayInMs, Channel::Right);
+	m_delayTimeMs = delayInMs;
+	float leftMs = juce::jlimit(1.0f, Parameters::maxDelayTime, m_delayTimeMs - m_spreadMs);
+	float rightMs = juce::jlimit(1.0f, Parameters::maxDelayTime, m_delayTimeMs + m_spreadMs);
+	m_stereoDelay.setDelayTime(leftMs, Channel::Left);
+	m_stereoDelay.setDelayTime(rightMs, Channel::Right);
 }
 
 void DelayEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
 {
-	setDelayTime(params.delayTime());
 	setLowCut(params);
 	setHighCut(params);
 	setMixLevel(params.mix());
 	setGainLevel(params.gain());
 	setFeedbackLevel(params.feedback());
 	setWidthLevel(params.stereo());
+	setSpreadMs(params.spread());
+	setDelayTime(params.delayTime());
 
 	float dryL = inL;
 	float dryR = inR;
 
+	// NOTE: currently cross feedback but there could be a switch
+	// for different delay modes: STEREO, CROSS, PING PONG
+	// probably enum + switch case does it
 	float popL = 0.0f, popR = 0.0f, wetL = 0.0f, wetR = 0.0f;
-	m_stereoDelay.processSample(dryL + m_feedbackR, popR, Channel::Left);
-	m_stereoDelay.processSample(dryR + m_feedbackL, popL, Channel::Right);
+	m_stereoDelay.processSample(dryL + m_feedbackR, popL, Channel::Left);
+	m_stereoDelay.processSample(dryR + m_feedbackL, popR, Channel::Right);
 	
 	m_chorusEngine.processSample(popL, popR, wetL, wetR, params);
 

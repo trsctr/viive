@@ -11,7 +11,8 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
     m_delayGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
     m_delayGroup.addAndMakeVisible(m_delayTimeKnob);
     m_delayGroup.addAndMakeVisible(m_feedbackKnob);
-	m_delayGroup.addAndMakeVisible(m_stereoKnob);
+	//m_delayGroup.addAndMakeVisible(m_stereoKnob);
+	m_delayGroup.addAndMakeVisible(m_spreadKnob);
     addAndMakeVisible(m_delayGroup);
 
     m_filterGroup.setText("Filter");
@@ -64,7 +65,8 @@ void ViiveAudioProcessorEditor::resized()
 
 	m_delayTimeKnob.setTopLeftPosition(20, 20);
 	m_feedbackKnob.setTopLeftPosition(m_delayTimeKnob.getRight() + 20, 20);
-	m_stereoKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
+	//m_stereoKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
+	m_spreadKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
 	m_lowCutFreqKnob.setTopLeftPosition(20, 20);
 	m_lowCutQKnob.setTopLeftPosition(m_lowCutFreqKnob.getRight() + 20, 20);
 	m_highCutFreqKnob.setTopLeftPosition(m_lowCutQKnob.getRight() + 20, 20);

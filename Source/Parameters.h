@@ -6,6 +6,7 @@ const juce::ParameterID delayTimeParamID{ "delayTime", 1 };
 const juce::ParameterID mixParamID{ "mix", 1 };
 const juce::ParameterID feedbackParamID{ "feedback", 1 };
 const juce::ParameterID stereoParamID{ "stereo", 1 };
+const juce::ParameterID spreadParamID{ "spread", 1 };
 const juce::ParameterID lowCutFreqParamID{ "lowCutFreq", 1 };
 const juce::ParameterID lowCutQParamID{ "lowCutQ", 1 };
 const juce::ParameterID highCutFreqParamID{ "highCutFreq", 1 };
@@ -40,6 +41,7 @@ public:
 	float mix() const { return m_mix; }
 	float feedback() const { return m_feedback; }
 	float stereo() const { return m_stereo; }
+	float spread() const { return m_spread; }
 	float lowCutFreq() const { return m_lowCutFreq; }
 	float lowCutQ() const { return m_lowCutQ; }
 	float highCutFreq() const { return m_highCutFreq; }
@@ -54,6 +56,7 @@ private:
 	juce::AudioParameterFloat* m_mixParam;
 	juce::AudioParameterFloat* m_feedbackParam;
 	juce::AudioParameterFloat* m_stereoParam;
+	juce::AudioParameterFloat* m_spreadParam;
 	juce::AudioParameterFloat* m_lowCutFreqParam;
 	juce::AudioParameterFloat* m_lowCutQParam;
 	juce::AudioParameterFloat* m_highCutFreqParam;
@@ -66,6 +69,7 @@ private:
 	juce::LinearSmoothedValue<float> m_mixSmoother;
 	juce::LinearSmoothedValue<float> m_feedbackSmoother;
 	juce::LinearSmoothedValue<float> m_stereoSmoother;
+	juce::LinearSmoothedValue<float> m_spreadSmoother;
 	juce::LinearSmoothedValue<float> m_lowCutFreqSmoother;
 	juce::LinearSmoothedValue<float> m_lowCutQSmoother;
 	juce::LinearSmoothedValue<float> m_highCutFreqSmoother;
@@ -82,6 +86,7 @@ private:
 	float m_mix = 0.5f;
 	float m_feedback = 0.0f;
 	float m_stereo = 0.0f;
+	float m_spread = 0.0f;
 	float m_lowCutFreq = 20.0f;
 	float m_lowCutQ = defaultFilterQ;
 	float m_highCutFreq = 20000.0f;

@@ -75,6 +75,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, mixParamID, m_mixParam);
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
 	castParameter(apvts, stereoParamID, m_stereoParam);
+	castParameter(apvts, spreadParamID, m_spreadParam);
 	castParameter(apvts, chorusIntensityParamID, m_chorusIntensityParam);
 	castParameter(apvts, lowCutFreqParamID, m_lowCutFreqParam);
 	castParameter(apvts, lowCutQParamID, m_lowCutQParam);
@@ -103,6 +104,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromMilliseconds)
 			.withValueFromStringFunction(millisecondsFromString)
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		spreadParamID.getParamID(),
+		"Spread",
+		juce::NormalisableRange<float>(-50.0f, 50.0f, 0.001f),
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+		.withStringFromValueFunction(stringFromMilliseconds)
+		.withValueFromStringFunction(millisecondsFromString)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		mixParamID.getParamID(),
@@ -186,6 +196,7 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_mixSmoother.reset(sampleRate, duration);
 	m_feedbackSmoother.reset(sampleRate, duration);
 	m_stereoSmoother.reset(sampleRate, duration);
+	m_spreadSmoother.reset(sampleRate, duration);
 	m_chorusIntensitySmoother.reset(sampleRate, duration);
 	m_lowCutFreqSmoother.reset(sampleRate, duration);
 	m_lowCutQSmoother.reset(sampleRate, duration);
@@ -203,6 +214,7 @@ void Parameters::reset() noexcept
 	m_mix = .5f;
 	m_feedback = 0.0f;
 	m_stereo = 0.0f;
+	m_spread = 0.0f;
 	m_chorusIntensity = 0.0f;
 	m_lowCutFreq = 20.0f;
 	m_lowCutQ = defaultFilterQ;
@@ -230,6 +242,7 @@ void Parameters::update() noexcept
 	m_mixSmoother.setTargetValue(m_mixParam->get() * 0.01f);
 	m_feedbackSmoother.setTargetValue(m_feedbackParam->get() * 0.01f);
 	m_stereoSmoother.setTargetValue(m_stereoParam->get() * 0.01f);
+	m_spreadSmoother.setTargetValue(m_spreadParam->get());
 	m_chorusIntensitySmoother.setTargetValue(m_chorusIntensityParam->get());
 	m_lowCutFreqSmoother.setTargetValue(m_lowCutFreqParam->get());
 	m_lowCutQSmoother.setTargetValue(m_lowCutQParam->get());
@@ -249,6 +262,7 @@ void Parameters::smoothen() noexcept
 	m_mix = m_mixSmoother.getNextValue();
 	m_feedback = m_feedbackSmoother.getNextValue();
 	m_stereo = m_stereoSmoother.getNextValue();
+	m_spread = m_spreadSmoother.getNextValue();
 	m_chorusIntensity = m_chorusIntensitySmoother.getNextValue();
 	m_lowCutFreq = m_lowCutFreqSmoother.getNextValue();
 	m_lowCutQ = m_lowCutQSmoother.getNextValue();

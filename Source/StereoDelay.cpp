@@ -12,7 +12,7 @@ void StereoDelay::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 	spec.maximumBlockSize = juce::uint32(samplesPerBlock);
 	spec.numChannels = 1;
 	m_sampleRate = static_cast<float>(sampleRate);
-	double numSamples = Parameters::maxDelayTime / 1000.0 * m_sampleRate;
+	double numSamples = msToSamples(Parameters::maxDelayTime + 50.0f, m_sampleRate);
 	int maxDelayInSamples = int(std::ceil(numSamples));
 	for (int i = 0; i < 2; i++) {
 		m_delayLines[i].prepare(spec);
