@@ -4,10 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ## \[Unreleased]
 
+### In progress
+
+* Tempo sync
+* Delay modes: stereo, cross, ping pong
+
+### Added
+
+* Link toggle for delay times between delay lines
+* Separate delay time params for right and left delay lines
+* Spread parameter for stereo offset between delay channels
+* Refactored delay line into StereoDelay primitive (two independent mono delay lines)
+* Stereo width control with mid/side processing
+
 ### Planned
 
-* Tempo sync for the delay time
-* Cross feedback control parameter
 * Additional effects in feedback loop (phaser, bitcrusher, etc.)
 * Preset manager
 
