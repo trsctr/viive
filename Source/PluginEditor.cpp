@@ -13,6 +13,13 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_delayGroup.addAndMakeVisible(m_delayTimeRKnob);
     m_delayGroup.addAndMakeVisible(m_feedbackKnob);
 	m_delayGroup.addAndMakeVisible(m_spreadKnob);
+	m_delayLinkButton.setButtonText("Link");
+	m_delayLinkButton.setClickingTogglesState(true);
+	m_delayLinkButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::transparentWhite);
+	m_delayLinkButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::orange);
+	m_delayLinkButton.setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colours::black);
+	m_delayLinkButton.setBounds(0, 0, 40, 20);
+	m_delayGroup.addAndMakeVisible(m_delayLinkButton);
     addAndMakeVisible(m_delayGroup);
 
     m_filterGroup.setText("Filter");
@@ -38,15 +45,15 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	addAndMakeVisible(m_chorusGroup);
 
 	addAndMakeVisible(m_meter);
-	m_audioProcessor.apvts.addParameterListener(delayTimeLParamID.getParamID(), this);
-
-    setSize (770, 330);
+	linkParameters(delayTimeLParamID.getParamID(), delayTimeRParamID.getParamID());
+	setSize (770, 330);
 }
 
 ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
 {
-	m_audioProcessor.apvts.removeParameterListener(delayTimeLParamID.getParamID(), this);
-
+	juce::HashMap<juce::String, juce::String>::Iterator it(m_linkedParams);
+	while (it.next())
+		m_audioProcessor.apvts.removeParameterListener(it.getKey(), this);
 }
 
 //==============================================================================
@@ -69,6 +76,8 @@ void ViiveAudioProcessorEditor::resized()
 
 	m_delayTimeLKnob.setTopLeftPosition(20, 20);
 	m_delayTimeRKnob.setTopLeftPosition(m_delayTimeLKnob.getRight() + 20, 20);
+	m_delayLinkButton.setTopLeftPosition(m_delayTimeLKnob.getRight() - 10, m_delayTimeLKnob.getBottom() - 45);
+
 	m_feedbackKnob.setTopLeftPosition(m_delayTimeRKnob.getRight() + 20, 20);
 	m_spreadKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
 	m_lowCutFreqKnob.setTopLeftPosition(20, 20);
@@ -85,9 +94,17 @@ void ViiveAudioProcessorEditor::resized()
 	m_meter.setBounds(m_outputGroup.getRight() + 15, 20, 35, height - 15);
 }
 
+void ViiveAudioProcessorEditor::linkParameters(const juce::String& idA, const juce::String& idB) {
+	m_linkedParams.set(idA, idB);
+	m_linkedParams.set(idB, idA);
+	m_audioProcessor.apvts.addParameterListener(idA, this);
+	m_audioProcessor.apvts.addParameterListener(idB, this);
+}
+
 void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, float newValue) {
-	if (m_delaysLinked && paramID == delayTimeLParamID.getParamID()) {
-		auto param = m_audioProcessor.apvts.getParameter(delayTimeRParamID.getParamID());
+	if (m_audioProcessor.apvts.getParameter(delayLinkParamID.getParamID())->getValue()
+		&& m_linkedParams.contains(paramID)) {
+		auto* param = m_audioProcessor.apvts.getParameter(m_linkedParams[paramID]);
 		param->setValueNotifyingHost(param->convertTo0to1(newValue));
 	}
 }

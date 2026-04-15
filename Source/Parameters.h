@@ -4,6 +4,7 @@
 const juce::ParameterID gainParamID{ "gain", 1 };
 const juce::ParameterID delayTimeLParamID{ "delayTimeL", 1 };
 const juce::ParameterID delayTimeRParamID{ "delayTimeR", 1 };
+const juce::ParameterID delayLinkParamID{ "link", 1 };
 const juce::ParameterID mixParamID{ "mix", 1 };
 const juce::ParameterID feedbackParamID{ "feedback", 1 };
 const juce::ParameterID stereoParamID{ "stereo", 1 };
@@ -40,6 +41,7 @@ public:
 	float gain() const { return m_gain; }
 	float delayTimeL() const { return m_delayTimeL; }
 	float delayTimeR() const { return m_delayTimeR; }
+	bool delayLink() const { return m_delayLink; }
 	float mix() const { return m_mix; }
 	float feedback() const { return m_feedback; }
 	float stereo() const { return m_stereo; }
@@ -56,6 +58,7 @@ private:
 	juce::AudioParameterFloat* m_gainParam;
 	juce::AudioParameterFloat* m_delayTimeLParam;
 	juce::AudioParameterFloat* m_delayTimeRParam;
+	juce::AudioParameterBool* m_delayLinkParam;
 	juce::AudioParameterFloat* m_mixParam;
 	juce::AudioParameterFloat* m_feedbackParam;
 	juce::AudioParameterFloat* m_stereoParam;
@@ -90,6 +93,7 @@ private:
 	float m_gain = 0.0f;
 	float m_delayTimeL = 0.0f;
 	float m_delayTimeR = 0.0f;
+	bool m_delayLink = true;
 	float m_mix = 0.5f;
 	float m_feedback = 0.0f;
 	float m_stereo = 0.0f;

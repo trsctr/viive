@@ -73,6 +73,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, gainParamID, m_gainParam);
 	castParameter(apvts, delayTimeLParamID, m_delayTimeLParam);
 	castParameter(apvts, delayTimeRParamID, m_delayTimeRParam);
+	castParameter(apvts, delayLinkParamID, m_delayLinkParam);
 	castParameter(apvts, mixParamID, m_mixParam);
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
 	castParameter(apvts, stereoParamID, m_stereoParam);
@@ -114,6 +115,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		juce::AudioParameterFloatAttributes()
 		.withStringFromValueFunction(stringFromMilliseconds)
 		.withValueFromStringFunction(millisecondsFromString)
+	));
+	layout.add(std::make_unique<juce::AudioParameterBool>(
+		delayLinkParamID.getParamID(),
+		"Link",
+		true
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		spreadParamID.getParamID(),
@@ -245,7 +251,6 @@ void Parameters::reset() noexcept
 	m_highCutQSmoother.setCurrentAndTargetValue(m_highCutQParam->get());
 	m_chorusModRateSmoother.setCurrentAndTargetValue(m_chorusModRateParam->get());
 	m_chorusModDepthSmoother.setCurrentAndTargetValue(m_chorusModDepthParam->get());
-
 }
 
 void Parameters::update() noexcept
@@ -270,6 +275,7 @@ void Parameters::update() noexcept
 	if (m_delayTimeR == 0.0f) {
 		m_delayTimeR = m_targetDelayTimeR;
 	}
+	m_delayLink = m_delayLinkParam->get();
 }
 
 void Parameters::smoothen() noexcept

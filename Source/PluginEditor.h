@@ -20,6 +20,7 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
     virtual void parameterChanged(const juce::String& paramID, float newValue) override;
+    void linkParameters(const juce::String& idA, const juce::String& idB);
 
 private:
     ViiveAudioProcessor& m_audioProcessor;
@@ -43,9 +44,15 @@ private:
 	RotaryKnob m_chorusModRateKnob{ "Mod Rate", m_audioProcessor.apvts, chorusModRateParamID.getParamID() };
 	RotaryKnob m_chorusModDepthKnob{ "Mod Depth", m_audioProcessor.apvts, chorusModDepthParamID.getParamID() };
 
-    juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup;
+    juce::TextButton m_delayLinkButton;
 
-    bool m_delaysLinked = true;
+    juce::HashMap<juce::String, juce::String> m_linkedParams;
+
+    juce::AudioProcessorValueTreeState::ButtonAttachment linkAttachment{
+        m_audioProcessor.apvts, delayLinkParamID.getParamID(), m_delayLinkButton
+    };
+
+    juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)
 };
