@@ -114,15 +114,15 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    m_params.update();
     m_tempo.update(getPlayHead());
+    m_params.update(m_tempo);
 
-    float syncedTimeL = static_cast<float>(m_tempo.noteLengthToMs(m_params.delayNoteL()));
-    float syncedTimeR = static_cast<float>(m_tempo.noteLengthToMs(m_params.delayNoteR()));
-    if (syncedTimeL > Parameters::maxDelayTime)
-        syncedTimeL = Parameters::maxDelayTime;
-    if (syncedTimeR > Parameters::maxDelayTime)
-        syncedTimeR = Parameters::maxDelayTime;
+    //float syncedTimeL = static_cast<float>(m_tempo.noteLengthToMs(m_params.delayNoteL()));
+    //float syncedTimeR = static_cast<float>(m_tempo.noteLengthToMs(m_params.delayNoteR()));
+    //if (syncedTimeL > Parameters::maxDelayTime)
+    //    syncedTimeL = Parameters::maxDelayTime;
+    //if (syncedTimeR > Parameters::maxDelayTime)
+    //    syncedTimeR = Parameters::maxDelayTime;
 
     //float sampleRate = float(getSampleRate());
 
@@ -139,10 +139,7 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     {
         float outL = 0.0f, outR = 0.0f;
         m_params.smoothen();
-        float delayTimeL = m_params.tempoSyncL() ? syncedTimeL : m_params.delayTimeL();
-        float delayTimeR = m_params.tempoSyncR() ? syncedTimeR : m_params.delayTimeR();
-        m_delayEngine.setDelayTimes(delayTimeL, delayTimeR);
-
+        m_delayEngine.update(m_params);
 		m_delayEngine.processSample(inputDataL[sample], inputDataR[sample],
 			outL, outR, m_params);
         outputDataL[sample] = outL;

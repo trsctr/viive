@@ -15,6 +15,7 @@ public:
 	void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept;
 	void reset() noexcept;
 
+	void update(const Parameters& params);
 	void processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params);
 	void setLowCut(const Parameters& params);
 	void setHighCut(const Parameters& params);
@@ -37,6 +38,8 @@ private:
 	ChorusEngine m_chorusEngine;
 
 	float m_sampleRate = 0.0f;
+	
+	float m_coeff = 0.0f;
 
 	float m_feedbackL = 0.0f;
 	float m_feedbackR = 0.0f;

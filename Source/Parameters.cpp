@@ -77,7 +77,6 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, delayNoteRParamID, m_delayNoteRParam);
 	castParameter(apvts, tempoSyncLParamID, m_tempoSyncLParam);
 	castParameter(apvts, tempoSyncRParamID, m_tempoSyncRParam);
-	castParameter(apvts, delayLinkParamID, m_delayLinkParam);
 	castParameter(apvts, mixParamID, m_mixParam);
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
 	castParameter(apvts, stereoParamID, m_stereoParam);

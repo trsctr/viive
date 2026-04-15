@@ -1,5 +1,5 @@
 #include "DelayEngine.h"
-
+#include "DSP.h"
 DelayEngine::DelayEngine()
 {
 	m_lowCutFilter.setType(juce::dsp::StateVariableTPTFilterType::highpass);
@@ -24,6 +24,8 @@ void DelayEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 	m_feedbackHighpass.prepare(spec);
 	m_chorusEngine.prepareToPlay(sampleRate, samplesPerBlock);
 	m_stereoDelay.prepareToPlay(sampleRate, samplesPerBlock);
+	m_coeff = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
+
 }
 
 void DelayEngine::reset() noexcept
@@ -73,16 +75,20 @@ void DelayEngine::setFilterQ(const float q, float& currentQ, Filter& filter) {
 	}
 }
 
-void DelayEngine::setDelayTimes(const float delayInMsL, const float delayInMsR) {
-	m_delayTimeMsL = delayInMsL;
-	m_delayTimeMsR = delayInMsR;
-	float leftMs = juce::jlimit(1.0f, Parameters::maxDelayTime, m_delayTimeMsL - m_spreadMs);
-	float rightMs = juce::jlimit(1.0f, Parameters::maxDelayTime, m_delayTimeMsR + m_spreadMs);
+void DelayEngine::setDelayTimes(const float targetL, const float targetR) {
+	float targetLeftMs = targetL - m_spreadMs;
+	float targetRightMs = targetR + m_spreadMs;
+	if (m_delayTimeMsL == 0.0f) m_delayTimeMsL = targetLeftMs;
+	if (m_delayTimeMsR == 0.0f) m_delayTimeMsR = targetRightMs;
+	m_delayTimeMsL = onePoleLowpass(targetLeftMs, m_delayTimeMsL, m_coeff);
+	m_delayTimeMsR = onePoleLowpass(targetRightMs, m_delayTimeMsR, m_coeff);
+	float leftMs = juce::jlimit(Parameters::minDelayTime, Parameters::maxDelayTime, m_delayTimeMsL);
+	float rightMs = juce::jlimit(Parameters::minDelayTime, Parameters::maxDelayTime, m_delayTimeMsR);
 	m_stereoDelay.setDelayTime(leftMs, Channel::Left);
 	m_stereoDelay.setDelayTime(rightMs, Channel::Right);
 }
 
-void DelayEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
+void DelayEngine::update(const Parameters& params)
 {
 	setLowCut(params);
 	setHighCut(params);
@@ -91,7 +97,12 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	setFeedbackLevel(params.feedback());
 	setWidthLevel(params.stereo());
 	setSpreadMs(params.spread());
+	setDelayTimes(params.delayTimeL(), params.delayTimeR());
 
+}
+
+void DelayEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
+{
 	float dryL = inL;
 	float dryR = inR;
 
