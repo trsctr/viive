@@ -1,11 +1,18 @@
-/*
-  ==============================================================================
-
-    Tempo.h
-    Created: 15 Apr 2026 1:20:40pm
-    Author:  trise
-
-  ==============================================================================
-*/
-
 #pragma once
+
+#include <JuceHeader.h>
+
+class Tempo
+{
+public:
+	void reset() noecept;
+	
+	void update(const juce::AudioPlayHead* playhead) noexcept;
+
+	double noteLengthToMs(int index) const noexcept;
+
+	double getTempo() const noexcept { return m_bpm; }
+
+private:
+	double m_bpm = 120.0;
+};
