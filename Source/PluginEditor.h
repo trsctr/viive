@@ -9,7 +9,8 @@
 //==============================================================================
 /**
 */
-class ViiveAudioProcessorEditor  : public juce::AudioProcessorEditor
+class ViiveAudioProcessorEditor  :  public juce::AudioProcessorEditor,
+    public juce::AudioProcessorValueTreeState::Listener
 {
 public:
     ViiveAudioProcessorEditor (ViiveAudioProcessor&);
@@ -18,6 +19,7 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+    virtual void parameterChanged(const juce::String& paramID, float newValue) override;
 
 private:
     ViiveAudioProcessor& m_audioProcessor;
@@ -42,6 +44,8 @@ private:
 	RotaryKnob m_chorusModDepthKnob{ "Mod Depth", m_audioProcessor.apvts, chorusModDepthParamID.getParamID() };
 
     juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup;
+
+    bool m_delaysLinked = true;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)
 };

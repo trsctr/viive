@@ -38,12 +38,15 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	addAndMakeVisible(m_chorusGroup);
 
 	addAndMakeVisible(m_meter);
+	m_audioProcessor.apvts.addParameterListener(delayTimeLParamID.getParamID(), this);
 
     setSize (770, 330);
 }
 
 ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
 {
+	m_audioProcessor.apvts.removeParameterListener(delayTimeLParamID.getParamID(), this);
+
 }
 
 //==============================================================================
@@ -80,4 +83,11 @@ void ViiveAudioProcessorEditor::resized()
 	m_chorusModDepthKnob.setTopLeftPosition(m_chorusModRateKnob.getRight() + 20, 20);
 
 	m_meter.setBounds(m_outputGroup.getRight() + 15, 20, 35, height - 15);
+}
+
+void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, float newValue) {
+	if (m_delaysLinked && paramID == delayTimeLParamID.getParamID()) {
+		auto param = m_audioProcessor.apvts.getParameter(delayTimeRParamID.getParamID());
+		param->setValueNotifyingHost(param->convertTo0to1(newValue));
+	}
 }
