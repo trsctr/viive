@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include "Tempo.h"
 
 const juce::ParameterID gainParamID{ "gain", 1 };
 const juce::ParameterID delayTimeLParamID{ "delayTimeL", 1 };
@@ -8,7 +9,6 @@ const juce::ParameterID delayNoteLParamID{ "delayNoteL", 1 };
 const juce::ParameterID delayNoteRParamID{ "delayNoteR", 1 };
 const juce::ParameterID tempoSyncLParamID{ "tempoSyncL", 1 };
 const juce::ParameterID tempoSyncRParamID{ "tempoSyncR", 1 };
-const juce::ParameterID delayLinkParamID{ "link", 1 };
 const juce::ParameterID mixParamID{ "mix", 1 };
 const juce::ParameterID feedbackParamID{ "feedback", 1 };
 const juce::ParameterID stereoParamID{ "stereo", 1 };
@@ -55,9 +55,8 @@ public:
 	static constexpr float defaultChorusModRate2 = 0.45f; // this is not a passed param but default value for 2nd chorus
 	static constexpr float defaultChorusModDepth = 4.0f;
 
-
 	void prepareToPlay(double sampleRate) noexcept;
-	void update() noexcept;
+	void update(const Tempo& tempo) noexcept;
 	void reset() noexcept;
 	void smoothen() noexcept;
 
@@ -68,7 +67,6 @@ public:
 	int delayNoteR() const { return m_delayNoteR; }
 	bool tempoSyncL() const { return m_tempoSyncL; }
 	bool tempoSyncR() const { return m_tempoSyncR; }
-	bool delayLink() const { return m_delayLink; }
 	float mix() const { return m_mix; }
 	float feedback() const { return m_feedback; }
 	float stereo() const { return m_stereo; }
@@ -118,8 +116,7 @@ private:
 	float m_targetDelayTimeL = 0.0f;
 	float m_targetDelayTimeR = 0.0f;
 
-	float m_coeffL = 0.0f;
-	float m_coeffR = 0.0f;
+	float m_coeff = 0.0f;
 
 	float m_gain = 0.0f;
 	float m_delayTimeL = 0.0f;
@@ -128,7 +125,6 @@ private:
 	int m_delayNoteR = 0;
 	bool m_tempoSyncL = true;
 	bool m_tempoSyncR = true;
-	bool m_delayLink = true;
 	float m_mix = 0.5f;
 	float m_feedback = 0.0f;
 	float m_stereo = 0.0f;

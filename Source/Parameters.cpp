@@ -141,11 +141,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		"Tempo Sync R",
 		true
 	));
-	layout.add(std::make_unique<juce::AudioParameterBool>(
-		delayLinkParamID.getParamID(),
-		"Link",
-		true
-	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		spreadParamID.getParamID(),
 		"Spread",
@@ -245,8 +240,6 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_highCutQSmoother.reset(sampleRate, duration);
 	m_chorusModRateSmoother.reset(sampleRate, duration);
 	m_chorusModDepthSmoother.reset(sampleRate, duration);
-	m_coeffL = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
-	m_coeffR = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
 }
 
 void Parameters::reset() noexcept
@@ -278,7 +271,7 @@ void Parameters::reset() noexcept
 	m_chorusModDepthSmoother.setCurrentAndTargetValue(m_chorusModDepthParam->get());
 }
 
-void Parameters::update() noexcept
+void Parameters::update(const Tempo& tempo) noexcept
 {
 	m_gainSmoother.setTargetValue(juce::Decibels::decibelsToGain(m_gainParam->get()));
 	m_mixSmoother.setTargetValue(m_mixParam->get() * 0.01f);
@@ -292,19 +285,20 @@ void Parameters::update() noexcept
 	m_highCutQSmoother.setTargetValue(m_highCutQParam->get());
 	m_chorusModRateSmoother.setTargetValue(m_chorusModRateParam->get());
 	m_chorusModDepthSmoother.setTargetValue(m_chorusModDepthParam->get());
-	m_targetDelayTimeL = m_delayTimeLParam->get();
-	if (m_delayTimeL == 0.0f) {
-		m_delayTimeL = m_targetDelayTimeL;
-	}
-	m_targetDelayTimeR = m_delayTimeRParam->get();
-	if (m_delayTimeR == 0.0f) {
-		m_delayTimeR = m_targetDelayTimeR;
-	}
-	m_delayNoteL = m_delayNoteLParam->getIndex();
-	m_delayNoteR = m_delayNoteRParam->getIndex();
 	m_tempoSyncL = m_tempoSyncLParam->get();
 	m_tempoSyncR = m_tempoSyncRParam->get();
-	m_delayLink = m_delayLinkParam->get();
+	m_delayNoteL = m_delayNoteLParam->getIndex();
+	m_delayNoteR = m_delayNoteRParam->getIndex();
+	if (m_tempoSyncL) {
+		float syncedMs = juce::jmin(float(tempo.noteLengthToMs(m_delayNoteL)), maxDelayTime);
+		m_delayTimeLParam->setValueNotifyingHost(m_delayTimeLParam->convertTo0to1(syncedMs));
+	}
+	if (m_tempoSyncR) {
+		float syncedMs = juce::jmin(float(tempo.noteLengthToMs(m_delayNoteR)), maxDelayTime);
+		m_delayTimeRParam->setValueNotifyingHost(m_delayTimeRParam->convertTo0to1(syncedMs));
+	}
+	m_delayTimeL = m_delayTimeLParam->get();
+	m_delayTimeR = m_delayTimeRParam->get();
 }
 
 void Parameters::smoothen() noexcept
@@ -321,6 +315,4 @@ void Parameters::smoothen() noexcept
 	m_highCutQ = m_highCutQSmoother.getNextValue();
 	m_chorusModRate = m_chorusModRateSmoother.getNextValue();
 	m_chorusModDepth = m_chorusModDepthSmoother.getNextValue();
-	m_delayTimeL = onePoleLowpass(m_targetDelayTimeL, m_delayTimeL, m_coeffL);
-	m_delayTimeR = onePoleLowpass(m_targetDelayTimeR, m_delayTimeR, m_coeffR);
 }
