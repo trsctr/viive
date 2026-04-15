@@ -42,6 +42,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	addAndMakeVisible(m_meter);
 	linkParameters(delayTimeLParamID.getParamID(), delayTimeRParamID.getParamID());
+	linkParameters(tempoSyncLParamID.getParamID(), tempoSyncRParamID.getParamID());
 	setSize (770, 330);
 }
 
@@ -72,6 +73,8 @@ void ViiveAudioProcessorEditor::resized()
 
 	m_delayTimeLKnob.setTopLeftPosition(20, 20);
 	m_delayTimeRKnob.setTopLeftPosition(m_delayTimeLKnob.getRight() + 20, 20);
+	m_tempoSyncLButton.setCentrePosition(m_delayTimeLKnob.getRight() - 35, m_delayTimeLKnob.getBottom() + 11);
+	m_tempoSyncRButton.setCentrePosition(m_delayTimeRKnob.getRight() - 35, m_delayTimeRKnob.getBottom() + 11);
 	m_delayLinkButton.setTopLeftPosition(m_delayTimeLKnob.getRight() - 10, m_delayTimeLKnob.getBottom() - 45);
 
 	m_feedbackKnob.setTopLeftPosition(m_delayTimeRKnob.getRight() + 20, 20);
@@ -101,6 +104,9 @@ void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, fl
 	if (m_audioProcessor.apvts.getParameter(delayLinkParamID.getParamID())->getValue()
 		&& m_linkedParams.contains(paramID)) {
 		auto* param = m_audioProcessor.apvts.getParameter(m_linkedParams[paramID]);
-		param->setValueNotifyingHost(param->convertTo0to1(newValue));
+		float currentValue = param->getValue();
+		float targetValue = param->convertTo0to1(newValue);
+		if (currentValue != targetValue)
+			param->setValueNotifyingHost(targetValue);
 	}
 }

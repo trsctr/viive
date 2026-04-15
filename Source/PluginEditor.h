@@ -46,6 +46,8 @@ private:
 	RotaryKnob m_chorusModDepthKnob{ "Mod Depth", m_audioProcessor.apvts, chorusModDepthParamID.getParamID() };
 
     Button m_delayLinkButton{ "Link", m_audioProcessor.apvts, delayLinkParamID.getParamID() };
+    Button m_tempoSyncLButton{ "Sync", m_audioProcessor.apvts, tempoSyncLParamID.getParamID() };
+    Button m_tempoSyncRButton{ "Sync", m_audioProcessor.apvts, tempoSyncRParamID.getParamID() };
 
     juce::HashMap<juce::String, juce::String> m_linkedParams;
 
