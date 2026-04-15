@@ -11,6 +11,8 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
     m_delayGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
     m_delayGroup.addAndMakeVisible(m_delayTimeLKnob);
 	m_delayGroup.addAndMakeVisible(m_delayTimeRKnob);
+	m_delayGroup.addChildComponent(m_delayNoteLKnob);
+	m_delayGroup.addChildComponent(m_delayNoteRKnob);
     m_delayGroup.addAndMakeVisible(m_feedbackKnob);
 	m_delayGroup.addAndMakeVisible(m_spreadKnob);
 	m_delayGroup.addAndMakeVisible(m_delayLinkButton);
@@ -41,7 +43,15 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	addAndMakeVisible(m_chorusGroup);
 
 	addAndMakeVisible(m_meter);
+
+	bool syncL = m_audioProcessor.apvts.getParameter(tempoSyncLParamID.getParamID())->getValue() > 0.5f;
+	bool syncR = m_audioProcessor.apvts.getParameter(tempoSyncRParamID.getParamID())->getValue() > 0.5f;
+
+	updateDelayKnobs(syncL, syncR);
+
+	m_audioProcessor.apvts.addParameterListener(delayLinkParamID.getParamID(), this);
 	linkParameters(delayTimeLParamID.getParamID(), delayTimeRParamID.getParamID());
+	linkParameters(delayNoteLParamID.getParamID(), delayNoteRParamID.getParamID());
 	linkParameters(tempoSyncLParamID.getParamID(), tempoSyncRParamID.getParamID());
 	setSize (770, 330);
 }
@@ -51,6 +61,7 @@ ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
 	juce::HashMap<juce::String, juce::String>::Iterator it(m_linkedParams);
 	while (it.next())
 		m_audioProcessor.apvts.removeParameterListener(it.getKey(), this);
+	m_audioProcessor.apvts.removeParameterListener(delayLinkParamID.getParamID(), this);
 }
 
 //==============================================================================
@@ -73,6 +84,8 @@ void ViiveAudioProcessorEditor::resized()
 
 	m_delayTimeLKnob.setTopLeftPosition(20, 20);
 	m_delayTimeRKnob.setTopLeftPosition(m_delayTimeLKnob.getRight() + 20, 20);
+	m_delayNoteLKnob.setTopLeftPosition(m_delayTimeLKnob.getX(), m_delayTimeLKnob.getY());
+	m_delayNoteRKnob.setTopLeftPosition(m_delayTimeRKnob.getX(), m_delayTimeRKnob.getY());
 	m_tempoSyncLButton.setCentrePosition(m_delayTimeLKnob.getRight() - 35, m_delayTimeLKnob.getBottom() + 11);
 	m_tempoSyncRButton.setCentrePosition(m_delayTimeRKnob.getRight() - 35, m_delayTimeRKnob.getBottom() + 11);
 	m_delayLinkButton.setTopLeftPosition(m_delayTimeLKnob.getRight() - 10, m_delayTimeLKnob.getBottom() - 45);
@@ -93,6 +106,14 @@ void ViiveAudioProcessorEditor::resized()
 	m_meter.setBounds(m_outputGroup.getRight() + 15, 20, 35, height - 15);
 }
 
+void ViiveAudioProcessorEditor::updateDelayKnobs(bool syncLActive, bool syncRActive)
+{
+	m_delayTimeLKnob.setVisible(!syncLActive);
+	m_delayNoteLKnob.setVisible(syncLActive);
+	m_delayTimeRKnob.setVisible(!syncRActive);
+	m_delayNoteRKnob.setVisible(syncRActive);
+}
+
 void ViiveAudioProcessorEditor::linkParameters(const juce::String& idA, const juce::String& idB) {
 	m_linkedParams.set(idA, idB);
 	m_linkedParams.set(idB, idA);
@@ -108,5 +129,28 @@ void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, fl
 		float targetValue = param->convertTo0to1(newValue);
 		if (currentValue != targetValue)
 			param->setValueNotifyingHost(targetValue);
+	}
+	if (paramID == tempoSyncLParamID.getParamID() || paramID == tempoSyncRParamID.getParamID()) {
+		bool syncL = m_audioProcessor.apvts.getParameter(tempoSyncLParamID.getParamID())->getValue() > 0.5f;
+		bool syncR = m_audioProcessor.apvts.getParameter(tempoSyncRParamID.getParamID())->getValue() > 0.5f;
+		if (juce::MessageManager::getInstance()->isThisTheMessageThread()) {
+			updateDelayKnobs(syncL, syncR);
+		}
+		else {
+			juce::MessageManager::callAsync([this, syncL, syncR] {
+				updateDelayKnobs(syncL, syncR);
+				});
+		}
+	}
+	if (paramID == delayLinkParamID.getParamID() && newValue > 0.5f) {
+		auto syncValue = [&](const juce::String& sourceID, const juce::String& targetID) {
+			auto* source = m_audioProcessor.apvts.getParameter(sourceID);
+			auto* target = m_audioProcessor.apvts.getParameter(targetID);
+			if (source->getValue() != target->getValue())
+				target->setValueNotifyingHost(source->getValue());
+			};
+		syncValue(delayTimeLParamID.getParamID(), delayTimeRParamID.getParamID());
+		syncValue(tempoSyncLParamID.getParamID(), tempoSyncRParamID.getParamID());
+		syncValue(delayNoteLParamID.getParamID(), delayNoteRParamID.getParamID());
 	}
 }

@@ -20,8 +20,6 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-    virtual void parameterChanged(const juce::String& paramID, float newValue) override;
-    void linkParameters(const juce::String& idA, const juce::String& idB);
 
 private:
     ViiveAudioProcessor& m_audioProcessor;
@@ -29,6 +27,9 @@ private:
 
     RotaryKnob m_delayTimeLKnob{ "Time L", m_audioProcessor.apvts, delayTimeLParamID.getParamID() };
     RotaryKnob m_delayTimeRKnob{ "Time R", m_audioProcessor.apvts, delayTimeRParamID.getParamID() };
+    RotaryKnob m_delayNoteLKnob{ "Note L", m_audioProcessor.apvts, delayNoteLParamID.getParamID() };
+    RotaryKnob m_delayNoteRKnob{ "Note R", m_audioProcessor.apvts, delayNoteRParamID.getParamID() };
+    
     RotaryKnob m_feedbackKnob{ "Feedback", m_audioProcessor.apvts, feedbackParamID.getParamID() };
     RotaryKnob m_stereoKnob{ "Stereo", m_audioProcessor.apvts, stereoParamID.getParamID() };
     RotaryKnob m_spreadKnob{ "Spread", m_audioProcessor.apvts, spreadParamID.getParamID() };
@@ -52,6 +53,10 @@ private:
     juce::HashMap<juce::String, juce::String> m_linkedParams;
 
     juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup;
+
+    virtual void parameterChanged(const juce::String& paramID, float newValue) override;
+    void linkParameters(const juce::String& idA, const juce::String& idB);
+    void updateDelayKnobs(bool syncLActive, bool syncRActive);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)
 };

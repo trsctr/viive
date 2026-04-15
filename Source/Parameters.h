@@ -4,6 +4,8 @@
 const juce::ParameterID gainParamID{ "gain", 1 };
 const juce::ParameterID delayTimeLParamID{ "delayTimeL", 1 };
 const juce::ParameterID delayTimeRParamID{ "delayTimeR", 1 };
+const juce::ParameterID delayNoteLParamID{ "delayNoteL", 1 };
+const juce::ParameterID delayNoteRParamID{ "delayNoteR", 1 };
 const juce::ParameterID tempoSyncLParamID{ "tempoSyncL", 1 };
 const juce::ParameterID tempoSyncRParamID{ "tempoSyncR", 1 };
 const juce::ParameterID delayLinkParamID{ "link", 1 };
@@ -18,6 +20,25 @@ const juce::ParameterID highCutQParamID{ "highCutQ", 1 };
 const juce::ParameterID chorusIntensityParamID{ "chorusIntensity", 1 };
 const juce::ParameterID chorusModRateParamID{ "chorusModRate", 1 };
 const juce::ParameterID chorusModDepthParamID{ "chorusModDepth", 1 };
+
+const juce::StringArray noteLengths = {
+"1/32",
+"1/16 trip",
+"1/32 dot",
+"1/16",
+"1/8 trip",
+"1/16 dot",
+"1/8",
+"1/4 trip",
+"1/8 dot",
+"1/4",
+"1/2 trip",
+"1/4 dot",
+"1/2",
+"1/1 trip",
+"1/2 dot",
+"1/1",
+};
 
 class Parameters {
 public:
@@ -62,6 +83,8 @@ private:
 	juce::AudioParameterFloat* m_gainParam;
 	juce::AudioParameterFloat* m_delayTimeLParam;
 	juce::AudioParameterFloat* m_delayTimeRParam;
+	juce::AudioParameterChoice* m_delayNoteLParam;
+	juce::AudioParameterChoice* m_delayNoteRParam;
 	juce::AudioParameterBool* m_tempoSyncLParam;
 	juce::AudioParameterBool* m_tempoSyncRParam;
 	juce::AudioParameterBool* m_delayLinkParam;
@@ -99,6 +122,8 @@ private:
 	float m_gain = 0.0f;
 	float m_delayTimeL = 0.0f;
 	float m_delayTimeR = 0.0f;
+	int m_delayNoteL = 0;
+	int m_delayNoteR = 0;
 	bool m_tempoSyncL = true;
 	bool m_tempoSyncR = true;
 	bool m_delayLink = true;

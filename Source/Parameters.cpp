@@ -73,6 +73,8 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, gainParamID, m_gainParam);
 	castParameter(apvts, delayTimeLParamID, m_delayTimeLParam);
 	castParameter(apvts, delayTimeRParamID, m_delayTimeRParam);
+	castParameter(apvts, delayNoteLParamID, m_delayNoteLParam);
+	castParameter(apvts, delayNoteRParamID, m_delayNoteRParam);
 	castParameter(apvts, tempoSyncLParamID, m_tempoSyncLParam);
 	castParameter(apvts, tempoSyncRParamID, m_tempoSyncRParam);
 	castParameter(apvts, delayLinkParamID, m_delayLinkParam);
@@ -117,6 +119,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		juce::AudioParameterFloatAttributes()
 		.withStringFromValueFunction(stringFromMilliseconds)
 		.withValueFromStringFunction(millisecondsFromString)
+	));
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		delayNoteLParamID,
+		"Delay Note L",
+		noteLengths,
+	9));
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		delayNoteRParamID,
+		"Delay Note R",
+		noteLengths,
+		9
 	));
 	layout.add(std::make_unique<juce::AudioParameterBool>(
 		tempoSyncLParamID.getParamID(),
@@ -287,6 +300,8 @@ void Parameters::update() noexcept
 	if (m_delayTimeR == 0.0f) {
 		m_delayTimeR = m_targetDelayTimeR;
 	}
+	m_delayNoteL = m_delayNoteLParam->getIndex();
+	m_delayNoteR = m_delayNoteRParam->getIndex();
 	m_tempoSyncL = m_tempoSyncLParam->get();
 	m_tempoSyncR = m_tempoSyncRParam->get();
 	m_delayLink = m_delayLinkParam->get();
