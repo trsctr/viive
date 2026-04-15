@@ -15,7 +15,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_delayGroup.addChildComponent(m_delayNoteRKnob);
     m_delayGroup.addAndMakeVisible(m_feedbackKnob);
 	m_delayGroup.addAndMakeVisible(m_spreadKnob);
-	m_delayGroup.addAndMakeVisible(m_delayLinkButton);
+//	m_delayGroup.addAndMakeVisible(m_delayLinkButton);
 	m_delayGroup.addAndMakeVisible(m_tempoSyncLButton);
 	m_delayGroup.addAndMakeVisible(m_tempoSyncRButton);
     addAndMakeVisible(m_delayGroup);
@@ -49,19 +49,15 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	updateDelayKnobs(syncL, syncR);
 
-	m_audioProcessor.apvts.addParameterListener(delayLinkParamID.getParamID(), this);
-	linkParameters(delayTimeLParamID.getParamID(), delayTimeRParamID.getParamID());
-	linkParameters(delayNoteLParamID.getParamID(), delayNoteRParamID.getParamID());
-	linkParameters(tempoSyncLParamID.getParamID(), tempoSyncRParamID.getParamID());
+	m_audioProcessor.apvts.addParameterListener(tempoSyncLParamID.getParamID(), this);
+	m_audioProcessor.apvts.addParameterListener(tempoSyncRParamID.getParamID(), this);
 	setSize (770, 330);
 }
 
 ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
 {
-	juce::HashMap<juce::String, juce::String>::Iterator it(m_linkedParams);
-	while (it.next())
-		m_audioProcessor.apvts.removeParameterListener(it.getKey(), this);
-	m_audioProcessor.apvts.removeParameterListener(delayLinkParamID.getParamID(), this);
+	m_audioProcessor.apvts.removeParameterListener(tempoSyncLParamID.getParamID(), this);
+	m_audioProcessor.apvts.removeParameterListener(tempoSyncRParamID.getParamID(), this);
 }
 
 //==============================================================================
@@ -88,7 +84,7 @@ void ViiveAudioProcessorEditor::resized()
 	m_delayNoteRKnob.setTopLeftPosition(m_delayTimeRKnob.getX(), m_delayTimeRKnob.getY());
 	m_tempoSyncLButton.setCentrePosition(m_delayTimeLKnob.getRight() - 35, m_delayTimeLKnob.getBottom() + 11);
 	m_tempoSyncRButton.setCentrePosition(m_delayTimeRKnob.getRight() - 35, m_delayTimeRKnob.getBottom() + 11);
-	m_delayLinkButton.setTopLeftPosition(m_delayTimeLKnob.getRight() - 10, m_delayTimeLKnob.getBottom() - 45);
+//	m_delayLinkButton.setTopLeftPosition(m_delayTimeLKnob.getRight() - 10, m_delayTimeLKnob.getBottom() - 45);
 
 	m_feedbackKnob.setTopLeftPosition(m_delayTimeRKnob.getRight() + 20, 20);
 	m_spreadKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
@@ -114,43 +110,12 @@ void ViiveAudioProcessorEditor::updateDelayKnobs(bool syncLActive, bool syncRAct
 	m_delayNoteRKnob.setVisible(syncRActive);
 }
 
-void ViiveAudioProcessorEditor::linkParameters(const juce::String& idA, const juce::String& idB) {
-	m_linkedParams.set(idA, idB);
-	m_linkedParams.set(idB, idA);
-	m_audioProcessor.apvts.addParameterListener(idA, this);
-	m_audioProcessor.apvts.addParameterListener(idB, this);
-}
-
 void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, float newValue) {
-	if (m_audioProcessor.apvts.getParameter(delayLinkParamID.getParamID())->getValue()
-		&& m_linkedParams.contains(paramID)) {
-		auto* param = m_audioProcessor.apvts.getParameter(m_linkedParams[paramID]);
-		float currentValue = param->getValue();
-		float targetValue = param->convertTo0to1(newValue);
-		if (currentValue != targetValue)
-			param->setValueNotifyingHost(targetValue);
-	}
 	if (paramID == tempoSyncLParamID.getParamID() || paramID == tempoSyncRParamID.getParamID()) {
-		bool syncL = m_audioProcessor.apvts.getParameter(tempoSyncLParamID.getParamID())->getValue() > 0.5f;
-		bool syncR = m_audioProcessor.apvts.getParameter(tempoSyncRParamID.getParamID())->getValue() > 0.5f;
-		if (juce::MessageManager::getInstance()->isThisTheMessageThread()) {
+		juce::MessageManager::callAsync([this] {
+			bool syncL = m_audioProcessor.apvts.getParameter(tempoSyncLParamID.getParamID())->getValue() > 0.5f;
+			bool syncR = m_audioProcessor.apvts.getParameter(tempoSyncRParamID.getParamID())->getValue() > 0.5f;
 			updateDelayKnobs(syncL, syncR);
-		}
-		else {
-			juce::MessageManager::callAsync([this, syncL, syncR] {
-				updateDelayKnobs(syncL, syncR);
-				});
-		}
-	}
-	if (paramID == delayLinkParamID.getParamID() && newValue > 0.5f) {
-		auto syncValue = [&](const juce::String& sourceID, const juce::String& targetID) {
-			auto* source = m_audioProcessor.apvts.getParameter(sourceID);
-			auto* target = m_audioProcessor.apvts.getParameter(targetID);
-			if (source->getValue() != target->getValue())
-				target->setValueNotifyingHost(source->getValue());
-			};
-		syncValue(delayTimeLParamID.getParamID(), delayTimeRParamID.getParamID());
-		syncValue(tempoSyncLParamID.getParamID(), tempoSyncRParamID.getParamID());
-		syncValue(delayNoteLParamID.getParamID(), delayNoteRParamID.getParamID());
+			});
 	}
 }

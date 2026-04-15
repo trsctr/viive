@@ -46,7 +46,6 @@ private:
 	RotaryKnob m_chorusModRateKnob{ "Mod Rate", m_audioProcessor.apvts, chorusModRateParamID.getParamID() };
 	RotaryKnob m_chorusModDepthKnob{ "Mod Depth", m_audioProcessor.apvts, chorusModDepthParamID.getParamID() };
 
-    Button m_delayLinkButton{ "Link", m_audioProcessor.apvts, delayLinkParamID.getParamID() };
     Button m_tempoSyncLButton{ "Sync", m_audioProcessor.apvts, tempoSyncLParamID.getParamID() };
     Button m_tempoSyncRButton{ "Sync", m_audioProcessor.apvts, tempoSyncRParamID.getParamID() };
 
@@ -55,7 +54,6 @@ private:
     juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup;
 
     virtual void parameterChanged(const juce::String& paramID, float newValue) override;
-    void linkParameters(const juce::String& idA, const juce::String& idB);
     void updateDelayKnobs(bool syncLActive, bool syncRActive);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)
