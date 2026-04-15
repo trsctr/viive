@@ -4,6 +4,7 @@
 #include "PluginProcessor.h"
 #include "Parameters.h"
 #include "RotaryKnob.h"
+#include "Button.h"
 #include "LevelMeter.h"
 
 //==============================================================================
@@ -44,13 +45,9 @@ private:
 	RotaryKnob m_chorusModRateKnob{ "Mod Rate", m_audioProcessor.apvts, chorusModRateParamID.getParamID() };
 	RotaryKnob m_chorusModDepthKnob{ "Mod Depth", m_audioProcessor.apvts, chorusModDepthParamID.getParamID() };
 
-    juce::TextButton m_delayLinkButton;
+    Button m_delayLinkButton{ "Link", m_audioProcessor.apvts, delayLinkParamID.getParamID() };
 
     juce::HashMap<juce::String, juce::String> m_linkedParams;
-
-    juce::AudioProcessorValueTreeState::ButtonAttachment linkAttachment{
-        m_audioProcessor.apvts, delayLinkParamID.getParamID(), m_delayLinkButton
-    };
 
     juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup;
 

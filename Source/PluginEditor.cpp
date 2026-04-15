@@ -13,13 +13,9 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_delayGroup.addAndMakeVisible(m_delayTimeRKnob);
     m_delayGroup.addAndMakeVisible(m_feedbackKnob);
 	m_delayGroup.addAndMakeVisible(m_spreadKnob);
-	m_delayLinkButton.setButtonText("Link");
-	m_delayLinkButton.setClickingTogglesState(true);
-	m_delayLinkButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::transparentWhite);
-	m_delayLinkButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::orange);
-	m_delayLinkButton.setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colours::black);
-	m_delayLinkButton.setBounds(0, 0, 40, 20);
 	m_delayGroup.addAndMakeVisible(m_delayLinkButton);
+	m_delayGroup.addAndMakeVisible(m_tempoSyncLButton);
+	m_delayGroup.addAndMakeVisible(m_tempoSyncRButton);
     addAndMakeVisible(m_delayGroup);
 
     m_filterGroup.setText("Filter");
