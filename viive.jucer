@@ -5,6 +5,8 @@
               pluginManufacturer="trsctr" pluginVST3Category="Delay" cppLanguageStandard="20">
   <MAINGROUP id="LCtwvr" name="viive">
     <GROUP id="{058ECC9C-9529-0D6B-B949-15DE645D6A88}" name="Source">
+      <FILE id="BFIEA0" name="Tempo.cpp" compile="1" resource="0" file="Source/Tempo.cpp"/>
+      <FILE id="cENj09" name="Tempo.h" compile="0" resource="0" file="Source/Tempo.h"/>
       <FILE id="qNqphR" name="Button.cpp" compile="1" resource="0" file="Source/Button.cpp"/>
       <FILE id="HccokJ" name="Button.h" compile="0" resource="0" file="Source/Button.h"/>
       <FILE id="bNCrMB" name="StereoDelay.cpp" compile="1" resource="0" file="Source/StereoDelay.cpp"/>
