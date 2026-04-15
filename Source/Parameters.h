@@ -64,6 +64,8 @@ public:
 	float gain() const { return m_gain; }
 	float delayTimeL() const { return m_delayTimeL; }
 	float delayTimeR() const { return m_delayTimeR; }
+	int delayNoteL() const { return m_delayNoteL; }
+	int delayNoteR() const { return m_delayNoteR; }
 	bool tempoSyncL() const { return m_tempoSyncL; }
 	bool tempoSyncR() const { return m_tempoSyncR; }
 	bool delayLink() const { return m_delayLink; }

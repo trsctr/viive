@@ -91,7 +91,6 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	setFeedbackLevel(params.feedback());
 	setWidthLevel(params.stereo());
 	setSpreadMs(params.spread());
-	setDelayTimes(params.delayTimeL(), params.delayTimeR());
 
 	float dryL = inL;
 	float dryR = inR;

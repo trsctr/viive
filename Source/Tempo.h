@@ -5,7 +5,7 @@
 class Tempo
 {
 public:
-	void reset() noecept;
+	void reset() noexcept;
 	
 	void update(const juce::AudioPlayHead* playhead) noexcept;
 
