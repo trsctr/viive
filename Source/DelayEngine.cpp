@@ -50,6 +50,14 @@ void DelayEngine::reset() noexcept
 	m_gainLevel = 1.0f;
 }
 
+void DelayEngine::setDelayMode(const int modeIndex) 
+{
+	DelayMode newMode = static_cast<DelayMode>(modeIndex);
+	if (newMode != m_delayMode) {
+		m_delayMode = newMode;
+	}
+}
+
 void DelayEngine::setLowCut(const Parameters& params) {
 	setFilterFreq(params.lowCutFreq(), m_lowCutFreq, m_lowCutFilter);
 	setFilterQ(params.lowCutQ(), m_lowCutQ, m_lowCutFilter);
@@ -98,7 +106,6 @@ void DelayEngine::update(const Parameters& params)
 	setWidthLevel(params.stereo());
 	setSpreadMs(params.spread());
 	setDelayTimes(params.delayTimeL(), params.delayTimeR());
-
 }
 
 void DelayEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
@@ -109,25 +116,30 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	float mono = (dryL + dryR) * .5;
 	float delayInL = 0.0f, delayInR = 0.0f, popL = 0.0f, popR = 0.0f, wetL = 0.0f, wetR = 0.0f;
 	switch (m_delayMode) {
-		case DelayMode::PingPongL:
+		case DelayMode::PingPongLR:
 			delayInL = mono + m_feedbackR;
 			delayInR = m_feedbackL;
+			//DBG("Mode: PingPongL");
 			break;
-		case DelayMode::PingPongR:
+		case DelayMode::PingPongRL:
 			delayInL = m_feedbackR;
 			delayInR = mono + m_feedbackL;
+			//DBG("Mode: PingPongR");
 			break;
 		case DelayMode::Cross: 
 			delayInL = dryL + m_feedbackR;
 			delayInR = dryR + m_feedbackL;
+			//DBG("Mode: Cross");
 			break;
 		case DelayMode::Stereo:
 			delayInL = dryL + m_feedbackL;
 			delayInR = dryR + m_feedbackR;
+		//	DBG("Mode: Stereo");
 			break;
 		default:
 			delayInL = dryL;
 			delayInR = dryR;
+	//		DBG("Falling through for default");
 	}
 
 	m_stereoDelay.processSample(delayInL, popL, Channel::Left);

@@ -6,7 +6,7 @@
 
 using Filter = juce::dsp::StateVariableTPTFilter<float>;
 
-enum class DelayMode { Stereo, Cross, PingPongL, PingPongR};
+enum class DelayMode { Stereo, Cross, PingPongLR, PingPongRL};
 
 class DelayEngine
 {
@@ -29,6 +29,7 @@ public:
 	void setGainLevel(const float value) { m_gainLevel = value; }
 	void setWidthLevel(const float value) { m_widthLevel = value; }
 	void setSpreadMs(const float value) { m_spreadMs = value * .5f; }
+	void setDelayMode(const int modeIndex);
 
 private:
 	//juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> m_delayLine;

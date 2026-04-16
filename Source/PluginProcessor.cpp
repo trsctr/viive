@@ -116,6 +116,7 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
 
     m_tempo.update(getPlayHead());
     m_params.update(m_tempo);
+    m_delayEngine.setDelayMode(m_params.delayMode());
 
     //float syncedTimeL = static_cast<float>(m_tempo.noteLengthToMs(m_params.delayNoteL()));
     //float syncedTimeR = static_cast<float>(m_tempo.noteLengthToMs(m_params.delayNoteR()));
