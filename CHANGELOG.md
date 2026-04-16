@@ -4,22 +4,33 @@ All notable changes to this project will be documented in this file.
 
 ## \[Unreleased]
 
-### In progress
-
-* Delay modes: stereo, cross, ping pong
-
-### Added
-
-* Tempo sync
-* Separate delay time params for right and left delay lines
-* Spread parameter for stereo offset between delay channels
-* Refactored delay line into StereoDelay primitive (two independent mono delay lines)
-* Stereo width control with mid/side processing
-
 ### Planned
 
 * Additional effects in feedback loop (phaser, bitcrusher, etc.)
 * Preset manager
+
+## \[0.1.0] - 2026-04-16
+
+### Added
+
+* Tempo sync
+* Separate L/R delay time parameters
+* Offset parameter for stereo offset between delay channels
+* Stereo width control with mid/side processing
+* Selectable delay modes: stereo, cross feedback, ping pong
+
+### Changed
+
+* Refactored delay line into StereoDelay primitive (two independent mono delay lines)
+* Cross feedback moved from hardcoded behavior to selectable delay mode
+* Default values for various parameters to get something nice sounding out of the plugin immediately
+
+### Known limitations
+
+* GUI still placeholder and will require a redesign
+* Feedback distorts or gets strange artifacts on some filter settings or certain kind of input
+* Delay time changes might introduce some strange artifacts
+* Left/Right delay parameters can't be linked as it caused some thread safety issues, possibly implementing a switch between single and dual modes
 
 ## \[0.0.5] - 2026-02-26
 
