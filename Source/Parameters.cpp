@@ -121,14 +121,6 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
 {
 	juce::AudioProcessorValueTreeState::ParameterLayout layout;
-	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		gainParamID.getParamID(),
-		"Gain",
-		juce::NormalisableRange<float>(-12.0f, 6.0f),
-		0.0f,
-		juce::AudioParameterFloatAttributes()
-			.withStringFromValueFunction(stringFromDecibels)
-	));
 	layout.add(std::make_unique<juce::AudioParameterChoice>(
 		delayModeParamID.getParamID(),
 		"Delay Mode",
@@ -176,6 +168,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		true
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		feedbackParamID.getParamID(),
+		"Feedback",
+		juce::NormalisableRange<float>(-100.0f, 100.0f, 1.0f),
+		defaultFeedback,
+		juce::AudioParameterFloatAttributes()
+		.withStringFromValueFunction(stringFromPercent)
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		offsetParamID.getParamID(),
 		"Offset",
 		juce::NormalisableRange<float>(-50.0f, 50.0f, 0.001f),
@@ -193,14 +193,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 			.withStringFromValueFunction(stringFromPercent)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		feedbackParamID.getParamID(),
-		"Feedback",
-		juce::NormalisableRange<float>(-100.0f, 100.0f, 1.0f),
-		0.0f,
-		juce::AudioParameterFloatAttributes()
-			.withStringFromValueFunction(stringFromPercent)
-	));
-	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		stereoParamID.getParamID(),
 		"Stereo",
 		juce::NormalisableRange<float>(0.0f, 200.0f, 1.0f),
@@ -209,16 +201,18 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		.withStringFromValueFunction(stringFromPercent)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		chorusIntensityParamID.getParamID(),
-		"Chorus Intensity",
-		juce::NormalisableRange<float>(0.0f, 1.0f, .01f),
-		0.0f
+		gainParamID.getParamID(),
+		"Gain",
+		juce::NormalisableRange<float>(-12.0f, 6.0f),
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+		.withStringFromValueFunction(stringFromDecibels)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutFreqParamID.getParamID(),
 		"Low Cut Frequency",
 		juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f),
-		20.0f,
+		defaultLowCut,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
 			.withValueFromStringFunction(hzFromString)
@@ -226,14 +220,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutQParamID.getParamID(),
 		"Low Cut Q",
-		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.1f),
+		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.01f),
 		defaultFilterQ
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutFreqParamID.getParamID(),
 		"High Cut Frequency",
 		juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f),
-		20000.0f,
+		defaultHighCut,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
 			.withValueFromStringFunction(hzFromString)
@@ -241,8 +235,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutQParamID.getParamID(),
 		"High Cut Q",
-		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.1f),
+		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.01f),
 		defaultFilterQ
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		chorusIntensityParamID.getParamID(),
+		"Chorus Intensity",
+		juce::NormalisableRange<float>(0.0f, 1.0f, .01f),
+		0.0f
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		chorusModRateParamID.getParamID(),
