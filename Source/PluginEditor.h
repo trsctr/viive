@@ -32,7 +32,7 @@ private:
     
     RotaryKnob m_feedbackKnob{ "Feedback", m_audioProcessor.apvts, feedbackParamID.getParamID() };
     RotaryKnob m_stereoKnob{ "Stereo", m_audioProcessor.apvts, stereoParamID.getParamID() };
-    RotaryKnob m_spreadKnob{ "Spread", m_audioProcessor.apvts, spreadParamID.getParamID() };
+    RotaryKnob m_offsetKnob{ "Offset", m_audioProcessor.apvts, offsetParamID.getParamID() };
 
     RotaryKnob m_lowCutFreqKnob{ "Low Cut Freq", m_audioProcessor.apvts, lowCutFreqParamID.getParamID() };
     RotaryKnob m_lowCutQKnob{ "Low Cut Q", m_audioProcessor.apvts, lowCutQParamID.getParamID() };

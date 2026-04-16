@@ -84,8 +84,8 @@ void DelayEngine::setFilterQ(const float q, float& currentQ, Filter& filter) {
 }
 
 void DelayEngine::setDelayTimes(const float targetL, const float targetR) {
-	float targetLeftMs = targetL - m_spreadMs;
-	float targetRightMs = targetR + m_spreadMs;
+	float targetLeftMs = targetL - m_offsetMs;
+	float targetRightMs = targetR + m_offsetMs;
 	if (m_delayTimeMsL == 0.0f) m_delayTimeMsL = targetLeftMs;
 	if (m_delayTimeMsR == 0.0f) m_delayTimeMsR = targetRightMs;
 	m_delayTimeMsL = onePoleLowpass(targetLeftMs, m_delayTimeMsL, m_coeff);
@@ -104,7 +104,7 @@ void DelayEngine::update(const Parameters& params)
 	setGainLevel(params.gain());
 	setFeedbackLevel(params.feedback());
 	setWidthLevel(params.stereo());
-	setSpreadMs(params.spread());
+	setOffsetMs(params.offset());
 	setDelayTimes(params.delayTimeL(), params.delayTimeR());
 }
 

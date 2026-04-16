@@ -14,7 +14,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_delayGroup.addChildComponent(m_delayNoteLKnob);
 	m_delayGroup.addChildComponent(m_delayNoteRKnob);
     m_delayGroup.addAndMakeVisible(m_feedbackKnob);
-	m_delayGroup.addAndMakeVisible(m_spreadKnob);
+	m_delayGroup.addAndMakeVisible(m_offsetKnob);
 	m_delayGroup.addAndMakeVisible(m_tempoSyncLButton);
 	m_delayGroup.addAndMakeVisible(m_tempoSyncRButton);
 	addAndMakeVisible(m_delayModeLabel);
@@ -98,7 +98,7 @@ void ViiveAudioProcessorEditor::resized()
 	m_delayModeLabel.setTopLeftPosition(10, y);
 	m_modeSelector.setTopLeftPosition(95, y);
 
-	m_spreadKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
+	m_offsetKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
 	m_lowCutFreqKnob.setTopLeftPosition(20, 20);
 	m_lowCutQKnob.setTopLeftPosition(m_lowCutFreqKnob.getRight() + 20, 20);
 	m_highCutFreqKnob.setTopLeftPosition(m_lowCutQKnob.getRight() + 20, 20);
