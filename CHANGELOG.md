@@ -23,12 +23,14 @@ All notable changes to this project will be documented in this file.
 
 * Refactored delay line into StereoDelay primitive (two independent mono delay lines)
 * Cross feedback moved from hardcoded behavior to selectable delay mode
+* Removed negative feedback and set feedback range to 0-140%
 
 ### Known limitations
 
 * GUI still placeholder and will require a redesign
 * Limited effect selection for feedback loop (only chorus)
 * Feedback distorts or gets strange artifacts on some filter settings or certain kind of input
+* Feedback gets strange noise on high (over 100%) feedback settings. Not necessarily a bad thing.
 * Delay time changes might introduce some strange artifacts
 * Left/Right delay parameters can't be linked as it caused some thread safety issues, possibly implementing a switch between single and dual modes
 

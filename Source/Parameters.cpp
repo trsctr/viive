@@ -170,7 +170,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		feedbackParamID.getParamID(),
 		"Feedback",
-		juce::NormalisableRange<float>(-100.0f, 100.0f, 1.0f),
+		juce::NormalisableRange<float>(0.0f, 140.0f, 1.0f),
 		0.0f,
 		juce::AudioParameterFloatAttributes()
 		.withStringFromValueFunction(stringFromPercent)
