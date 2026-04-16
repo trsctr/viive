@@ -119,27 +119,22 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 		case DelayMode::PingPongLR:
 			delayInL = mono + m_feedbackR;
 			delayInR = m_feedbackL;
-			//DBG("Mode: PingPongL");
 			break;
 		case DelayMode::PingPongRL:
 			delayInL = m_feedbackR;
 			delayInR = mono + m_feedbackL;
-			//DBG("Mode: PingPongR");
 			break;
 		case DelayMode::Cross: 
 			delayInL = dryL + m_feedbackR;
 			delayInR = dryR + m_feedbackL;
-			//DBG("Mode: Cross");
 			break;
 		case DelayMode::Stereo:
 			delayInL = dryL + m_feedbackL;
 			delayInR = dryR + m_feedbackR;
-		//	DBG("Mode: Stereo");
 			break;
 		default:
 			delayInL = dryL;
 			delayInR = dryR;
-	//		DBG("Falling through for default");
 	}
 
 	m_stereoDelay.processSample(delayInL, popL, Channel::Left);
