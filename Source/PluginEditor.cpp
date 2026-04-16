@@ -91,8 +91,8 @@ void ViiveAudioProcessorEditor::resized()
 	m_delayTimeRKnob.setTopLeftPosition(m_delayTimeLKnob.getRight() + 20, 20);
 	m_delayNoteLKnob.setTopLeftPosition(m_delayTimeLKnob.getX(), m_delayTimeLKnob.getY());
 	m_delayNoteRKnob.setTopLeftPosition(m_delayTimeRKnob.getX(), m_delayTimeRKnob.getY());
-	m_tempoSyncLButton.setCentrePosition(m_delayTimeLKnob.getRight() - 35, m_delayTimeLKnob.getBottom() + 11);
-	m_tempoSyncRButton.setCentrePosition(m_delayTimeRKnob.getRight() - 35, m_delayTimeRKnob.getBottom() + 11);
+	m_tempoSyncLButton.setCentrePosition(m_delayTimeLKnob.getRight() - 35, m_delayTimeLKnob.getBottom() + 15);
+	m_tempoSyncRButton.setCentrePosition(m_delayTimeRKnob.getRight() - 35, m_delayTimeRKnob.getBottom() + 15);
 	m_feedbackKnob.setTopLeftPosition(m_delayTimeRKnob.getRight() + 20, 20);
 	
 	m_delayModeLabel.setTopLeftPosition(10, y);
