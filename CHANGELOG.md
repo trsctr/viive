@@ -23,7 +23,6 @@ All notable changes to this project will be documented in this file.
 
 * Refactored delay line into StereoDelay primitive (two independent mono delay lines)
 * Cross feedback moved from hardcoded behavior to selectable delay mode
-* Default values for various parameters to get something nice sounding out of the plugin immediately
 
 ### Known limitations
 

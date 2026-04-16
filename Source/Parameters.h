@@ -32,9 +32,6 @@ public:
 	static constexpr float defaultDelayTime = 100.0f;
 	static constexpr float maxFilterQ = 2.0f;
 	static constexpr float minFilterQ = 0.1f;
-	static constexpr float defaultFeedback = 40.0f;
-	static constexpr float defaultLowCut = 80.0f;
-	static constexpr float defaultHighCut = 8000.0f;
 	static constexpr float defaultFilterQ = 0.707f;
 	static constexpr float defaultChorusModRate = 0.2f;
 	static constexpr float defaultChorusModRate2 = 0.45f; // this is not a passed param but default value for 2nd chorus

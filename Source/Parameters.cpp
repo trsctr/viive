@@ -171,7 +171,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		feedbackParamID.getParamID(),
 		"Feedback",
 		juce::NormalisableRange<float>(-100.0f, 100.0f, 1.0f),
-		defaultFeedback,
+		0.0f,
 		juce::AudioParameterFloatAttributes()
 		.withStringFromValueFunction(stringFromPercent)
 	));
@@ -212,7 +212,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		lowCutFreqParamID.getParamID(),
 		"Low Cut Frequency",
 		juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f),
-		defaultLowCut,
+		20.0f,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
 			.withValueFromStringFunction(hzFromString)
@@ -227,7 +227,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		highCutFreqParamID.getParamID(),
 		"High Cut Frequency",
 		juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f),
-		defaultHighCut,
+		20000.0f,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
 			.withValueFromStringFunction(hzFromString)
