@@ -106,12 +106,32 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	float dryL = inL;
 	float dryR = inR;
 
-	// NOTE: currently cross feedback but there could be a switch
-	// for different delay modes: STEREO, CROSS, PING PONG
-	// probably enum + switch case does it
-	float popL = 0.0f, popR = 0.0f, wetL = 0.0f, wetR = 0.0f;
-	m_stereoDelay.processSample(dryL + m_feedbackR, popL, Channel::Left);
-	m_stereoDelay.processSample(dryR + m_feedbackL, popR, Channel::Right);
+	float mono = (dryL + dryR) * .5;
+	float delayInL = 0.0f, delayInR = 0.0f, popL = 0.0f, popR = 0.0f, wetL = 0.0f, wetR = 0.0f;
+	switch (m_delayMode) {
+		case DelayMode::PingPongL:
+			delayInL = mono + m_feedbackR;
+			delayInR = m_feedbackL;
+			break;
+		case DelayMode::PingPongR:
+			delayInL = m_feedbackR;
+			delayInR = mono + m_feedbackL;
+			break;
+		case DelayMode::Cross: 
+			delayInL = dryL + m_feedbackR;
+			delayInR = dryR + m_feedbackL;
+			break;
+		case DelayMode::Stereo:
+			delayInL = dryL + m_feedbackL;
+			delayInR = dryR + m_feedbackR;
+			break;
+		default:
+			delayInL = dryL;
+			delayInR = dryR;
+	}
+
+	m_stereoDelay.processSample(delayInL, popL, Channel::Left);
+	m_stereoDelay.processSample(delayInR, popR, Channel::Right);
 	
 	m_chorusEngine.processSample(popL, popR, wetL, wetR, params);
 

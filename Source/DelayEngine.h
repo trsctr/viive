@@ -6,6 +6,8 @@
 
 using Filter = juce::dsp::StateVariableTPTFilter<float>;
 
+enum class DelayMode { Stereo, Cross, PingPongL, PingPongR};
+
 class DelayEngine
 {
 public:
@@ -31,12 +33,13 @@ public:
 private:
 	//juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> m_delayLine;
 	StereoDelay m_stereoDelay;
+	DelayMode m_delayMode = DelayMode::Stereo;
 	Filter m_lowCutFilter;
 	Filter m_highCutFilter;
 	Filter m_feedbackHighpass;
 	juce::dsp::Compressor<float> m_feedbackCompressor;
 	ChorusEngine m_chorusEngine;
-
+	
 	float m_sampleRate = 0.0f;
 	
 	float m_coeff = 0.0f;
