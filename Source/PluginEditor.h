@@ -49,11 +49,15 @@ private:
     Button m_tempoSyncLButton{ "Sync", m_audioProcessor.apvts, tempoSyncLParamID.getParamID() };
     Button m_tempoSyncRButton{ "Sync", m_audioProcessor.apvts, tempoSyncRParamID.getParamID() };
 
+    juce::Label m_delayModeLabel;
+    juce::ComboBox m_modeSelector;
+
     juce::HashMap<juce::String, juce::String> m_linkedParams;
 
     juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup;
 
     virtual void parameterChanged(const juce::String& paramID, float newValue) override;
+    void modeSelectorChanged();
     void updateDelayKnobs(bool syncLActive, bool syncRActive);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)

@@ -15,10 +15,19 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_delayGroup.addChildComponent(m_delayNoteRKnob);
     m_delayGroup.addAndMakeVisible(m_feedbackKnob);
 	m_delayGroup.addAndMakeVisible(m_spreadKnob);
-//	m_delayGroup.addAndMakeVisible(m_delayLinkButton);
 	m_delayGroup.addAndMakeVisible(m_tempoSyncLButton);
 	m_delayGroup.addAndMakeVisible(m_tempoSyncRButton);
-    addAndMakeVisible(m_delayGroup);
+	addAndMakeVisible(m_delayModeLabel);
+	m_delayModeLabel.setText("Delay Mode:", juce::NotificationType::dontSendNotification);
+	m_delayModeLabel.setEditable(false);
+	m_delayModeLabel.setSize(80, 25);
+	addAndMakeVisible(m_modeSelector);
+	m_modeSelector.addItemList(Parameters::delayModes, 1);
+	m_modeSelector.setEditableText(false);
+	m_modeSelector.setSize(130, 25);
+	m_modeSelector.onChange = [this] { modeSelectorChanged();};
+	m_modeSelector.setSelectedId(1);
+	addAndMakeVisible(m_delayGroup);
 
     m_filterGroup.setText("Filter");
     m_filterGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
@@ -51,7 +60,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	m_audioProcessor.apvts.addParameterListener(tempoSyncLParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(tempoSyncRParamID.getParamID(), this);
-	setSize (770, 330);
+	setSize (770, 370);
 }
 
 ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
@@ -73,10 +82,10 @@ void ViiveAudioProcessorEditor::resized()
     int y = 10;
 	int height = bounds.getHeight() - 20;
 
-    m_chorusGroup.setBounds(bounds.getWidth() - 360, y, 300, height / 2);
-    m_delayGroup.setBounds(10, y, m_chorusGroup.getX() - 20, height / 2);
-	m_outputGroup.setBounds(bounds.getWidth() - 360, height / 2 + 20, 300, height / 2 - 10);
-	m_filterGroup.setBounds(10, height / 2 + 20, m_outputGroup.getX() - 20, height / 2 - 10);
+    m_chorusGroup.setBounds(bounds.getWidth() - 360, y + 35, 300, height / 2 - 10);
+    m_delayGroup.setBounds(10, y + 35, m_chorusGroup.getX() - 20, height / 2 - 10);
+	m_outputGroup.setBounds(bounds.getWidth() - 360, height / 2 + 45, 300, height / 2 - 30);
+	m_filterGroup.setBounds(10, height / 2 + 45, m_outputGroup.getX() - 20, height / 2 - 30);
 
 	m_delayTimeLKnob.setTopLeftPosition(20, 20);
 	m_delayTimeRKnob.setTopLeftPosition(m_delayTimeLKnob.getRight() + 20, 20);
@@ -84,9 +93,11 @@ void ViiveAudioProcessorEditor::resized()
 	m_delayNoteRKnob.setTopLeftPosition(m_delayTimeRKnob.getX(), m_delayTimeRKnob.getY());
 	m_tempoSyncLButton.setCentrePosition(m_delayTimeLKnob.getRight() - 35, m_delayTimeLKnob.getBottom() + 11);
 	m_tempoSyncRButton.setCentrePosition(m_delayTimeRKnob.getRight() - 35, m_delayTimeRKnob.getBottom() + 11);
-//	m_delayLinkButton.setTopLeftPosition(m_delayTimeLKnob.getRight() - 10, m_delayTimeLKnob.getBottom() - 45);
-
 	m_feedbackKnob.setTopLeftPosition(m_delayTimeRKnob.getRight() + 20, 20);
+	
+	m_delayModeLabel.setTopLeftPosition(10, y);
+	m_modeSelector.setTopLeftPosition(95, y);
+
 	m_spreadKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
 	m_lowCutFreqKnob.setTopLeftPosition(20, 20);
 	m_lowCutQKnob.setTopLeftPosition(m_lowCutFreqKnob.getRight() + 20, 20);
@@ -99,7 +110,7 @@ void ViiveAudioProcessorEditor::resized()
 	m_chorusModRateKnob.setTopLeftPosition(m_chorusIntensityKnob.getRight() + 20, 20);
 	m_chorusModDepthKnob.setTopLeftPosition(m_chorusModRateKnob.getRight() + 20, 20);
 
-	m_meter.setBounds(m_outputGroup.getRight() + 15, 20, 35, height - 15);
+	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
 }
 
 void ViiveAudioProcessorEditor::updateDelayKnobs(bool syncLActive, bool syncRActive)
@@ -118,4 +129,10 @@ void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, fl
 			updateDelayKnobs(syncL, syncR);
 			});
 	}
+}
+
+void ViiveAudioProcessorEditor::modeSelectorChanged() {
+	int selectedID = m_modeSelector.getSelectedId();
+	auto* param = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(delayModeParamID.getParamID()));
+	param->setValueNotifyingHost(param->convertTo0to1(selectedID - 1));
 }
