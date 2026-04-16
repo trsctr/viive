@@ -68,6 +68,33 @@ static float hzFromString(const juce::String& text)
 	return value;
 }
 
+const juce::StringArray Parameters::delayModes = {
+	"Stereo",
+	"Cross Fb",
+	"Ping Pong LR",
+	"Ping Pong RL",
+};
+
+const juce::StringArray Parameters::noteLengths = {
+	"1/32",
+	"1/16 trip",
+	"1/32 dot",
+	"1/16",
+	"1/8 trip",
+	"1/16 dot",
+	"1/8",
+	"1/4 trip",
+	"1/8 dot",
+	"1/4",
+	"1/2 trip",
+	"1/4 dot",
+	"1/2",
+	"1/1 trip",
+	"1/2 dot",
+	"1/1",
+};
+
+
 Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 {
 	castParameter(apvts, gainParamID, m_gainParam);
@@ -77,6 +104,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, delayNoteRParamID, m_delayNoteRParam);
 	castParameter(apvts, tempoSyncLParamID, m_tempoSyncLParam);
 	castParameter(apvts, tempoSyncRParamID, m_tempoSyncRParam);
+	castParameter(apvts, delayModeParamID, m_delayModeParam);
 	castParameter(apvts, mixParamID, m_mixParam);
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
 	castParameter(apvts, stereoParamID, m_stereoParam);
@@ -101,6 +129,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromDecibels)
 	));
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		delayModeParamID.getParamID(),
+		"Delay Mode",
+		delayModes,
+		0
+	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		delayTimeLParamID.getParamID(),
 		"Delay Time L",
@@ -123,7 +157,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		delayNoteLParamID,
 		"Delay Note L",
 		noteLengths,
-	9));
+		9
+	));
 	layout.add(std::make_unique<juce::AudioParameterChoice>(
 		delayNoteRParamID,
 		"Delay Note R",
@@ -288,6 +323,7 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_tempoSyncR = m_tempoSyncRParam->get();
 	m_delayNoteL = m_delayNoteLParam->getIndex();
 	m_delayNoteR = m_delayNoteRParam->getIndex();
+	m_delayMode = m_delayModeParam->getIndex();
 	if (m_tempoSyncL) {
 		float syncedMs = juce::jmin(float(tempo.noteLengthToMs(m_delayNoteL)), maxDelayTime);
 		m_delayTimeLParam->setValueNotifyingHost(m_delayTimeLParam->convertTo0to1(syncedMs));

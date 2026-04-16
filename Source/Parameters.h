@@ -9,6 +9,7 @@ const juce::ParameterID delayNoteLParamID{ "delayNoteL", 1 };
 const juce::ParameterID delayNoteRParamID{ "delayNoteR", 1 };
 const juce::ParameterID tempoSyncLParamID{ "tempoSyncL", 1 };
 const juce::ParameterID tempoSyncRParamID{ "tempoSyncR", 1 };
+const juce::ParameterID delayModeParamID{ "delayMode", 1 };
 const juce::ParameterID mixParamID{ "mix", 1 };
 const juce::ParameterID feedbackParamID{ "feedback", 1 };
 const juce::ParameterID stereoParamID{ "stereo", 1 };
@@ -20,25 +21,6 @@ const juce::ParameterID highCutQParamID{ "highCutQ", 1 };
 const juce::ParameterID chorusIntensityParamID{ "chorusIntensity", 1 };
 const juce::ParameterID chorusModRateParamID{ "chorusModRate", 1 };
 const juce::ParameterID chorusModDepthParamID{ "chorusModDepth", 1 };
-
-const juce::StringArray noteLengths = {
-"1/32",
-"1/16 trip",
-"1/32 dot",
-"1/16",
-"1/8 trip",
-"1/16 dot",
-"1/8",
-"1/4 trip",
-"1/8 dot",
-"1/4",
-"1/2 trip",
-"1/4 dot",
-"1/2",
-"1/1 trip",
-"1/2 dot",
-"1/1",
-};
 
 class Parameters {
 public:
@@ -54,7 +36,9 @@ public:
 	static constexpr float defaultChorusModRate = 0.2f;
 	static constexpr float defaultChorusModRate2 = 0.45f; // this is not a passed param but default value for 2nd chorus
 	static constexpr float defaultChorusModDepth = 4.0f;
-
+	static const juce::StringArray delayModes;
+	static const juce::StringArray noteLengths;
+	
 	void prepareToPlay(double sampleRate) noexcept;
 	void update(const Tempo& tempo) noexcept;
 	void reset() noexcept;
@@ -67,6 +51,7 @@ public:
 	int delayNoteR() const { return m_delayNoteR; }
 	bool tempoSyncL() const { return m_tempoSyncL; }
 	bool tempoSyncR() const { return m_tempoSyncR; }
+	int delayMode() const { return m_delayMode; }
 	float mix() const { return m_mix; }
 	float feedback() const { return m_feedback; }
 	float stereo() const { return m_stereo; }
@@ -87,7 +72,7 @@ private:
 	juce::AudioParameterChoice* m_delayNoteRParam;
 	juce::AudioParameterBool* m_tempoSyncLParam;
 	juce::AudioParameterBool* m_tempoSyncRParam;
-	juce::AudioParameterBool* m_delayLinkParam;
+	juce::AudioParameterChoice* m_delayModeParam;
 	juce::AudioParameterFloat* m_mixParam;
 	juce::AudioParameterFloat* m_feedbackParam;
 	juce::AudioParameterFloat* m_stereoParam;
@@ -125,6 +110,7 @@ private:
 	int m_delayNoteR = 0;
 	bool m_tempoSyncL = true;
 	bool m_tempoSyncR = true;
+	int m_delayMode = 0;
 	float m_mix = 0.5f;
 	float m_feedback = 0.0f;
 	float m_stereo = 0.0f;
