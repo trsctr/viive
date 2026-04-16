@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 ### Known limitations
 
 * GUI still placeholder and will require a redesign
+* Limited effect selection for feedback loop (only chorus)
 * Feedback distorts or gets strange artifacts on some filter settings or certain kind of input
 * Delay time changes might introduce some strange artifacts
 * Left/Right delay parameters can't be linked as it caused some thread safety issues, possibly implementing a switch between single and dual modes
