@@ -4,7 +4,7 @@
 #include "PluginProcessor.h"
 #include "Parameters.h"
 #include "RotaryKnob.h"
-#include "Button.h"
+#include "SyncButton.h"
 #include "LevelMeter.h"
 
 //==============================================================================
@@ -46,8 +46,8 @@ private:
 	RotaryKnob m_chorusModRateKnob{ "Mod Rate", m_audioProcessor.apvts, chorusModRateParamID.getParamID() };
 	RotaryKnob m_chorusModDepthKnob{ "Mod Depth", m_audioProcessor.apvts, chorusModDepthParamID.getParamID() };
 
-    Button m_tempoSyncLButton{ "Sync", m_audioProcessor.apvts, tempoSyncLParamID.getParamID() };
-    Button m_tempoSyncRButton{ "Sync", m_audioProcessor.apvts, tempoSyncRParamID.getParamID() };
+    SyncButton m_tempoSyncLButton{ "Sync", m_audioProcessor.apvts, tempoSyncLParamID.getParamID() };
+    SyncButton m_tempoSyncRButton{ "Sync", m_audioProcessor.apvts, tempoSyncRParamID.getParamID() };
 
     juce::Label m_delayModeLabel;
     juce::ComboBox m_modeSelector;
