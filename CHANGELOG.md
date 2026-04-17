@@ -2,15 +2,6 @@
 
 All notable changes to this project will be documented in this file.
 
-## \[Unreleased]
-
-### Planned
-
-* Additional effects in feedback loop (phaser, bitcrusher, etc.)
-* Preset manager
-* Ducking
-* LFO/Modulation for general parameters (delay time, filter cutoff)
-
 ## \[0.1.0] - 2026-04-17
 
 ### Added

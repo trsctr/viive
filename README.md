@@ -1,13 +1,10 @@
 # viive
-
 A VST3 delay plugin built with JUCE. Work in progress.
 Personal playground for learning audio DSP and experimenting with feedback-loop effects.
 Currently developed and tested on Windows (JUCE AudioPluginHost, Ableton Live Suite 10, Reaper).
-
 ![screenshot](./viive.png)
 
 ## Features
-
 - Functional GUI with parameter controls and output level metering
 - Saves and retrieves plugin state
 - Separate L/R delay times (5ms - 5000ms) with tempo sync and L/R offset
@@ -23,8 +20,17 @@ Note: GUI is not final.
 
 See [CHANGELOG.md](./CHANGELOG.md) for version history and detailed changes.
 
-## Potential future features
+## Download & Installation
+Pre-built VST3 binaries for Windows and macOS are available on the [Releases](../../releases) page.
 
+Download the zip for your platform, extract it, and copy `viive.vst3` to your VST3 folder:
+
+- **Windows:** `C:\Program Files\Common Files\VST3\`
+- **macOS:** `~/Library/Audio/Plug-Ins/VST3/`
+
+Then rescan plugins in your DAW.
+
+## Potential future features
 - LFO/modulation for general parameters (such as filter cutoffs)
 - Additional effects in feedback loop (bitcrush, phaser)
 - Preset manager
@@ -32,45 +38,29 @@ See [CHANGELOG.md](./CHANGELOG.md) for version history and detailed changes.
 - Ducking
 
 ## Building
-
 ### Requirements
-
 * C++20 compiler (Visual Studio 2022 on Windows, Xcode on macOS)
-* JUCE **8.0.11**
-* Projucer
+* CMake 3.22+
 
-### 1) Get JUCE 8.0.11
+### 1) Clone the repository
+```bash
+git clone https://github.com/trsctr/viive.git
+cd viive
+```
 
-Download JUCE **8.0.11** from the [official JUCE GitHub releases](https://github.com/juce-framework/JUCE/releases/tag/8.0.11)
+### 2) Configure and build
+```bash
+cmake -B Build -DCMAKE_BUILD_TYPE=Release
+cmake --build Build --config Release
+```
 
-You should end up with a folder that contains:
-
-* `JUCE/modules/`
-* `Projucer` (the Projucer app)
-
-### 2) Set the JUCE module path in Projucer
-
-Open **Projucer** → FILE → **Global paths...**:
-
-Make sure the JUCE Modules path points to:
-* `<path-to-JUCE>/modules`
-
-### 3) Generate IDE project files
-
-* Open `viive.jucer` in Projucer
-* Click **Save Project**
-
-This generates platform-specific projects under `Builds/`
-
-### 4) Build
-
-Select your exporter from the menu in projucer and click the logo to open the project in Xcode/Visual Studio
-Once the project opens, build the `Release` configuration.
+JUCE 8.0.11 is downloaded automatically during configuration.
 
 ### Output
+The VST3 will be produced under `Build/viive_artefacts/Release/VST3/`.
 
-* VST3 will be produced under the corresponding `Builds/...` directory (search for `*.vst3` if you’re unsure).
+---
+Build setup based on the [JUCE CMake Audio Plugin Template](https://github.com/anthonyalfimov/JUCE-CMake-Plugin-Template).
 
 ## Based On
-
-Based on concepts and example code from *The Complete Beginner’s Guide to Audio Plug-in Development* by Matthijs Hollemans.
+Based on concepts and example code from *The Complete Beginner's Guide to Audio Plug-in Development* by Matthijs Hollemans.
