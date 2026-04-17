@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "Parameters.h"
 #include "DelayEngine.h"
+#include "Tempo.h"
 
 //==============================================================================
 /**
@@ -57,6 +58,7 @@ public:
 private:
     Parameters m_params;
     DelayEngine m_delayEngine;
+    Tempo m_tempo;
 
     std::atomic<float> m_outputLevelL, m_outputLevelR;
     //==============================================================================

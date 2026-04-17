@@ -10,26 +10,26 @@ Currently developed and tested on Windows (JUCE AudioPluginHost, Ableton Live Su
 
 - Functional GUI with parameter controls and output level metering
 - Saves and retrieves plugin state
-- Adjustable delay time (5ms - 5000ms)
-- Mix and feedback controls with feedback stabilization
-- Sculpting Low/high-cut filters with adjustable resonance on delayed signal / feedback loop
-- Cross-channel feedback for stereo effects
+- Separate L/R delay times (5ms - 5000ms) with tempo sync and L/R offset
+- Mix and feedback controls with feedback stabilization (0-140%)
+- Stereo width control with mid/side processing
+- Sculpting low/high-cut filters with adjustable resonance on delayed signal / feedback loop
 - Dual-voice chorus effect in feedback loop with intensity, modulation rate, and modulation depth controls
 - Feedback loop protection: HPF, compressor, soft clipping
 
-Despite the feedback protection, it can get quite loud and nasty.
+Despite the feedback protection, it can get quite loud and nasty. High feedback settings may produce interesting noise artifacts.
 
-Note: GUI is not final. Stereo knob is placeholder and non-functional.
+Note: GUI is not final.
 
 See [CHANGELOG.md](./CHANGELOG.md) for version history and detailed changes.
 
 ## Potential future features
 
-- Tempo sync for delay time
 - LFO/modulation for general parameters (such as filter cutoffs)
-- Cross feedback amount control
-- Additional effects in feedback loop (phaser?)
+- Additional effects in feedback loop (bitcrush, phaser)
 - Preset manager
+- Single/dual delay mode switch
+- Ducking
 
 ## Building
 

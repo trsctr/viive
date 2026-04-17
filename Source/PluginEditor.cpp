@@ -9,10 +9,26 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
     // editor's size to whatever you need it to be.
     m_delayGroup.setText("Delay");
     m_delayGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
-    m_delayGroup.addAndMakeVisible(m_delayTimeKnob);
+    m_delayGroup.addAndMakeVisible(m_delayTimeLKnob);
+	m_delayGroup.addAndMakeVisible(m_delayTimeRKnob);
+	m_delayGroup.addChildComponent(m_delayNoteLKnob);
+	m_delayGroup.addChildComponent(m_delayNoteRKnob);
     m_delayGroup.addAndMakeVisible(m_feedbackKnob);
-	m_delayGroup.addAndMakeVisible(m_stereoKnob);
-    addAndMakeVisible(m_delayGroup);
+	m_delayGroup.addAndMakeVisible(m_offsetKnob);
+	m_delayGroup.addAndMakeVisible(m_tempoSyncLButton);
+	m_delayGroup.addAndMakeVisible(m_tempoSyncRButton);
+	addAndMakeVisible(m_delayModeLabel);
+	m_delayModeLabel.setText("Delay Mode:", juce::NotificationType::dontSendNotification);
+	m_delayModeLabel.setEditable(false);
+	m_delayModeLabel.setSize(80, 25);
+	addAndMakeVisible(m_modeSelector);
+	m_modeSelector.addItemList(Parameters::delayModes, 1);
+	m_modeSelector.setEditableText(false);
+	m_modeSelector.setSize(130, 25);
+	m_modeSelector.onChange = [this] { modeSelectorChanged();};
+	auto* param = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(delayModeParamID.getParamID()));
+	m_modeSelector.setSelectedId(param->getIndex() + 1, juce::dontSendNotification);
+	addAndMakeVisible(m_delayGroup);
 
     m_filterGroup.setText("Filter");
     m_filterGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
@@ -24,6 +40,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	m_outputGroup.setText("Output");
 	m_outputGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
+	m_outputGroup.addAndMakeVisible(m_stereoKnob);
 	m_outputGroup.addAndMakeVisible(m_mixKnob);
 	m_outputGroup.addAndMakeVisible(m_gainKnob);
     addAndMakeVisible(m_outputGroup);
@@ -37,11 +54,20 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	addAndMakeVisible(m_meter);
 
-    setSize (670, 330);
+	bool syncL = m_audioProcessor.apvts.getParameter(tempoSyncLParamID.getParamID())->getValue() > 0.5f;
+	bool syncR = m_audioProcessor.apvts.getParameter(tempoSyncRParamID.getParamID())->getValue() > 0.5f;
+
+	updateDelayKnobs(syncL, syncR);
+
+	m_audioProcessor.apvts.addParameterListener(tempoSyncLParamID.getParamID(), this);
+	m_audioProcessor.apvts.addParameterListener(tempoSyncRParamID.getParamID(), this);
+	setSize (770, 370);
 }
 
 ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
 {
+	m_audioProcessor.apvts.removeParameterListener(tempoSyncLParamID.getParamID(), this);
+	m_audioProcessor.apvts.removeParameterListener(tempoSyncRParamID.getParamID(), this);
 }
 
 //==============================================================================
@@ -49,6 +75,9 @@ void ViiveAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(juce::Colours::darkgrey);
+	g.setColour(juce::Colours::white);
+	g.setFont(12.0f);
+	g.drawText(JucePlugin_VersionString, getLocalBounds().reduced(5), juce::Justification::topRight);
 }
 
 void ViiveAudioProcessorEditor::resized()
@@ -57,23 +86,59 @@ void ViiveAudioProcessorEditor::resized()
     int y = 10;
 	int height = bounds.getHeight() - 20;
 
-    m_chorusGroup.setBounds(bounds.getWidth() - 360, y, 300, height / 2 - 10);
-    m_delayGroup.setBounds(10, y, m_chorusGroup.getX() - 20, height / 2 - 10);
-	m_outputGroup.setBounds(bounds.getWidth() - 260, height / 2 + 10, 200, height / 2);
-	m_filterGroup.setBounds(10, height / 2 + 10, m_outputGroup.getX() - 20, height / 2);
+    m_chorusGroup.setBounds(bounds.getWidth() - 360, y + 35, 300, height / 2 - 10);
+    m_delayGroup.setBounds(10, y + 35, m_chorusGroup.getX() - 20, height / 2 - 10);
+	m_outputGroup.setBounds(bounds.getWidth() - 360, height / 2 + 45, 300, height / 2 - 30);
+	m_filterGroup.setBounds(10, height / 2 + 45, m_outputGroup.getX() - 20, height / 2 - 30);
 
-	m_delayTimeKnob.setTopLeftPosition(20, 20);
-	m_feedbackKnob.setTopLeftPosition(m_delayTimeKnob.getRight() + 20, 20);
-	m_stereoKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
+	m_delayTimeLKnob.setTopLeftPosition(20, 20);
+	m_delayTimeRKnob.setTopLeftPosition(m_delayTimeLKnob.getRight() + 20, 20);
+	m_delayNoteLKnob.setTopLeftPosition(m_delayTimeLKnob.getX(), m_delayTimeLKnob.getY());
+	m_delayNoteRKnob.setTopLeftPosition(m_delayTimeRKnob.getX(), m_delayTimeRKnob.getY());
+	m_tempoSyncLButton.setCentrePosition(m_delayTimeLKnob.getRight() - 35, m_delayTimeLKnob.getBottom() + 15);
+	m_tempoSyncRButton.setCentrePosition(m_delayTimeRKnob.getRight() - 35, m_delayTimeRKnob.getBottom() + 15);
+	m_feedbackKnob.setTopLeftPosition(m_delayTimeRKnob.getRight() + 20, 20);
+	
+	m_delayModeLabel.setTopLeftPosition(10, y);
+	m_modeSelector.setTopLeftPosition(95, y);
+
+	m_offsetKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
 	m_lowCutFreqKnob.setTopLeftPosition(20, 20);
 	m_lowCutQKnob.setTopLeftPosition(m_lowCutFreqKnob.getRight() + 20, 20);
 	m_highCutFreqKnob.setTopLeftPosition(m_lowCutQKnob.getRight() + 20, 20);
 	m_highCutQKnob.setTopLeftPosition(m_highCutFreqKnob.getRight() + 20, 20);
-	m_mixKnob.setTopLeftPosition(20, 20);
+	m_stereoKnob.setTopLeftPosition(20, 20);
+	m_mixKnob.setTopLeftPosition(m_stereoKnob.getRight() + 20, 20);
 	m_gainKnob.setTopLeftPosition(m_mixKnob.getRight() + 20, 20);
 	m_chorusIntensityKnob.setTopLeftPosition(20, 20);
 	m_chorusModRateKnob.setTopLeftPosition(m_chorusIntensityKnob.getRight() + 20, 20);
 	m_chorusModDepthKnob.setTopLeftPosition(m_chorusModRateKnob.getRight() + 20, 20);
 
-	m_meter.setBounds(m_outputGroup.getRight() + 15, 20, 35, height - 15);
+	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
+
+
+}
+
+void ViiveAudioProcessorEditor::updateDelayKnobs(bool syncLActive, bool syncRActive)
+{
+	m_delayTimeLKnob.setVisible(!syncLActive);
+	m_delayNoteLKnob.setVisible(syncLActive);
+	m_delayTimeRKnob.setVisible(!syncRActive);
+	m_delayNoteRKnob.setVisible(syncRActive);
+}
+
+void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, float newValue) {
+	if (paramID == tempoSyncLParamID.getParamID() || paramID == tempoSyncRParamID.getParamID()) {
+		juce::MessageManager::callAsync([this] {
+			bool syncL = m_audioProcessor.apvts.getParameter(tempoSyncLParamID.getParamID())->getValue() > 0.5f;
+			bool syncR = m_audioProcessor.apvts.getParameter(tempoSyncRParamID.getParamID())->getValue() > 0.5f;
+			updateDelayKnobs(syncL, syncR);
+			});
+	}
+}
+
+void ViiveAudioProcessorEditor::modeSelectorChanged() {
+	int selectedID = m_modeSelector.getSelectedId();
+	auto* param = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(delayModeParamID.getParamID()));
+	param->setValueNotifyingHost(param->convertTo0to1(selectedID - 1));
 }

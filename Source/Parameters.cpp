@@ -68,13 +68,47 @@ static float hzFromString(const juce::String& text)
 	return value;
 }
 
+const juce::StringArray Parameters::delayModes = {
+	"Stereo",
+	"Cross Fb",
+	"Ping Pong LR",
+	"Ping Pong RL",
+};
+
+const juce::StringArray Parameters::noteLengths = {
+	"1/32",
+	"1/16 trip",
+	"1/32 dot",
+	"1/16",
+	"1/8 trip",
+	"1/16 dot",
+	"1/8",
+	"1/4 trip",
+	"1/8 dot",
+	"1/4",
+	"1/2 trip",
+	"1/4 dot",
+	"1/2",
+	"1/1 trip",
+	"1/2 dot",
+	"1/1",
+};
+
+
 Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 {
 	castParameter(apvts, gainParamID, m_gainParam);
-	castParameter(apvts, delayTimeParamID, m_delayTimeParam);
+	castParameter(apvts, delayTimeLParamID, m_delayTimeLParam);
+	castParameter(apvts, delayTimeRParamID, m_delayTimeRParam);
+	castParameter(apvts, delayNoteLParamID, m_delayNoteLParam);
+	castParameter(apvts, delayNoteRParamID, m_delayNoteRParam);
+	castParameter(apvts, tempoSyncLParamID, m_tempoSyncLParam);
+	castParameter(apvts, tempoSyncRParamID, m_tempoSyncRParam);
+	castParameter(apvts, delayModeParamID, m_delayModeParam);
 	castParameter(apvts, mixParamID, m_mixParam);
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
 	castParameter(apvts, stereoParamID, m_stereoParam);
+	castParameter(apvts, offsetParamID, m_offsetParam);
 	castParameter(apvts, chorusIntensityParamID, m_chorusIntensityParam);
 	castParameter(apvts, lowCutFreqParamID, m_lowCutFreqParam);
 	castParameter(apvts, lowCutQParamID, m_lowCutQParam);
@@ -87,22 +121,68 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
 {
 	juce::AudioProcessorValueTreeState::ParameterLayout layout;
-	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		gainParamID.getParamID(),
-		"Gain",
-		juce::NormalisableRange<float>(-12.0f, 6.0f),
-		0.0f,
-		juce::AudioParameterFloatAttributes()
-			.withStringFromValueFunction(stringFromDecibels)
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		delayModeParamID.getParamID(),
+		"Delay Mode",
+		delayModes,
+		0
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		delayTimeParamID.getParamID(),
-		"Delay Time",
+		delayTimeLParamID.getParamID(),
+		"Delay Time L",
 		juce::NormalisableRange<float>(minDelayTime, maxDelayTime, 0.001f, 0.25f),
 		defaultDelayTime,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromMilliseconds)
 			.withValueFromStringFunction(millisecondsFromString)
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		delayTimeRParamID.getParamID(),
+		"Delay Time R",
+		juce::NormalisableRange<float>(minDelayTime, maxDelayTime, 0.001f, 0.25f),
+		defaultDelayTime,
+		juce::AudioParameterFloatAttributes()
+		.withStringFromValueFunction(stringFromMilliseconds)
+		.withValueFromStringFunction(millisecondsFromString)
+	));
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		delayNoteLParamID,
+		"Delay Note L",
+		noteLengths,
+		9
+	));
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		delayNoteRParamID,
+		"Delay Note R",
+		noteLengths,
+		9
+	));
+	layout.add(std::make_unique<juce::AudioParameterBool>(
+		tempoSyncLParamID.getParamID(),
+		"Tempo Sync L",
+		true
+	));
+	layout.add(std::make_unique<juce::AudioParameterBool>(
+		tempoSyncRParamID.getParamID(),
+		"Tempo Sync R",
+		true
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		feedbackParamID.getParamID(),
+		"Feedback",
+		juce::NormalisableRange<float>(0.0f, 140.0f, 1.0f),
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+		.withStringFromValueFunction(stringFromPercent)
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		offsetParamID.getParamID(),
+		"Offset",
+		juce::NormalisableRange<float>(-50.0f, 50.0f, 0.001f),
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+		.withStringFromValueFunction(stringFromMilliseconds)
+		.withValueFromStringFunction(millisecondsFromString)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		mixParamID.getParamID(),
@@ -113,26 +193,20 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 			.withStringFromValueFunction(stringFromPercent)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		feedbackParamID.getParamID(),
-		"Feedback",
-		juce::NormalisableRange<float>(-100.0f, 100.0f, 1.0f),
-		0.0f,
-		juce::AudioParameterFloatAttributes()
-			.withStringFromValueFunction(stringFromPercent)
-	));
-	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		stereoParamID.getParamID(),
 		"Stereo",
-		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
-		0.0f,
+		juce::NormalisableRange<float>(0.0f, 200.0f, 1.0f),
+		100.0f,
 		juce::AudioParameterFloatAttributes()
 		.withStringFromValueFunction(stringFromPercent)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		chorusIntensityParamID.getParamID(),
-		"Chorus Intensity",
-		juce::NormalisableRange<float>(0.0f, 1.0f, .01f),
-		0.0f
+		gainParamID.getParamID(),
+		"Gain",
+		juce::NormalisableRange<float>(-12.0f, 6.0f),
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+		.withStringFromValueFunction(stringFromDecibels)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutFreqParamID.getParamID(),
@@ -146,7 +220,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutQParamID.getParamID(),
 		"Low Cut Q",
-		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.1f),
+		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.01f),
 		defaultFilterQ
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
@@ -161,8 +235,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutQParamID.getParamID(),
 		"High Cut Q",
-		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.1f),
+		juce::NormalisableRange<float>(minFilterQ, maxFilterQ, 0.01f),
 		defaultFilterQ
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		chorusIntensityParamID.getParamID(),
+		"Chorus Intensity",
+		juce::NormalisableRange<float>(0.0f, 1.0f, .01f),
+		0.0f
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		chorusModRateParamID.getParamID(),
@@ -186,6 +266,7 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_mixSmoother.reset(sampleRate, duration);
 	m_feedbackSmoother.reset(sampleRate, duration);
 	m_stereoSmoother.reset(sampleRate, duration);
+	m_offsetSmoother.reset(sampleRate, duration);
 	m_chorusIntensitySmoother.reset(sampleRate, duration);
 	m_lowCutFreqSmoother.reset(sampleRate, duration);
 	m_lowCutQSmoother.reset(sampleRate, duration);
@@ -193,16 +274,17 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_highCutQSmoother.reset(sampleRate, duration);
 	m_chorusModRateSmoother.reset(sampleRate, duration);
 	m_chorusModDepthSmoother.reset(sampleRate, duration);
-	m_coeff = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
 }
 
 void Parameters::reset() noexcept
 {
 	m_gain = 0.0f;
-	m_delayTime = 0.0f;
+	m_delayTimeL = 0.0f;
+	m_delayTimeR = 0.0f;
 	m_mix = .5f;
 	m_feedback = 0.0f;
 	m_stereo = 0.0f;
+	m_offset = 0.0f;
 	m_chorusIntensity = 0.0f;
 	m_lowCutFreq = 20.0f;
 	m_lowCutQ = defaultFilterQ;
@@ -221,15 +303,15 @@ void Parameters::reset() noexcept
 	m_highCutQSmoother.setCurrentAndTargetValue(m_highCutQParam->get());
 	m_chorusModRateSmoother.setCurrentAndTargetValue(m_chorusModRateParam->get());
 	m_chorusModDepthSmoother.setCurrentAndTargetValue(m_chorusModDepthParam->get());
-
 }
 
-void Parameters::update() noexcept
+void Parameters::update(const Tempo& tempo) noexcept
 {
 	m_gainSmoother.setTargetValue(juce::Decibels::decibelsToGain(m_gainParam->get()));
 	m_mixSmoother.setTargetValue(m_mixParam->get() * 0.01f);
 	m_feedbackSmoother.setTargetValue(m_feedbackParam->get() * 0.01f);
 	m_stereoSmoother.setTargetValue(m_stereoParam->get() * 0.01f);
+	m_offsetSmoother.setTargetValue(m_offsetParam->get());
 	m_chorusIntensitySmoother.setTargetValue(m_chorusIntensityParam->get());
 	m_lowCutFreqSmoother.setTargetValue(m_lowCutFreqParam->get());
 	m_lowCutQSmoother.setTargetValue(m_lowCutQParam->get());
@@ -237,10 +319,21 @@ void Parameters::update() noexcept
 	m_highCutQSmoother.setTargetValue(m_highCutQParam->get());
 	m_chorusModRateSmoother.setTargetValue(m_chorusModRateParam->get());
 	m_chorusModDepthSmoother.setTargetValue(m_chorusModDepthParam->get());
-	m_targetDelayTime = m_delayTimeParam->get();
-	if (m_delayTime == 0.0f) {
-		m_delayTime = m_targetDelayTime;
+	m_tempoSyncL = m_tempoSyncLParam->get();
+	m_tempoSyncR = m_tempoSyncRParam->get();
+	m_delayNoteL = m_delayNoteLParam->getIndex();
+	m_delayNoteR = m_delayNoteRParam->getIndex();
+	m_delayMode = m_delayModeParam->getIndex();
+	if (m_tempoSyncL) {
+		float syncedMs = juce::jmin(float(tempo.noteLengthToMs(m_delayNoteL)), maxDelayTime);
+		m_delayTimeLParam->setValueNotifyingHost(m_delayTimeLParam->convertTo0to1(syncedMs));
 	}
+	if (m_tempoSyncR) {
+		float syncedMs = juce::jmin(float(tempo.noteLengthToMs(m_delayNoteR)), maxDelayTime);
+		m_delayTimeRParam->setValueNotifyingHost(m_delayTimeRParam->convertTo0to1(syncedMs));
+	}
+	m_delayTimeL = m_delayTimeLParam->get();
+	m_delayTimeR = m_delayTimeRParam->get();
 }
 
 void Parameters::smoothen() noexcept
@@ -249,6 +342,7 @@ void Parameters::smoothen() noexcept
 	m_mix = m_mixSmoother.getNextValue();
 	m_feedback = m_feedbackSmoother.getNextValue();
 	m_stereo = m_stereoSmoother.getNextValue();
+	m_offset = m_offsetSmoother.getNextValue();
 	m_chorusIntensity = m_chorusIntensitySmoother.getNextValue();
 	m_lowCutFreq = m_lowCutFreqSmoother.getNextValue();
 	m_lowCutQ = m_lowCutQSmoother.getNextValue();
@@ -256,5 +350,4 @@ void Parameters::smoothen() noexcept
 	m_highCutQ = m_highCutQSmoother.getNextValue();
 	m_chorusModRate = m_chorusModRateSmoother.getNextValue();
 	m_chorusModDepth = m_chorusModDepthSmoother.getNextValue();
-	m_delayTime = onePoleLowpass(m_targetDelayTime, m_delayTime, m_coeff);
 }
