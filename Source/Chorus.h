@@ -5,7 +5,7 @@
 class Chorus
 {
 public:
-	Chorus(float delayTimeMs, float lfoFrequency, float modDepth, float lfoOffset);
+	Chorus(float delayTimeMs = defaultDelayMs, float lfoFrequency = 1.0f, float modDepth = 1.0f, float lfoOffset = 0.0f);
 	~Chorus() = default;
 
 	static constexpr float chorusMaxDelayMs = 60.0f;
@@ -17,7 +17,7 @@ public:
 	void update();
 	float processSample(const float& in);
 	void setBaseDelay(float delayInMs);
-	void setModRate(float rate) { m_lfo.setFrequency(rate); };
+	void setModRate(float rate) { m_lfo.setFrequency(rate); }
 	void setModDepthMs(float modDepthMs);
 
 private:
@@ -41,5 +41,5 @@ private:
 	void setBaseDelaySamples();
 	void setModDepthSamples();
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Chorus);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Chorus)
 };

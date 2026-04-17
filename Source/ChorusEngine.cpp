@@ -38,7 +38,7 @@ void ChorusEngine::reset() noexcept
 
 void ChorusEngine::setModRate(float newRate)
 {
-	if (newRate != m_modRate) {
+	if (!juce::approximatelyEqual(newRate, m_modRate)) {
 		m_modRate = newRate;
 		m_chorus1L.setModRate(m_modRate);
 		m_chorus1R.setModRate(m_modRate);
@@ -49,7 +49,7 @@ void ChorusEngine::setModRate(float newRate)
 
 void ChorusEngine::setModDepth(float modDepth)
 {
-	if (modDepth != m_modDepth)
+	if (!juce::approximatelyEqual(modDepth, m_modDepth))
 	{
 		m_modDepth = modDepth;
 		m_chorus1L.setModDepthMs(m_modDepth);

@@ -31,7 +31,7 @@ void StereoDelay::reset() noexcept
 
 void StereoDelay::setDelayTime(float ms, Channel channel)
 {
-	if (ms != m_delayTimesMs[channel]) {
+	if (!juce::approximatelyEqual(ms, m_delayTimesMs[channel])) {
 		m_delayTimesMs[channel] = ms;
 		m_delayTimesSamples[channel] = msToSamples(m_delayTimesMs[channel], m_sampleRate);
 		m_delayLines[channel].setDelay(m_delayTimesSamples[channel]);

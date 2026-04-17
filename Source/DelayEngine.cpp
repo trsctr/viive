@@ -69,7 +69,7 @@ void DelayEngine::setHighCut(const Parameters& params) {
 }
 
 void DelayEngine::setFilterFreq(const float freq, float& currentFreq, Filter& filter) {
-	if (freq != currentFreq) {
+	if (!juce::approximatelyEqual(freq, currentFreq)) {
 		filter.setCutoffFrequency(freq);
 		currentFreq = freq;
 	}
@@ -77,7 +77,7 @@ void DelayEngine::setFilterFreq(const float freq, float& currentFreq, Filter& fi
 
 void DelayEngine::setFilterQ(const float q, float& currentQ, Filter& filter) {
 	float newQ = std::min(q, Parameters::maxFilterQ);
-	if (newQ != currentQ) {
+	if (!juce::approximatelyEqual(newQ, currentQ)) {
 		filter.setResonance(newQ);
 		currentQ = newQ;
 	}
@@ -86,8 +86,8 @@ void DelayEngine::setFilterQ(const float q, float& currentQ, Filter& filter) {
 void DelayEngine::setDelayTimes(const float targetL, const float targetR) {
 	float targetLeftMs = targetL - m_offsetMs;
 	float targetRightMs = targetR + m_offsetMs;
-	if (m_delayTimeMsL == 0.0f) m_delayTimeMsL = targetLeftMs;
-	if (m_delayTimeMsR == 0.0f) m_delayTimeMsR = targetRightMs;
+	if (std::abs(m_delayTimeMsL) < 1e-4f) m_delayTimeMsL = targetLeftMs;
+	if (std::abs(m_delayTimeMsR) < 1e-4f) m_delayTimeMsR = targetRightMs;
 	m_delayTimeMsL = onePoleLowpass(targetLeftMs, m_delayTimeMsL, m_coeff);
 	m_delayTimeMsR = onePoleLowpass(targetRightMs, m_delayTimeMsR, m_coeff);
 	float leftMs = juce::jlimit(Parameters::minDelayTime, Parameters::maxDelayTime, m_delayTimeMsL);
@@ -113,7 +113,7 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	float dryL = inL;
 	float dryR = inR;
 
-	float mono = (dryL + dryR) * .5;
+	float mono = (dryL + dryR) * .5f;
 	float delayInL = 0.0f, delayInR = 0.0f, popL = 0.0f, popR = 0.0f, wetL = 0.0f, wetR = 0.0f;
 	switch (m_delayMode) {
 		case DelayMode::PingPongLR:
@@ -162,8 +162,8 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	m_feedbackL = std::tanh(m_feedbackL);
 	m_feedbackR = std::tanh(m_feedbackR);
 
-	float mid = (wetL + wetR) * .5;
-	float side = (wetL - wetR) * .5;
+	float mid = (wetL + wetR) * .5f;
+	float side = (wetL - wetR) * .5f;
 
 	side *= m_widthLevel;
 

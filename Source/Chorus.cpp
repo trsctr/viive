@@ -1,6 +1,6 @@
 #include "Chorus.h"
 #include "DSP.h"
-Chorus::Chorus(float delayTimeMs = defaultDelayMs, float lfoFrequency = 1.0f, float modDepth = 1.0f, float lfoOffset = 0.0f)
+Chorus::Chorus(float delayTimeMs, float lfoFrequency, float modDepth, float lfoOffset)
 	: m_baseDelayMs(delayTimeMs), m_lfo{lfoFrequency, lfoOffset, LFOShape::Triangle }, m_modDepthMs(modDepth)
 {
 }
@@ -31,7 +31,7 @@ void Chorus::reset() noexcept
 
 void Chorus::setBaseDelay(float delayInMs)
 {
-	if (delayInMs != m_baseDelayMs) {
+	if (!juce::approximatelyEqual(delayInMs, m_baseDelayMs)) {
 		m_baseDelayMs = delayInMs;
 		setBaseDelaySamples();
 	}
@@ -43,7 +43,7 @@ void Chorus::setBaseDelaySamples() {
 
 void Chorus::setModDepthMs(float modDepthMs)
 {
-	if (modDepthMs != m_modDepthMs) {
+	if (!juce::approximatelyEqual(modDepthMs, m_modDepthMs)) {
 		m_modDepthMs = modDepthMs;
 		setModDepthSamples();
 	}

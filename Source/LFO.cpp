@@ -1,6 +1,6 @@
 #include "LFO.h"
 
-LFO::LFO(float frequency = 1.0f, float offset = 0.0f, LFOShape shape = LFOShape::Sine)
+LFO::LFO(float frequency, float offset, LFOShape shape)
 	: m_frequency(frequency), m_offset(offset), m_shape(shape)
 {
 }
@@ -15,7 +15,7 @@ void LFO::reset() noexcept {
 }
 
 void LFO::setFrequency(float frequency) {
-	if (frequency != m_frequency) {
+	if (!juce::approximatelyEqual(frequency, m_frequency)) {
 		m_frequency = frequency;
 		setIncrement();
 	}
