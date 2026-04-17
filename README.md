@@ -21,7 +21,7 @@ Note: GUI is not final.
 See [CHANGELOG.md](./CHANGELOG.md) for version history and detailed changes.
 
 ## Download & Installation
-Pre-built VST3 binaries for Windows and macOS are available on the [Releases](../../releases) page.
+Pre-built VST3 binaries for Windows and macOS are available on the [Releases](https://github.com/trsctr/viive/releases) page.
 
 Download the zip for your platform, extract it, and copy `viive.vst3` to your VST3 folder:
 
