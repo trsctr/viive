@@ -75,6 +75,9 @@ void ViiveAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(juce::Colours::darkgrey);
+	g.setColour(juce::Colours::white);
+	g.setFont(12.0f);
+	g.drawText(JucePlugin_VersionString, getLocalBounds().reduced(5), juce::Justification::topRight);
 }
 
 void ViiveAudioProcessorEditor::resized()
@@ -112,6 +115,8 @@ void ViiveAudioProcessorEditor::resized()
 	m_chorusModDepthKnob.setTopLeftPosition(m_chorusModRateKnob.getRight() + 20, 20);
 
 	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
+
+
 }
 
 void ViiveAudioProcessorEditor::updateDelayKnobs(bool syncLActive, bool syncRActive)
