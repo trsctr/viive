@@ -4,7 +4,7 @@
 enum class LFOShape { Sine, Triangle };
 class LFO {
 public:
-	LFO(float frequency, float offset, LFOShape shape);
+	LFO(float frequency = 1.0f, float offset = 0.0f, LFOShape shape = LFOShape::Sine);
 	~LFO() = default;
 
 	void prepareToPlay(float sampleRate) noexcept;

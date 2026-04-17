@@ -1,18 +1,8 @@
-/*
-  ==============================================================================
-
-    Button.cpp
-    Created: 15 Apr 2026 11:58:15am
-    Author:  trise
-
-  ==============================================================================
-*/
-
 #include <JuceHeader.h>
-#include "Button.h"
+#include "SyncButton.h"
 
 //==============================================================================
-Button::Button(const juce::String& text, juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& parameterID, int width, int height)
+SyncButton::SyncButton(const juce::String& text, juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& parameterID, int width, int height)
     : m_attachment(apvts, parameterID.getParamID(), m_button)
 {
     // In your constructor, you should add any child components, and
@@ -27,11 +17,11 @@ Button::Button(const juce::String& text, juce::AudioProcessorValueTreeState& apv
     setSize(width, height);
 }
 
-Button::~Button()
+SyncButton::~SyncButton()
 {
 }
 
-void Button::resized()
+void SyncButton::resized()
 {
     m_button.setTopLeftPosition(0, 0);
 }
