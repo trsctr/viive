@@ -82,13 +82,14 @@ jobs:
       working-directory: Build
       run: |
         shopt -s extglob
-        mv *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3 viive.vst3
+        mkdir viive-${{ env.SAFE_REF_NAME }}-vst3-${{ runner.os }}
+        mv *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3 viive-${{ env.SAFE_REF_NAME }}-vst3-${{ runner.os }}/
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: viive-${{ env.SAFE_REF_NAME }}-vst3-${{ runner.os }}
-        path: Build/viive.vst3
+        path: Build/viive-${{ env.SAFE_REF_NAME }}-vst3-${{ runner.os }}
 
   release:
     needs: build_and_validate
