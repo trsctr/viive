@@ -26,7 +26,8 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_modeSelector.setEditableText(false);
 	m_modeSelector.setSize(130, 25);
 	m_modeSelector.onChange = [this] { modeSelectorChanged();};
-	m_modeSelector.setSelectedId(1);
+	auto* param = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(delayModeParamID.getParamID()));
+	m_modeSelector.setSelectedId(param->getIndex() + 1, juce::dontSendNotification);
 	addAndMakeVisible(m_delayGroup);
 
     m_filterGroup.setText("Filter");
