@@ -105,7 +105,7 @@ jobs:
     - name: Zip artifacts
       run: |
         for dir in viive-*/; do
-          zip -r "${dir%/}.zip" "$dir"
+          (cd "$dir" && zip -r "../${dir%/}.zip" .)
         done
 
     - name: Create Release
