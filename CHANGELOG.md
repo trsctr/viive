@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 * Ducking
 * LFO/Modulation for general parameters (delay time, filter cutoff)
 
-## \[0.1.0] - 2026-04-16
+## \[0.1.0] - 2026-04-17
 
 ### Added
 
