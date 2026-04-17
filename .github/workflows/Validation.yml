@@ -73,19 +73,22 @@ jobs:
         unzip -q pluginval
         ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3
 
+    - name: Get safe ref name
+      shell: bash
+      run: echo "SAFE_REF_NAME=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
+
     - name: Prepare artifacts
       shell: bash
       working-directory: Build
       run: |
         shopt -s extglob
         mv *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3 viive.vst3
-        zip -r viive-${{ github.ref_name }}-vst3-${{ runner.os }}.zip viive.vst3
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: viive-${{ github.ref_name }}-vst3-${{ runner.os }}
-        path: Build/viive-${{ github.ref_name }}-vst3-${{ runner.os }}.zip
+        name: viive-${{ env.SAFE_REF_NAME }}-vst3-${{ runner.os }}
+        path: Build/viive.vst3
 
   release:
     needs: build_and_validate
@@ -97,6 +100,6 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        files: "**/*.zip"
+        files: "**/*.vst3"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
