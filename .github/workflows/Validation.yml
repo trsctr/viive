@@ -2,7 +2,7 @@ name: Build and Validate
 
 on:
   push:
-    branches: [main, dev, build/cmake-setup]
+    branches: [main, dev]
     tags:
       - 'v*'
   pull_request:
@@ -102,5 +102,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: "**/*.vst3"
+        body_path: CHANGELOG.md
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
