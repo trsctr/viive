@@ -16,8 +16,14 @@ const juce::ParameterID stereoParamID{ "stereo", 1 };
 const juce::ParameterID offsetParamID{ "offset", 1 };
 const juce::ParameterID lowCutFreqParamID{ "lowCutFreq", 1 };
 const juce::ParameterID lowCutQParamID{ "lowCutQ", 1 };
+const juce::ParameterID lowCutModRateParamID{ "lowCutModRate", 1 };
+const juce::ParameterID lowCutModDepthParamID{ "lowCutModDepth", 1 };
+const juce::ParameterID lowCutModPhaseParamID{ "lowCutModPhase", 1 };
 const juce::ParameterID highCutFreqParamID{ "highCutFreq", 1 };
 const juce::ParameterID highCutQParamID{ "highCutQ", 1 };
+const juce::ParameterID highCutModRateParamID{ "highCutModRate", 1 };
+const juce::ParameterID highCutModDepthParamID{ "highCutModDepth", 1 };
+const juce::ParameterID highCutModPhaseParamID{ "highCutModPhase", 1 };
 const juce::ParameterID chorusIntensityParamID{ "chorusIntensity", 1 };
 const juce::ParameterID chorusModRateParamID{ "chorusModRate", 1 };
 const juce::ParameterID chorusModDepthParamID{ "chorusModDepth", 1 };
@@ -60,8 +66,14 @@ public:
 	float offset() const { return m_offset; }
 	float lowCutFreq() const { return m_lowCutFreq; }
 	float lowCutQ() const { return m_lowCutQ; }
+	float lowCutModRate() const { return m_lowCutModRate; }
+	float lowCutModDepth() const { return m_lowCutModDepth; }
+	float lowCutModPhase() const { return m_lowCutModPhase; }
 	float highCutFreq() const { return m_highCutFreq; }
 	float highCutQ() const { return m_highCutQ; }
+	float highCutModRate() const { return m_highCutModRate; }
+	float highCutModDepth() const { return m_highCutModDepth; }
+	float highCutModPhase() const { return m_highCutModPhase; }
 	float chorusIntensity() const { return m_chorusIntensity; }
 	float chorusModRate() const { return m_chorusModRate; }
 	float chorusModDepth() const { return m_chorusModDepth; }
@@ -81,8 +93,14 @@ private:
 	juce::AudioParameterFloat* m_offsetParam;
 	juce::AudioParameterFloat* m_lowCutFreqParam;
 	juce::AudioParameterFloat* m_lowCutQParam;
+	juce::AudioParameterFloat* m_lowCutModRateParam;
+	juce::AudioParameterFloat* m_lowCutModDepthParam;
+	juce::AudioParameterFloat* m_lowCutModPhaseParam;
 	juce::AudioParameterFloat* m_highCutFreqParam;
 	juce::AudioParameterFloat* m_highCutQParam;
+	juce::AudioParameterFloat* m_highCutModRateParam;
+	juce::AudioParameterFloat* m_highCutModDepthParam;
+	juce::AudioParameterFloat* m_highCutModPhaseParam;
 	juce::AudioParameterFloat* m_chorusIntensityParam;
 	juce::AudioParameterFloat* m_chorusModRateParam;
 	juce::AudioParameterFloat* m_chorusModDepthParam;
@@ -94,8 +112,14 @@ private:
 	juce::LinearSmoothedValue<float> m_offsetSmoother;
 	juce::LinearSmoothedValue<float> m_lowCutFreqSmoother;
 	juce::LinearSmoothedValue<float> m_lowCutQSmoother;
+	juce::LinearSmoothedValue<float> m_lowCutModRateSmoother;
+	juce::LinearSmoothedValue<float> m_lowCutModDepthSmoother;
+	juce::LinearSmoothedValue<float> m_lowCutModPhaseSmoother;
 	juce::LinearSmoothedValue<float> m_highCutFreqSmoother;
 	juce::LinearSmoothedValue<float> m_highCutQSmoother;
+	juce::LinearSmoothedValue<float> m_highCutModRateSmoother;
+	juce::LinearSmoothedValue<float> m_highCutModDepthSmoother;
+	juce::LinearSmoothedValue<float> m_highCutModPhaseSmoother;
 	juce::LinearSmoothedValue<float> m_chorusIntensitySmoother;
 	juce::LinearSmoothedValue<float> m_chorusModRateSmoother;
 	juce::LinearSmoothedValue<float> m_chorusModDepthSmoother;
@@ -119,8 +143,14 @@ private:
 	float m_offset = 0.0f;
 	float m_lowCutFreq = 20.0f;
 	float m_lowCutQ = defaultFilterQ;
+	float m_lowCutModRate = 0.0f;
+	float m_lowCutModDepth = 0.0f;
+	float m_lowCutModPhase = 0.0f;
 	float m_highCutFreq = 20000.0f;
 	float m_highCutQ = defaultFilterQ;
+	float m_highCutModRate = 0.0f;
+	float m_highCutModDepth = 0.0f;
+	float m_highCutModPhase = 0.0f;
 	float m_chorusIntensity = 0.0f;
 	float m_chorusModRate = defaultChorusModRate;
 	float m_chorusModDepth = defaultChorusModDepth;
