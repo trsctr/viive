@@ -79,7 +79,7 @@ const juce::StringArray Parameters::delayModes = {
 	"Ping Pong RL",
 };
 
-const juce::StringArray Parameters::noteLengths = {
+const juce::StringArray Parameters::delayNoteLengths = {
 	"1/32",
 	"1/16 trip",
 	"1/32 dot",
@@ -96,6 +96,18 @@ const juce::StringArray Parameters::noteLengths = {
 	"1/1 trip",
 	"1/2 dot",
 	"1/1",
+};
+
+const juce::StringArray Parameters::modNoteLengths = {
+	"1/16",
+	"1/8",
+	"1/4",
+	"1/4 dot",
+	"1/2",
+	"1/1",
+	"2/1",
+	"4/1",
+	"8/1",
 };
 
 
@@ -119,11 +131,15 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, lowCutModRateParamID, m_lowCutModRateParam);
 	castParameter(apvts, lowCutModDepthParamID, m_lowCutModDepthParam);
 	castParameter(apvts, lowCutModPhaseParamID, m_lowCutModPhaseParam);
+	castParameter(apvts, lowCutModTempoSyncParamID, m_lowCutModTempoSyncParam);
+	castParameter(apvts, lowCutModNoteParamID, m_lowCutModNoteParam);
 	castParameter(apvts, highCutFreqParamID, m_highCutFreqParam);
 	castParameter(apvts, highCutQParamID, m_highCutQParam);
 	castParameter(apvts, highCutModRateParamID, m_highCutModRateParam);
 	castParameter(apvts, highCutModDepthParamID, m_highCutModDepthParam);
 	castParameter(apvts, highCutModPhaseParamID, m_highCutModPhaseParam);
+	castParameter(apvts, highCutModTempoSyncParamID, m_highCutModTempoSyncParam);
+	castParameter(apvts, highCutModNoteParamID, m_highCutModNoteParam);
 	castParameter(apvts, chorusModRateParamID, m_chorusModRateParam);
 	castParameter(apvts, chorusModDepthParamID, m_chorusModDepthParam);
 }
@@ -158,13 +174,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterChoice>(
 		delayNoteLParamID,
 		"Delay Note L",
-		noteLengths,
+		delayNoteLengths,
 		9
 	));
 	layout.add(std::make_unique<juce::AudioParameterChoice>(
 		delayNoteRParamID,
 		"Delay Note R",
-		noteLengths,
+		delayNoteLengths,
 		9
 	));
 	layout.add(std::make_unique<juce::AudioParameterBool>(
@@ -236,11 +252,22 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutModRateParamID.getParamID(),
 		"Low Cut Mod Rate",
-		juce::NormalisableRange<float>(0.05f, 2.0f, 0.001f),
+		juce::NormalisableRange<float>(0.01f, 20.0f, 0.001f, 0.3f),
 		0.05f,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
 			.withValueFromStringFunction(hzFromString)
+	));
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		lowCutModNoteParamID,
+		"Low Cut Mod Note",
+		modNoteLengths,
+		5
+	));
+	layout.add(std::make_unique<juce::AudioParameterBool>(
+		lowCutModTempoSyncParamID.getParamID(),
+		"Low Cut Mod Tempo Sync",
+		false
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutModDepthParamID.getParamID(),
@@ -272,11 +299,22 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutModRateParamID.getParamID(),
 		"High Cut Mod Rate",
-		juce::NormalisableRange<float>(0.05f, 2.0f, 0.001f),
+		juce::NormalisableRange<float>(0.01f, 20.0f, 0.001f, 0.3f),
 		0.05f,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
 			.withValueFromStringFunction(hzFromString)
+	));
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		highCutModNoteParamID,
+		"High Cut Mod Note",
+		modNoteLengths,
+		5
+	));
+	layout.add(std::make_unique<juce::AudioParameterBool>(
+		highCutModTempoSyncParamID.getParamID(),
+		"High Cut Mod Tempo Sync",
+		false
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutModDepthParamID.getParamID(),
@@ -400,6 +438,18 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_delayNoteL = m_delayNoteLParam->getIndex();
 	m_delayNoteR = m_delayNoteRParam->getIndex();
 	m_delayMode = m_delayModeParam->getIndex();
+	m_lowCutModTempoSync = m_lowCutModTempoSyncParam->get();
+	m_lowCutModNote = m_lowCutModNoteParam->getIndex();
+	m_highCutModTempoSync = m_highCutModTempoSyncParam->get();
+	m_highCutModNote = m_highCutModNoteParam->getIndex();
+	if (m_lowCutModTempoSync) {
+		float syncedHz = float(tempo.noteLengthToHz(m_lowCutModNote));
+		m_lowCutModRateParam->setValueNotifyingHost(m_lowCutModRateParam->convertTo0to1(syncedHz));
+	}
+	if (m_highCutModTempoSync) {
+		float syncedHz = float(tempo.noteLengthToHz(m_highCutModNote));
+		m_highCutModRateParam->setValueNotifyingHost(m_highCutModRateParam->convertTo0to1(syncedHz));
+	}
 	if (m_tempoSyncL) {
 		float syncedMs = juce::jmin(float(tempo.noteLengthToMs(m_delayNoteL)), maxDelayTime);
 		m_delayTimeLParam->setValueNotifyingHost(m_delayTimeLParam->convertTo0to1(syncedMs));

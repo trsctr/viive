@@ -1,6 +1,6 @@
 #include "Tempo.h"
 
-static std::array<double, 16> noteLengthMultipliers =
+static std::array<double, 16> delayNoteLengthMultipliers =
 {
 	0.125,			// 0 = 1/32
 	0.5 / 3.0,		// 1 = 1/16 triplet
@@ -18,6 +18,19 @@ static std::array<double, 16> noteLengthMultipliers =
 	8.0 / 3.0,		// 13 = 1/1 triplet
 	3.0,			// 14 = 1/2 dotted
 	4.0,			// 15 = 1/1
+};
+
+static std::array<double, 9> modNoteLengthMultipliers =
+{
+	0.25,			// 0 = 1/16
+	0.5,			// 1 = 1/8
+	1.0,			// 2 = 1/4
+	1.5,			// 3 = 1/4 dotted
+	2.0,			// 4 = 1/2
+	4.0,			// 5 = 1/1
+	8.0,			// 6 = 2/1
+	16.0,			// 7 = 4/1
+	32.0,			// 8 = 8/1
 };
 
 void Tempo::reset() noexcept 
@@ -45,5 +58,10 @@ void Tempo::update(const juce::AudioPlayHead* playhead) noexcept
 
 double Tempo::noteLengthToMs(int index) const noexcept
 {
-	return 60000.0 * noteLengthMultipliers[size_t(index)] / m_bpm;
+	return 60000.0 * delayNoteLengthMultipliers[size_t(index)] / m_bpm;
+}
+
+double Tempo::noteLengthToHz(int index) const noexcept
+{
+	return m_bpm / (60.0 * modNoteLengthMultipliers[size_t(index)]);
 }

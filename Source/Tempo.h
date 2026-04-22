@@ -10,6 +10,7 @@ public:
 	void update(const juce::AudioPlayHead* playhead) noexcept;
 
 	double noteLengthToMs(int index) const noexcept;
+	double noteLengthToHz(int index) const noexcept;
 
 	double getTempo() const noexcept { return m_bpm; }
 
