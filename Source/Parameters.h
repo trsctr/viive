@@ -30,6 +30,8 @@ public:
 	static constexpr float minDelayTime = 5.0f;
 	static constexpr float maxDelayTime = 5000.0f;
 	static constexpr float defaultDelayTime = 100.0f;
+	static constexpr float minFilterFreq = 20.0f;
+	static constexpr float maxFilterFreq = 20000.0f;
 	static constexpr float maxFilterQ = 2.0f;
 	static constexpr float minFilterQ = 0.1f;
 	static constexpr float defaultFilterQ = 0.707f;

@@ -3,6 +3,7 @@
 #include "Parameters.h"
 #include "ChorusEngine.h"
 #include "StereoDelay.h"
+#include "FilterEngine.h"
 
 using Filter = juce::dsp::StateVariableTPTFilter<float>;
 
@@ -35,6 +36,7 @@ private:
 	//juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> m_delayLine;
 	StereoDelay m_stereoDelay;
 	DelayMode m_delayMode = DelayMode::Stereo;
+	FilterEngine m_filterEngine;
 	Filter m_lowCutFilter;
 	Filter m_highCutFilter;
 	Filter m_feedbackHighpass;
