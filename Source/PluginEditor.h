@@ -6,6 +6,9 @@
 #include "RotaryKnob.h"
 #include "SyncButton.h"
 #include "LevelMeter.h"
+#if JUCE_DEBUG
+#include "LFOScope.h"
+#endif
 
 //==============================================================================
 /**
@@ -55,6 +58,10 @@ private:
     juce::HashMap<juce::String, juce::String> m_linkedParams;
 
     juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup;
+
+#if JUCE_DEBUG
+    std::unique_ptr<LFOScope> m_lfoScope;
+#endif
 
     virtual void parameterChanged(const juce::String& paramID, float newValue) override;
     void modeSelectorChanged();

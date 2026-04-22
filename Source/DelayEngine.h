@@ -4,6 +4,9 @@
 #include "ChorusEngine.h"
 #include "StereoDelay.h"
 #include "FilterEngine.h"
+#if JUCE_DEBUG
+#include "LFOScopeBuffer.h"
+#endif
 
 using Filter = juce::dsp::StateVariableTPTFilter<float>;
 
@@ -31,6 +34,10 @@ public:
 	void setWidthLevel(const float value) { m_widthLevel = value; }
 	void setOffsetMs(const float value) { m_offsetMs = value * .5f; }
 	void setDelayMode(const int modeIndex);
+
+#if JUCE_DEBUG
+	LFOScopeBuffer& getLFOScopeBuffer() { return m_filterEngine.m_scopeBuffer; }
+#endif
 
 private:
 	//juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> m_delayLine;

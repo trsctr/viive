@@ -102,10 +102,22 @@ void FilterEngine::update(const Parameters& params)
 
 void FilterEngine::processSample(const float& inL, const float& inR, float& outL, float& outR)
 {
-    m_lowCut.setCutoff(onePoleLowpass(modulatedCutoff(m_lowCutBase,   m_lowCutLfos[Channel::Left].process(),   m_lowCutModDepth),  m_lowCutSmoothed[Channel::Left],   m_cutoffSmoothCoeff), Channel::Left);
-    m_lowCut.setCutoff(onePoleLowpass(modulatedCutoff(m_lowCutBase,   m_lowCutLfos[Channel::Right].process(),  m_lowCutModDepth),  m_lowCutSmoothed[Channel::Right],  m_cutoffSmoothCoeff), Channel::Right);
-    m_highCut.setCutoff(onePoleLowpass(modulatedCutoff(m_highCutBase, m_highCutLfos[Channel::Left].process(),  m_highCutModDepth), m_highCutSmoothed[Channel::Left],  m_cutoffSmoothCoeff), Channel::Left);
-    m_highCut.setCutoff(onePoleLowpass(modulatedCutoff(m_highCutBase, m_highCutLfos[Channel::Right].process(), m_highCutModDepth), m_highCutSmoothed[Channel::Right], m_cutoffSmoothCoeff), Channel::Right);
+    float lcL = m_lowCutLfos[Channel::Left].process();
+    float lcR = m_lowCutLfos[Channel::Right].process();
+    float hcL = m_highCutLfos[Channel::Left].process();
+    float hcR = m_highCutLfos[Channel::Right].process();
+
+#if JUCE_DEBUG
+    if (++m_scopeCounter >= scopeDownsample) {
+        m_scopeCounter = 0;
+        m_scopeBuffer.push(lcL, lcR, hcL, hcR);
+    }
+#endif
+
+    m_lowCut.setCutoff(onePoleLowpass(modulatedCutoff(m_lowCutBase,  lcL, m_lowCutModDepth),  m_lowCutSmoothed[Channel::Left],   m_cutoffSmoothCoeff), Channel::Left);
+    m_lowCut.setCutoff(onePoleLowpass(modulatedCutoff(m_lowCutBase,  lcR, m_lowCutModDepth),  m_lowCutSmoothed[Channel::Right],  m_cutoffSmoothCoeff), Channel::Right);
+    m_highCut.setCutoff(onePoleLowpass(modulatedCutoff(m_highCutBase, hcL, m_highCutModDepth), m_highCutSmoothed[Channel::Left],  m_cutoffSmoothCoeff), Channel::Left);
+    m_highCut.setCutoff(onePoleLowpass(modulatedCutoff(m_highCutBase, hcR, m_highCutModDepth), m_highCutSmoothed[Channel::Right], m_cutoffSmoothCoeff), Channel::Right);
 
     float lowL, lowR;
     m_lowCut.processSample(inL, inR, lowL, lowR);

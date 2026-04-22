@@ -5,6 +5,9 @@
 #include "StereoFilter.h"
 #include "Types.h"
 #include "DSP.h"
+#if JUCE_DEBUG
+#include "LFOScopeBuffer.h"
+#endif
 
 using FilterType = juce::dsp::StateVariableTPTFilterType;
 
@@ -20,12 +23,16 @@ public:
     void update(const Parameters& params);
     void processSample(const float& inL, const float& inR, float& outL, float& outR);
 
+#if JUCE_DEBUG
+    LFOScopeBuffer m_scopeBuffer;
+#endif
+
 private:
     StereoFilter m_lowCut{ FilterType::highpass };
     StereoFilter m_highCut{ FilterType::lowpass };
 
-    LFO m_lowCutLfos[2]  = { {1.0f, 0.0f, LFOShape::Sine}, {1.0f, 0.0f, LFOShape::Sine} };
-    LFO m_highCutLfos[2] = { {1.0f, 0.0f, LFOShape::Sine}, {1.0f, 0.0f, LFOShape::Sine} };
+    LFO m_lowCutLfos[2];
+    LFO m_highCutLfos[2];
 
     float m_lowCutBase        = -1.0f;
     float m_lowCutQ           = -1.0f;
@@ -42,6 +49,11 @@ private:
     float m_lowCutSmoothed[2]  = { Parameters::minFilterFreq, Parameters::minFilterFreq };
     float m_highCutSmoothed[2] = { Parameters::maxFilterFreq, Parameters::maxFilterFreq };
     float m_cutoffSmoothCoeff  = 0.0f;
+
+#if JUCE_DEBUG
+    static constexpr int scopeDownsample = 64;
+    int m_scopeCounter = 0;
+#endif
 
     void setLowCutFilter(const Parameters& params);
     void setHighCutFilter(const Parameters& params);

@@ -54,6 +54,11 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	addAndMakeVisible(m_meter);
 
+#if JUCE_DEBUG
+	m_lfoScope = std::make_unique<LFOScope>(p.getLFOScopeBuffer());
+	addAndMakeVisible(*m_lfoScope);
+#endif
+
 	bool syncL = m_audioProcessor.apvts.getParameter(tempoSyncLParamID.getParamID())->getValue() > 0.5f;
 	bool syncR = m_audioProcessor.apvts.getParameter(tempoSyncRParamID.getParamID())->getValue() > 0.5f;
 
@@ -61,7 +66,11 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	m_audioProcessor.apvts.addParameterListener(tempoSyncLParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(tempoSyncRParamID.getParamID(), this);
-	setSize (770, 370);
+#if JUCE_DEBUG
+	setSize(770, 570);
+#else
+	setSize(770, 370);
+#endif
 }
 
 ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
@@ -84,8 +93,11 @@ void ViiveAudioProcessorEditor::resized()
 {
 	auto bounds = getLocalBounds();
     int y = 10;
+#ifdef JUCE_DEBUG
+	int height = bounds.getHeight() - 30 - 180;
+#else
 	int height = bounds.getHeight() - 20;
-
+#endif
     m_chorusGroup.setBounds(bounds.getWidth() - 360, y + 35, 300, height / 2 - 10);
     m_delayGroup.setBounds(10, y + 35, m_chorusGroup.getX() - 20, height / 2 - 10);
 	m_outputGroup.setBounds(bounds.getWidth() - 360, height / 2 + 45, 300, height / 2 - 30);
@@ -116,7 +128,9 @@ void ViiveAudioProcessorEditor::resized()
 
 	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
 
-
+#if JUCE_DEBUG
+	m_lfoScope->setBounds(10, 380, bounds.getWidth() - 20, 170);
+#endif
 }
 
 void ViiveAudioProcessorEditor::updateDelayKnobs(bool syncLActive, bool syncRActive)

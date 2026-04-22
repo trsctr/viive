@@ -80,7 +80,8 @@ target_sources(viive PRIVATE
     Source/DelayEngine.cpp
     Source/Parameters.cpp
     Source/PluginProcessor.cpp
-    Source/PluginEditor.cpp)
+    Source/PluginEditor.cpp
+    Source/LFOScope.cpp)
 
 juce_generate_juce_header(viive)
 
