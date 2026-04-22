@@ -46,6 +46,8 @@ float LFO::process() {
 			return processSine(offsetPhase);
 		case (LFOShape::Triangle):
 			return processTriangle(offsetPhase);
+		case (LFOShape::Square):
+			return processSquare(offsetPhase);
 		default:
 			return 0.0f;
 	}
@@ -57,4 +59,8 @@ float LFO::processSine(float phase) {
 
 float LFO::processTriangle(float phase) {
 	return 1.0f - 4.0f * std::abs(phase - 0.5f);
+}
+
+float LFO::processSquare(float phase) {
+	return (phase < 0.5f) ? 1.0f : -1.0f;
 }
