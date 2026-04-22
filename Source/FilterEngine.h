@@ -4,6 +4,7 @@
 #include "LFO.h"
 #include "StereoFilter.h"
 #include "Types.h"
+#include "DSP.h"
 
 using FilterType = juce::dsp::StateVariableTPTFilterType;
 
@@ -29,33 +30,28 @@ private:
     float m_lowCutBase        = -1.0f;
     float m_lowCutQ           = -1.0f;
     float m_lowCutModDepth    = 0.0f;
-    float m_lowCutLfoRate     = 0.0f;
-    float m_lowCutPhaseOffset = 0.0f;
+    float m_lowCutModRate     = 0.0f;
+    float m_lowCutModPhase    = 0.0f;
 
     float m_highCutBase        = -1.0f;
     float m_highCutQ           = -1.0f;
     float m_highCutModDepth    = 0.0f;
-    float m_highCutLfoRate     = 0.0f;
-    float m_highCutPhaseOffset = 0.0f;
+    float m_highCutModRate     = 0.0f;
+    float m_highCutModPhase    = 0.0f;
 
-    void setLowCutFreq(float freq);
-    void setLowCutQ(float q);
-    void setLowCutModDepth(float depthHz);
-    void setLowCutLfoRate(float rate);
-    void setLowCutPhaseOffset(float phase);
+    float m_lowCutSmoothed[2]  = { Parameters::minFilterFreq, Parameters::minFilterFreq };
+    float m_highCutSmoothed[2] = { Parameters::maxFilterFreq, Parameters::maxFilterFreq };
+    float m_cutoffSmoothCoeff  = 0.0f;
 
-    void setHighCutFreq(float freq);
-    void setHighCutQ(float q);
-    void setHighCutModDepth(float depthHz);
-    void setHighCutLfoRate(float rate);
-    void setHighCutPhaseOffset(float phase);
+    void setLowCutFilter(const Parameters& params);
+    void setHighCutFilter(const Parameters& params);
 
     float modulatedCutoff(float base, float lfoValue, float modDepth);
     void setFilterFreq(float freq, float& current);
     void setFilterQ(float q, float& current, StereoFilter& filter);
     void setFilterModDepth(float depthHz, float& current);
-    void setFilterLfoRate(float rate, float& current, LFO* lfos);
-    void setFilterPhaseOffset(float phase, float& current, LFO* lfos);
+    void setFilterModRate(float rate, float& current, LFO* lfos);
+    void setFilterModPhase(float phase, float& current, LFO* lfos);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FilterEngine)
 };

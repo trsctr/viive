@@ -12,6 +12,7 @@ void FilterEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcep
         lfo.prepareToPlay(static_cast<float>(sampleRate));
     for (auto& lfo : m_highCutLfos)
         lfo.prepareToPlay(static_cast<float>(sampleRate));
+    m_cutoffSmoothCoeff = onePoleLowpassCoeff(5.0f, static_cast<float>(sampleRate));
 }
 
 void FilterEngine::reset() noexcept
@@ -26,6 +27,8 @@ void FilterEngine::reset() noexcept
     m_lowCutQ     = -1.0f;
     m_highCutBase = -1.0f;
     m_highCutQ    = -1.0f;
+    m_lowCutSmoothed[0]  = m_lowCutSmoothed[1]  = Parameters::minFilterFreq;
+    m_highCutSmoothed[0] = m_highCutSmoothed[1] = Parameters::maxFilterFreq;
 }
 
 float FilterEngine::modulatedCutoff(float base, float lfoValue, float modDepth)
@@ -54,7 +57,7 @@ void FilterEngine::setFilterModDepth(float depthHz, float& current)
         current = depthHz;
 }
 
-void FilterEngine::setFilterLfoRate(float rate, float& current, LFO* lfos)
+void FilterEngine::setFilterModRate(float rate, float& current, LFO* lfos)
 {
     if (!juce::approximatelyEqual(rate, current)) {
         current = rate;
@@ -63,7 +66,7 @@ void FilterEngine::setFilterLfoRate(float rate, float& current, LFO* lfos)
     }
 }
 
-void FilterEngine::setFilterPhaseOffset(float phase, float& current, LFO* lfos)
+void FilterEngine::setFilterModPhase(float phase, float& current, LFO* lfos)
 {
     if (!juce::approximatelyEqual(phase, current)) {
         current = phase;
@@ -72,70 +75,37 @@ void FilterEngine::setFilterPhaseOffset(float phase, float& current, LFO* lfos)
     }
 }
 
-void FilterEngine::setLowCutFreq(float freq)
+void FilterEngine::setLowCutFilter(const Parameters& params)
 {
-    setFilterFreq(freq, m_lowCutBase);
+    setFilterFreq(params.lowCutFreq(), m_lowCutBase);
+    setFilterQ(params.lowCutQ(), m_lowCutQ, m_lowCut);
+    setFilterModRate(params.lowCutModRate(), m_lowCutModRate, m_lowCutLfos);
+    setFilterModDepth(params.lowCutModDepth(), m_lowCutModDepth);
+    setFilterModPhase(params.lowCutModPhase(), m_lowCutModPhase, m_lowCutLfos );
 }
 
-void FilterEngine::setLowCutQ(float q)
+void FilterEngine::setHighCutFilter(const Parameters& params)
 {
-    setFilterQ(q, m_lowCutQ, m_lowCut);
+    setFilterFreq(params.highCutFreq(), m_highCutBase);
+    setFilterQ(params.highCutQ(), m_highCutQ, m_highCut);
+    setFilterModRate(params.highCutModRate(), m_highCutModRate, m_highCutLfos);
+    setFilterModDepth(params.highCutModDepth(), m_highCutModDepth);
+    setFilterModPhase(params.highCutModPhase(), m_highCutModPhase, m_highCutLfos);
 }
 
-void FilterEngine::setLowCutModDepth(float depth)
-{
-    setFilterModDepth(depth, m_lowCutModDepth);
-}
-
-void FilterEngine::setLowCutLfoRate(float rate)
-{
-    setFilterLfoRate(rate, m_lowCutLfoRate, m_lowCutLfos);
-}
-
-void FilterEngine::setLowCutPhaseOffset(float phase)
-{
-    setFilterPhaseOffset(phase, m_lowCutPhaseOffset, m_lowCutLfos);
-}
-
-void FilterEngine::setHighCutFreq(float freq)
-{
-    setFilterFreq(freq, m_highCutBase);
-}
-
-void FilterEngine::setHighCutQ(float q)
-{
-    setFilterQ(q, m_highCutQ, m_highCut);
-}
-
-void FilterEngine::setHighCutModDepth(float depth)
-{
-    setFilterModDepth(depth, m_highCutModDepth);
-}
-
-void FilterEngine::setHighCutLfoRate(float rate)
-{
-    setFilterLfoRate(rate, m_highCutLfoRate, m_highCutLfos);
-}
-
-void FilterEngine::setHighCutPhaseOffset(float phase)
-{
-    setFilterPhaseOffset(phase, m_highCutPhaseOffset, m_highCutLfos);
-}
 
 void FilterEngine::update(const Parameters& params)
 {
-    setLowCutFreq(params.lowCutFreq());
-    setLowCutQ(params.lowCutQ());
-    setHighCutFreq(params.highCutFreq());
-    setHighCutQ(params.highCutQ());
+    setLowCutFilter(params);
+    setHighCutFilter(params);
 }
 
 void FilterEngine::processSample(const float& inL, const float& inR, float& outL, float& outR)
 {
-    m_lowCut.setCutoff(m_lowCutBase   + m_lowCutLfos[Channel::Left].process()   * m_lowCutModDepth,  Channel::Left);
-    m_lowCut.setCutoff(m_lowCutBase   + m_lowCutLfos[Channel::Right].process()  * m_lowCutModDepth,  Channel::Right);
-    m_highCut.setCutoff(m_highCutBase + m_highCutLfos[Channel::Left].process()  * m_highCutModDepth, Channel::Left);
-    m_highCut.setCutoff(m_highCutBase + m_highCutLfos[Channel::Right].process() * m_highCutModDepth, Channel::Right);
+    m_lowCut.setCutoff(onePoleLowpass(modulatedCutoff(m_lowCutBase,   m_lowCutLfos[Channel::Left].process(),   m_lowCutModDepth),  m_lowCutSmoothed[Channel::Left],   m_cutoffSmoothCoeff), Channel::Left);
+    m_lowCut.setCutoff(onePoleLowpass(modulatedCutoff(m_lowCutBase,   m_lowCutLfos[Channel::Right].process(),  m_lowCutModDepth),  m_lowCutSmoothed[Channel::Right],  m_cutoffSmoothCoeff), Channel::Right);
+    m_highCut.setCutoff(onePoleLowpass(modulatedCutoff(m_highCutBase, m_highCutLfos[Channel::Left].process(),  m_highCutModDepth), m_highCutSmoothed[Channel::Left],  m_cutoffSmoothCoeff), Channel::Left);
+    m_highCut.setCutoff(onePoleLowpass(modulatedCutoff(m_highCutBase, m_highCutLfos[Channel::Right].process(), m_highCutModDepth), m_highCutSmoothed[Channel::Right], m_cutoffSmoothCoeff), Channel::Right);
 
     float lowL, lowR;
     m_lowCut.processSample(inL, inR, lowL, lowR);
