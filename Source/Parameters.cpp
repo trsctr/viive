@@ -33,6 +33,9 @@ static juce::String stringFromPercent(float value, int)
 
 static juce::String stringFromHertz(float value, int)
 {
+	if (value < 5) {
+		return juce::String(value, 3) + " Hz";
+	}
 	if (value < 10) {
 		return juce::String(value, 2) + " Hz";
 	}
@@ -233,8 +236,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutModRateParamID.getParamID(),
 		"Low Cut Mod Rate",
-		juce::NormalisableRange<float>(0.01f, 2.0f, 0.01f),
-		0.0f,
+		juce::NormalisableRange<float>(0.05f, 2.0f, 0.001f),
+		0.05f,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
 			.withValueFromStringFunction(hzFromString)
@@ -269,8 +272,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutModRateParamID.getParamID(),
 		"High Cut Mod Rate",
-		juce::NormalisableRange<float>(0.01f, 2.0f, 0.01f),
-		0.0f,
+		juce::NormalisableRange<float>(0.05f, 2.0f, 0.001f),
+		0.05f,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
 			.withValueFromStringFunction(hzFromString)
