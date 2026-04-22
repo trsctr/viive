@@ -33,7 +33,7 @@ void FilterEngine::reset() noexcept
 
 float FilterEngine::modulatedCutoff(float base, float lfoValue, float modDepth)
 {
-    return juce::jlimit(Parameters::minFilterFreq, Parameters::maxFilterFreq, base + lfoValue * modDepth);
+    return juce::jlimit(Parameters::minFilterFreq, Parameters::maxFilterFreq, base * std::pow(2.0f, lfoValue * modDepth));
 }
 
 void FilterEngine::setFilterFreq(float freq, float& current)
@@ -51,10 +51,10 @@ void FilterEngine::setFilterQ(float q, float& current, StereoFilter& filter)
     }
 }
 
-void FilterEngine::setFilterModDepth(float depthHz, float& current)
+void FilterEngine::setFilterModDepth(float depth, float& current)
 {
-    if (!juce::approximatelyEqual(depthHz, current))
-        current = depthHz;
+    if (!juce::approximatelyEqual(depth, current))
+        current = depth;
 }
 
 void FilterEngine::setFilterModRate(float rate, float& current, LFO* lfos)
@@ -70,7 +70,7 @@ void FilterEngine::setFilterModPhase(float phase, float& current, LFO* lfos)
 {
     if (!juce::approximatelyEqual(phase, current)) {
         current = phase;
-        float normalized = std::fmod(std::fmod(phase, 360.0f) + 360.0f, 360.0f);
+        float normalized = std::fmod(std::fmod(phase, 360.0f) + 360.0f, 360.0f) / 360.0f;
         lfos[Channel::Right].setOffset(normalized);
     }
 }

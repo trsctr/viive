@@ -47,6 +47,7 @@ static juce::String stringFromHertz(float value, int)
 	}
 }
 
+
 static float millisecondsFromString(const juce::String& text)
 {
 	float value = text.getFloatValue();
@@ -241,11 +242,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutModDepthParamID.getParamID(),
 		"Low Cut Mod Depth",
-		juce::NormalisableRange<float>(0.0f, 600.0f, 0.1f),
-		0.0f,
-		juce::AudioParameterFloatAttributes()
-			.withStringFromValueFunction(stringFromHertz)
-			.withValueFromStringFunction(hzFromString)
+		juce::NormalisableRange<float>(0.0f, 2.0f, 0.01f),
+		0.0f
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutModPhaseParamID.getParamID(),
@@ -280,11 +278,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutModDepthParamID.getParamID(),
 		"High Cut Mod Depth",
-		juce::NormalisableRange<float>(0.0f, 600.0f, 0.1f),
-		0.0f,
-		juce::AudioParameterFloatAttributes()
-			.withStringFromValueFunction(stringFromHertz)
-			.withValueFromStringFunction(hzFromString)
+		juce::NormalisableRange<float>(0.0f, 2.0f, 0.01f),
+		0.0f
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutModPhaseParamID.getParamID(),

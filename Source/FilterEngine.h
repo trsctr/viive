@@ -49,7 +49,7 @@ private:
     float modulatedCutoff(float base, float lfoValue, float modDepth);
     void setFilterFreq(float freq, float& current);
     void setFilterQ(float q, float& current, StereoFilter& filter);
-    void setFilterModDepth(float depthHz, float& current);
+    void setFilterModDepth(float depth, float& current);
     void setFilterModRate(float rate, float& current, LFO* lfos);
     void setFilterModPhase(float phase, float& current, LFO* lfos);
 
