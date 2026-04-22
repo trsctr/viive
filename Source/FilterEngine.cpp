@@ -104,8 +104,8 @@ void FilterEngine::processSample(const float& inL, const float& inR, float& outL
 {
     float lcL = m_lowCutLfos[Channel::Left].process();
     float lcR = m_lowCutLfos[Channel::Right].process();
-    float hcL = m_highCutLfos[Channel::Left].process();
-    float hcR = m_highCutLfos[Channel::Right].process();
+    float hcL = -m_highCutLfos[Channel::Left].process();
+    float hcR = -m_highCutLfos[Channel::Right].process();
 
 #if JUCE_DEBUG
     if (++m_scopeCounter >= scopeDownsample) {
