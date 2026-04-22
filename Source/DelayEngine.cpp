@@ -19,8 +19,6 @@ void DelayEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 	spec.numChannels = 2;
 	m_sampleRate = static_cast<float>(sampleRate);
 	m_feedbackCompressor.prepare(spec);
-	m_lowCutFilter.prepare(spec);
-	m_highCutFilter.prepare(spec);
 	m_filterEngine.prepareToPlay(sampleRate, samplesPerBlock);
 	m_feedbackHighpass.prepare(spec);
 	m_chorusEngine.prepareToPlay(sampleRate, samplesPerBlock);
@@ -32,8 +30,6 @@ void DelayEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 void DelayEngine::reset() noexcept
 {
 	m_stereoDelay.reset();
-	m_lowCutFilter.reset();
-	m_highCutFilter.reset();
 	m_chorusEngine.reset();
 	m_filterEngine.reset();
 	m_feedbackHighpass.reset();
@@ -42,10 +38,6 @@ void DelayEngine::reset() noexcept
 	m_feedbackCompressor.reset();
 	m_feedbackL = 0.0f;
 	m_feedbackR = 0.0f;
-	m_lowCutFreq = -1.0f;
-	m_lowCutQ = -1.0f;
-	m_highCutFreq = -1.0f;
-	m_highCutQ = -1.0f;
 	m_baseDelayTimeMs = -1.0f;
 	m_mixLevel = 0.5f;
 	m_feedbackLevel = 0.0f;
@@ -57,31 +49,6 @@ void DelayEngine::setDelayMode(const int modeIndex)
 	DelayMode newMode = static_cast<DelayMode>(modeIndex);
 	if (newMode != m_delayMode) {
 		m_delayMode = newMode;
-	}
-}
-
-void DelayEngine::setLowCut(const Parameters& params) {
-	setFilterFreq(params.lowCutFreq(), m_lowCutFreq, m_lowCutFilter);
-	setFilterQ(params.lowCutQ(), m_lowCutQ, m_lowCutFilter);
-}
-
-void DelayEngine::setHighCut(const Parameters& params) {
-	setFilterFreq(params.highCutFreq(), m_highCutFreq, m_highCutFilter);
-	setFilterQ(params.highCutQ(), m_highCutQ, m_highCutFilter);
-}
-
-void DelayEngine::setFilterFreq(const float freq, float& currentFreq, Filter& filter) {
-	if (!juce::approximatelyEqual(freq, currentFreq)) {
-		filter.setCutoffFrequency(freq);
-		currentFreq = freq;
-	}
-}
-
-void DelayEngine::setFilterQ(const float q, float& currentQ, Filter& filter) {
-	float newQ = std::min(q, Parameters::maxFilterQ);
-	if (!juce::approximatelyEqual(newQ, currentQ)) {
-		filter.setResonance(newQ);
-		currentQ = newQ;
 	}
 }
 
@@ -142,13 +109,6 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	m_stereoDelay.processSample(delayInR, wetR, Channel::Right);
 	
 	m_chorusEngine.processSample(wetL, wetR, wetL, wetR, params);
-
-	// sculpting filters, first left and then right channel
-	// wetL = m_lowCutFilter.processSample(0, wetL);
-	// wetL = m_highCutFilter.processSample(0, wetL);
-
-	// wetR = m_lowCutFilter.processSample(1, wetR);
-	// wetR = m_highCutFilter.processSample(1, wetR);
 
 	m_filterEngine.processSample(wetL, wetR, wetL, wetR);
 
