@@ -39,8 +39,16 @@ private:
 
     RotaryKnob m_lowCutFreqKnob{ "Low Cut Freq", m_audioProcessor.apvts, lowCutFreqParamID.getParamID() };
     RotaryKnob m_lowCutQKnob{ "Low Cut Q", m_audioProcessor.apvts, lowCutQParamID.getParamID() };
+    RotaryKnob m_lowCutModRateKnob{ "Rate", m_audioProcessor.apvts, lowCutModRateParamID.getParamID(), RotaryKnob::Size::Small };
+    RotaryKnob m_lowCutModNoteKnob{ "Note", m_audioProcessor.apvts, lowCutModNoteParamID.getParamID(), RotaryKnob::Size::Small };
+    RotaryKnob m_lowCutModDepthKnob{ "Depth", m_audioProcessor.apvts, lowCutModDepthParamID.getParamID(), RotaryKnob::Size::Small };
+    RotaryKnob m_lowCutModPhaseKnob{ "Phase", m_audioProcessor.apvts, lowCutModPhaseParamID.getParamID(), RotaryKnob::Size::Small };
     RotaryKnob m_highCutFreqKnob{ "High Cut Freq", m_audioProcessor.apvts, highCutFreqParamID.getParamID() };
     RotaryKnob m_highCutQKnob{ "High Cut Q", m_audioProcessor.apvts, highCutQParamID.getParamID() };
+    RotaryKnob m_highCutModRateKnob{ "Rate", m_audioProcessor.apvts, highCutModRateParamID.getParamID(), RotaryKnob::Size::Small };
+    RotaryKnob m_highCutModNoteKnob{ "Note", m_audioProcessor.apvts, highCutModNoteParamID.getParamID(), RotaryKnob::Size::Small };
+    RotaryKnob m_highCutModDepthKnob{ "Depth", m_audioProcessor.apvts, highCutModDepthParamID.getParamID(), RotaryKnob::Size::Small };
+    RotaryKnob m_highCutModPhaseKnob{ "Phase", m_audioProcessor.apvts, highCutModPhaseParamID.getParamID(), RotaryKnob::Size::Small };
 
     RotaryKnob m_gainKnob{ "Gain", m_audioProcessor.apvts, gainParamID.getParamID() };
     RotaryKnob m_mixKnob{ "Mix", m_audioProcessor.apvts, mixParamID.getParamID() };
@@ -51,13 +59,17 @@ private:
 
     SyncButton m_tempoSyncLButton{ "Sync", m_audioProcessor.apvts, tempoSyncLParamID.getParamID() };
     SyncButton m_tempoSyncRButton{ "Sync", m_audioProcessor.apvts, tempoSyncRParamID.getParamID() };
+    SyncButton m_lowCutModTempoSyncButton{ "Sync", m_audioProcessor.apvts, lowCutModTempoSyncParamID.getParamID() };
+    SyncButton m_highCutModTempoSyncButton{ "Sync", m_audioProcessor.apvts, highCutModTempoSyncParamID.getParamID() };
 
     juce::Label m_delayModeLabel;
     juce::ComboBox m_modeSelector;
 
+    juce::Label m_modulationLabel;
+
     juce::HashMap<juce::String, juce::String> m_linkedParams;
 
-    juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup;
+    juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup, m_filterModGroup;
 
 #if JUCE_DEBUG
     std::unique_ptr<LFOScope> m_lfoScope;
@@ -65,7 +77,7 @@ private:
 
     virtual void parameterChanged(const juce::String& paramID, float newValue) override;
     void modeSelectorChanged();
-    void updateDelayKnobs(bool syncLActive, bool syncRActive);
+    void updateSyncedKnobs(bool syncLActive, bool syncRActive, bool lowCutSyncActive, bool highCutSyncActive);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)
 };

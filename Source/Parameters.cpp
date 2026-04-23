@@ -33,10 +33,7 @@ static juce::String stringFromPercent(float value, int)
 
 static juce::String stringFromHertz(float value, int)
 {
-	if (value < 5) {
-		return juce::String(value, 3) + " Hz";
-	}
-	if (value < 10) {
+	if (value < 20) {
 		return juce::String(value, 2) + " Hz";
 	}
 	if (value < 1000.0f) {
