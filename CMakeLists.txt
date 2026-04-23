@@ -33,6 +33,11 @@ FetchContent_Declare(juce
 FetchContent_MakeAvailable(juce)
 
 
+### Developer options ###
+
+set(VST3_DEV_COPY_DIR "" CACHE PATH "If set, copies the Debug VST3 build here after each build")
+
+
 ### Plugin Project Setup ###
 
 juce_add_plugin(viive
@@ -47,8 +52,14 @@ juce_add_plugin(viive
     NEEDS_MIDI_OUTPUT FALSE
     IS_MIDI_EFFECT FALSE
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE
-    COPY_PLUGIN_AFTER_BUILD $<AND:$<CONFIG:Debug>,$<BOOL:${WIN32}>>
-    VST3_COPY_DIR "C:/dev/vst3_debug")
+    COPY_PLUGIN_AFTER_BUILD FALSE)
+
+if(VST3_DEV_COPY_DIR)
+    add_custom_command(TARGET viive_VST3 POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E $<IF:$<CONFIG:Debug>,copy_directory,true>
+            "$<TARGET_FILE_DIR:viive_VST3>/../.."
+            "${VST3_DEV_COPY_DIR}/viive.vst3")
+endif()
 
 target_compile_features(viive PUBLIC cxx_std_20)
 
