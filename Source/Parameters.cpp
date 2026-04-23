@@ -47,6 +47,10 @@ static juce::String stringFromHertz(float value, int)
 	}
 }
 
+static juce::String stringFromDegrees(float value, int)
+{
+	return juce::String(int(value)) + "°";
+}
 
 static float millisecondsFromString(const juce::String& text)
 {
@@ -67,6 +71,11 @@ static float hzFromString(const juce::String& text)
 		return value * 1000.0f;
 	}
 	return value;
+}
+
+static float degreesFromString(const juce::String& text)
+{
+	return text.getFloatValue();
 }
 
 const juce::StringArray Parameters::delayModes = {
@@ -276,7 +285,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		lowCutModPhaseParamID.getParamID(),
 		"Low Cut Mod Phase",
 		juce::NormalisableRange<float>(0.0f, 360.0f, 0.1f),
-		0.0f
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromDegrees)
+			.withValueFromStringFunction(degreesFromString)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutFreqParamID.getParamID(),
@@ -323,7 +335,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		highCutModPhaseParamID.getParamID(),
 		"High Cut Mod Phase",
 		juce::NormalisableRange<float>(0.0f, 360.0f, 0.1f),
-		0.0f
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromDegrees)
+			.withValueFromStringFunction(degreesFromString)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		chorusIntensityParamID.getParamID(),
