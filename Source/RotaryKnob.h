@@ -8,7 +8,9 @@
 class RotaryKnob  : public juce::Component
 {
 public:
-    RotaryKnob(const juce::String& text, juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& parameterID);
+    enum class Size { Normal, Small };
+
+    RotaryKnob(const juce::String& text, juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& parameterID, Size size = Size::Normal);
     ~RotaryKnob() override;
 
     void resized() override;
@@ -16,6 +18,15 @@ public:
 	juce::Label& getLabel() { return m_label; }
 
 private:
+    struct KnobLookAndFeel : public juce::LookAndFeel_V4
+    {
+        void drawRotarySlider(juce::Graphics&, int x, int y, int width, int height,
+                              float sliderPos, float rotaryStartAngle, float rotaryEndAngle,
+                              juce::Slider&) override;
+        juce::Font getLabelFont(juce::Label&) override;
+    };
+
+    KnobLookAndFeel m_laf;
     juce::Slider m_slider;
     juce::Label m_label;
 
