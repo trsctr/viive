@@ -1,7 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-
-enum class LFOShape { Sine, Triangle, Square, SawUp, SawDown };
+#include "Types.h"
 
 class LFO {
 public:

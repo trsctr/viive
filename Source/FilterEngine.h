@@ -39,12 +39,16 @@ private:
     float m_lowCutModDepth    = 0.0f;
     float m_lowCutModRate     = 0.0f;
     float m_lowCutModPhase    = 0.0f;
+    LFOShape m_lowCutModShape = LFOShape::Sine;
+    bool m_lowCutModTempoSync = false;
 
     float m_highCutBase        = -1.0f;
     float m_highCutQ           = -1.0f;
     float m_highCutModDepth    = 0.0f;
     float m_highCutModRate     = 0.0f;
     float m_highCutModPhase    = 0.0f;
+    LFOShape m_highCutModShape = LFOShape::Sine;
+    bool m_highCutModTempoSync = false;
 
     bool m_highCutModInvert = false;
 
@@ -66,6 +70,7 @@ private:
     void setFilterModDepth(float depth, float& current);
     void setFilterModRate(float rate, float& current, LFO* lfos);
     void setFilterModPhase(float phase, float& current, LFO* lfos);
+    void setFilterModShape(int shapeIndex, LFOShape& current, LFO* lfos);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FilterEngine)
 };

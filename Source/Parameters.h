@@ -21,6 +21,7 @@ const juce::ParameterID lowCutModDepthParamID{ "lowCutModDepth", 1 };
 const juce::ParameterID lowCutModPhaseParamID{ "lowCutModPhase", 1 };
 const juce::ParameterID lowCutModTempoSyncParamID{ "lowCutModTempoSync", 1 };
 const juce::ParameterID lowCutModNoteParamID{ "lowCutModNote", 1 };
+const juce::ParameterID lowCutModShapeParamID{ "lowCutModShape", 1 };
 const juce::ParameterID highCutFreqParamID{ "highCutFreq", 1 };
 const juce::ParameterID highCutQParamID{ "highCutQ", 1 };
 const juce::ParameterID highCutModRateParamID{ "highCutModRate", 1 };
@@ -28,7 +29,8 @@ const juce::ParameterID highCutModDepthParamID{ "highCutModDepth", 1 };
 const juce::ParameterID highCutModPhaseParamID{ "highCutModPhase", 1 };
 const juce::ParameterID highCutModTempoSyncParamID{ "highCutModTempoSync", 1 };
 const juce::ParameterID highCutModNoteParamID{ "highCutModNote", 1 };
-const juce::ParameterID highCutModInvertParamID{ "highCutInvert", 1 };
+const juce::ParameterID highCutModShapeParamID{ "highCutModShape", 1 };
+const juce::ParameterID highCutModInvertParamID{ "highCutModInvert", 1 };
 const juce::ParameterID chorusIntensityParamID{ "chorusIntensity", 1 };
 const juce::ParameterID chorusModRateParamID{ "chorusModRate", 1 };
 const juce::ParameterID chorusModDepthParamID{ "chorusModDepth", 1 };
@@ -52,6 +54,7 @@ public:
 	static const juce::StringArray delayModes;
 	static const juce::StringArray delayNoteLengths;
 	static const juce::StringArray modNoteLengths;
+	static const juce::StringArray lfoShapes;
 	
 	void prepareToPlay(double sampleRate) noexcept;
 	void update(const Tempo& tempo) noexcept;
@@ -77,6 +80,7 @@ public:
 	float lowCutModPhase() const { return m_lowCutModPhase; }
 	bool lowCutModTempoSync() const { return m_lowCutModTempoSync; }
 	int lowCutModNote() const { return m_lowCutModNote; }
+	int lowCutModShape() const { return m_lowCutModShape; }
 	float highCutFreq() const { return m_highCutFreq; }
 	float highCutQ() const { return m_highCutQ; }
 	float highCutModRate() const { return m_highCutModRate; }
@@ -84,6 +88,7 @@ public:
 	float highCutModPhase() const { return m_highCutModPhase; }
 	bool highCutModTempoSync() const { return m_highCutModTempoSync; }
 	int highCutModNote() const { return m_highCutModNote; }
+	int highCutModShape() const { return m_highCutModShape; }
 	bool highCutModInvert() const { return m_highCutModInvert; }
 	float chorusIntensity() const { return m_chorusIntensity; }
 	float chorusModRate() const { return m_chorusModRate; }
@@ -109,6 +114,7 @@ private:
 	juce::AudioParameterFloat* m_lowCutModPhaseParam;
 	juce::AudioParameterBool* m_lowCutModTempoSyncParam;
 	juce::AudioParameterChoice* m_lowCutModNoteParam;
+	juce::AudioParameterChoice* m_lowCutModShapeParam;
 	juce::AudioParameterFloat* m_highCutFreqParam;
 	juce::AudioParameterFloat* m_highCutQParam;
 	juce::AudioParameterFloat* m_highCutModRateParam;
@@ -116,6 +122,7 @@ private:
 	juce::AudioParameterFloat* m_highCutModPhaseParam;
 	juce::AudioParameterBool* m_highCutModTempoSyncParam;
 	juce::AudioParameterChoice* m_highCutModNoteParam;
+	juce::AudioParameterChoice* m_highCutModShapeParam;
 	juce::AudioParameterBool* m_highCutModInvertParam;
 	juce::AudioParameterFloat* m_chorusIntensityParam;
 	juce::AudioParameterFloat* m_chorusModRateParam;
@@ -164,6 +171,7 @@ private:
 	float m_lowCutModPhase = 0.0f;
 	bool m_lowCutModTempoSync = false;
 	int m_lowCutModNote = 0;
+	int m_lowCutModShape = 0;
 	float m_highCutFreq = 20000.0f;
 	float m_highCutQ = defaultFilterQ;
 	float m_highCutModRate = 0.0f;
@@ -171,6 +179,7 @@ private:
 	float m_highCutModPhase = 0.0f;
 	bool m_highCutModTempoSync = false;
 	int m_highCutModNote = 0;
+	int m_highCutModShape = 0;
 	bool m_highCutModInvert = false;
 	float m_chorusIntensity = 0.0f;
 	float m_chorusModRate = defaultChorusModRate;

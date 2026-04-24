@@ -75,6 +75,16 @@ void FilterEngine::setFilterModPhase(float phase, float& current, LFO* lfos)
     }
 }
 
+void FilterEngine::setFilterModShape(int shapeIndex, LFOShape& current, LFO* lfos)
+{
+    LFOShape newShape = static_cast<LFOShape>(shapeIndex);
+    if (newShape != current) {
+        current = newShape;
+        for (int i = 0; i < 2; i++)
+            lfos[i].setShape(current);
+    }
+}
+
 void FilterEngine::setLowCutFilter(const Parameters& params)
 {
     setFilterFreq(params.lowCutFreq(), m_lowCutBase);
@@ -82,6 +92,8 @@ void FilterEngine::setLowCutFilter(const Parameters& params)
     setFilterModRate(params.lowCutModRate(), m_lowCutModRate, m_lowCutLfos);
     setFilterModDepth(params.lowCutModDepth(), m_lowCutModDepth);
     setFilterModPhase(params.lowCutModPhase(), m_lowCutModPhase, m_lowCutLfos );
+    setFilterModShape(params.lowCutModShape(), m_lowCutModShape, m_lowCutLfos);
+    m_lowCutModTempoSync = params.lowCutModTempoSync();
 }
 
 void FilterEngine::setHighCutFilter(const Parameters& params)
@@ -91,6 +103,8 @@ void FilterEngine::setHighCutFilter(const Parameters& params)
     setFilterModRate(params.highCutModRate(), m_highCutModRate, m_highCutLfos);
     setFilterModDepth(params.highCutModDepth(), m_highCutModDepth);
     setFilterModPhase(params.highCutModPhase(), m_highCutModPhase, m_highCutLfos);
+    setFilterModShape(params.highCutModShape(), m_highCutModShape, m_highCutLfos);
+    m_highCutModTempoSync = params.highCutModTempoSync();
 }
 
 
@@ -99,6 +113,16 @@ void FilterEngine::update(const Parameters& params)
     setLowCutFilter(params);
     setHighCutFilter(params);
     m_highCutModInvert = params.highCutModInvert();
+}
+
+void FilterEngine::resetLFOs()
+{
+    if (m_lowCutModTempoSync)
+        for (auto& lfo : m_lowCutLfos)
+            lfo.reset();
+    if (m_highCutModTempoSync)
+        for (auto& lfo : m_highCutLfos)
+            lfo.reset();
 }
 
 void FilterEngine::processSample(const float& inL, const float& inR, float& outL, float& outR)

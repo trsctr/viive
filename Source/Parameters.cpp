@@ -116,6 +116,14 @@ const juce::StringArray Parameters::modNoteLengths = {
 	"8/1",
 };
 
+const juce::StringArray Parameters::lfoShapes = {
+	"SIN",
+	"TRI",
+	"SQR",
+	"SAW+",
+	"SAW-",
+};
+
 
 Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 {
@@ -139,6 +147,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, lowCutModPhaseParamID, m_lowCutModPhaseParam);
 	castParameter(apvts, lowCutModTempoSyncParamID, m_lowCutModTempoSyncParam);
 	castParameter(apvts, lowCutModNoteParamID, m_lowCutModNoteParam);
+	castParameter(apvts, lowCutModShapeParamID, m_lowCutModShapeParam);
 	castParameter(apvts, highCutFreqParamID, m_highCutFreqParam);
 	castParameter(apvts, highCutQParamID, m_highCutQParam);
 	castParameter(apvts, highCutModRateParamID, m_highCutModRateParam);
@@ -146,6 +155,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, highCutModPhaseParamID, m_highCutModPhaseParam);
 	castParameter(apvts, highCutModTempoSyncParamID, m_highCutModTempoSyncParam);
 	castParameter(apvts, highCutModNoteParamID, m_highCutModNoteParam);
+	castParameter(apvts, highCutModShapeParamID, m_highCutModShapeParam);
 	castParameter(apvts, highCutModInvertParamID, m_highCutModInvertParam);
 	castParameter(apvts, chorusModRateParamID, m_chorusModRateParam);
 	castParameter(apvts, chorusModDepthParamID, m_chorusModDepthParam);
@@ -291,6 +301,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 			.withStringFromValueFunction(stringFromDegrees)
 			.withValueFromStringFunction(degreesFromString)
 	));
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		lowCutModShapeParamID,
+		"Low Cut Mod Shape",
+		lfoShapes,
+		0
+	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutFreqParamID.getParamID(),
 		"High Cut Frequency",
@@ -320,6 +336,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		"High Cut Mod Note",
 		modNoteLengths,
 		5
+	));
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		highCutModShapeParamID,
+		"High Cut Mod Shape",
+		lfoShapes,
+		0
 	));
 	layout.add(std::make_unique<juce::AudioParameterBool>(
 		highCutModTempoSyncParamID.getParamID(),
@@ -461,6 +483,8 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_highCutModTempoSync = m_highCutModTempoSyncParam->get();
 	m_highCutModNote = m_highCutModNoteParam->getIndex();
 	m_highCutModInvert = m_highCutModInvertParam->get();
+	m_lowCutModShape = m_lowCutModShapeParam->getIndex();
+	m_highCutModShape = m_highCutModShapeParam->getIndex();
 	if (m_lowCutModTempoSync) {
 		float syncedHz = float(tempo.noteLengthToHz(m_lowCutModNote));
 		m_lowCutModRateParam->setValueNotifyingHost(m_lowCutModRateParam->convertTo0to1(syncedHz));
