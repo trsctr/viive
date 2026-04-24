@@ -1,7 +1,13 @@
 #include "FilterEngine.h"
-
+#include "Sync.h"
 FilterEngine::FilterEngine()
 {
+    int seedLow = m_random.nextInt();
+    int seedHigh = m_random.nextInt();
+    for (int i = 0; i < 2; i++) {
+        m_lowCutLfos[i].setSeed(seedLow);
+        m_highCutLfos[i].setSeed(seedHigh);
+    }
 }
 
 void FilterEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
@@ -80,6 +86,11 @@ void FilterEngine::setFilterModShape(int shapeIndex, LFOShape& current, LFO* lfo
     LFOShape newShape = static_cast<LFOShape>(shapeIndex);
     if (newShape != current) {
         current = newShape;
+        if (current == LFOShape::SampleAndHold) {
+            int seed = m_random.nextInt();
+            for (int i = 0; i < 2; i++)
+                lfos[i].setSeed(seed);
+        }
         for (int i = 0; i < 2; i++)
             lfos[i].setShape(current);
     }
@@ -94,6 +105,7 @@ void FilterEngine::setLowCutFilter(const Parameters& params)
     setFilterModPhase(params.lowCutModPhase(), m_lowCutModPhase, m_lowCutLfos );
     setFilterModShape(params.lowCutModShape(), m_lowCutModShape, m_lowCutLfos);
     m_lowCutModTempoSync = params.lowCutModTempoSync();
+    m_lowCutModNote = params.lowCutModNote();
 }
 
 void FilterEngine::setHighCutFilter(const Parameters& params)
@@ -105,6 +117,7 @@ void FilterEngine::setHighCutFilter(const Parameters& params)
     setFilterModPhase(params.highCutModPhase(), m_highCutModPhase, m_highCutLfos);
     setFilterModShape(params.highCutModShape(), m_highCutModShape, m_highCutLfos);
     m_highCutModTempoSync = params.highCutModTempoSync();
+    m_highCutModNote = params.highCutModNote();
 }
 
 
@@ -115,14 +128,20 @@ void FilterEngine::update(const Parameters& params)
     m_highCutModInvert = params.highCutModInvert();
 }
 
-void FilterEngine::resetLFOs()
+void FilterEngine::updateLFOs(const double ppqPosition) noexcept
 {
     if (m_lowCutModTempoSync)
-        for (auto& lfo : m_lowCutLfos)
-            lfo.reset();
+    {
+        float phase = getSyncedPhase(m_lowCutModNote, ppqPosition);
+        m_lowCutLfos[Channel::Left].setPhase(phase);
+        m_lowCutLfos[Channel::Right].setPhase(phase);
+    }
     if (m_highCutModTempoSync)
-        for (auto& lfo : m_highCutLfos)
-            lfo.reset();
+    {
+        float phase = getSyncedPhase(m_highCutModNote, ppqPosition);
+        m_highCutLfos[Channel::Left].setPhase(phase);
+        m_highCutLfos[Channel::Right].setPhase(phase);
+    }
 }
 
 void FilterEngine::processSample(const float& inL, const float& inR, float& outL, float& outR)

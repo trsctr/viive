@@ -76,6 +76,11 @@ void DelayEngine::update(const Parameters& params)
 	m_filterEngine.update(params);
 }
 
+void DelayEngine::updateSyncedModulators(const double ppqPosition)
+{
+	m_filterEngine.updateLFOs(ppqPosition);
+}
+
 void DelayEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
 {
 	float dryL = inL;

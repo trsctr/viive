@@ -30,6 +30,7 @@ public:
 	void setWidthLevel(const float value) { m_widthLevel = value; }
 	void setOffsetMs(const float value) { m_offsetMs = value * .5f; }
 	void setDelayMode(const int modeIndex);
+	void updateSyncedModulators(const double ppqPosition);
 
 #if JUCE_DEBUG
 	LFOScopeBuffer& getLFOScopeBuffer() { return m_filterEngine.m_scopeBuffer; }

@@ -12,6 +12,7 @@ public:
 	void setFrequency(float frequency);
 	void setOffset(float offset);
 	void setShape(LFOShape shape);
+	void setPhase(float phase) { m_phase = std::fmod(phase, 1.0f); }
 	float process();
 
 private:

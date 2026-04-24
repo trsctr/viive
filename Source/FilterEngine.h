@@ -23,6 +23,8 @@ public:
     void update(const Parameters& params);
     void processSample(const float& inL, const float& inR, float& outL, float& outR);
 
+    void updateLFOs(const double ppqPosition) noexcept;
+
 #if JUCE_DEBUG
     LFOScopeBuffer m_scopeBuffer;
 #endif
@@ -30,6 +32,7 @@ public:
 private:
     StereoFilter m_lowCut{ FilterType::highpass };
     StereoFilter m_highCut{ FilterType::lowpass };
+    juce::Random m_random;
 
     LFO m_lowCutLfos[2];
     LFO m_highCutLfos[2];
@@ -41,6 +44,7 @@ private:
     float m_lowCutModPhase    = 0.0f;
     LFOShape m_lowCutModShape = LFOShape::Sine;
     bool m_lowCutModTempoSync = false;
+    int m_lowCutModNote = 0;
 
     float m_highCutBase        = -1.0f;
     float m_highCutQ           = -1.0f;
@@ -49,6 +53,7 @@ private:
     float m_highCutModPhase    = 0.0f;
     LFOShape m_highCutModShape = LFOShape::Sine;
     bool m_highCutModTempoSync = false;
+    int m_highCutModNote = 0;
 
     bool m_highCutModInvert = false;
 
