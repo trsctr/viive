@@ -48,6 +48,10 @@ float LFO::process() {
 			return processTriangle(offsetPhase);
 		case (LFOShape::Square):
 			return processSquare(offsetPhase);
+		case (LFOShape::SawDown):
+			return processSawDown(offsetPhase);
+		case (LFOShape::SawUp):
+			return processSawUp(offsetPhase);
 		default:
 			return 0.0f;
 	}
@@ -63,4 +67,12 @@ float LFO::processTriangle(float phase) {
 
 float LFO::processSquare(float phase) {
 	return (phase < 0.5f) ? 1.0f : -1.0f;
+}
+
+float LFO::processSawUp(float phase) {
+	return phase * 2.0f - 1.0f;
+}
+
+float LFO::processSawDown(float phase) {
+	return phase * -2.0f + 1.0f;
 }

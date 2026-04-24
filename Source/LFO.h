@@ -1,7 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-enum class LFOShape { Sine, Triangle, Square };
+enum class LFOShape { Sine, Triangle, Square, SawUp, SawDown };
 
 class LFO {
 public:
@@ -29,4 +29,6 @@ private:
 	float processSine(float phase);
 	float processTriangle(float phase);
 	float processSquare(float phase);
+	float processSawUp(float phase);
+	float processSawDown(float phase);
 };
