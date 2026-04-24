@@ -33,7 +33,7 @@ private:
     StereoFilter m_lowCut{ FilterType::highpass };
     StereoFilter m_highCut{ FilterType::lowpass };
     juce::Random m_random;
-
+    
     LFO m_lowCutLfos[2];
     LFO m_highCutLfos[2];
 

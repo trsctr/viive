@@ -2,11 +2,11 @@
 #include "Sync.h"
 FilterEngine::FilterEngine()
 {
-    int seedLow = m_random.nextInt();
-    int seedHigh = m_random.nextInt();
+    int lowCutSeed = juce::Random::getSystemRandom().nextInt();
+    int highCutSeed = juce::Random::getSystemRandom().nextInt();
     for (int i = 0; i < 2; i++) {
-        m_lowCutLfos[i].setSeed(seedLow);
-        m_highCutLfos[i].setSeed(seedHigh);
+        m_lowCutLfos[i].setSeed(lowCutSeed);
+        m_highCutLfos[i].setSeed(highCutSeed);
     }
 }
 
@@ -86,11 +86,6 @@ void FilterEngine::setFilterModShape(int shapeIndex, LFOShape& current, LFO* lfo
     LFOShape newShape = static_cast<LFOShape>(shapeIndex);
     if (newShape != current) {
         current = newShape;
-        if (current == LFOShape::SampleAndHold) {
-            int seed = m_random.nextInt();
-            for (int i = 0; i < 2; i++)
-                lfos[i].setSeed(seed);
-        }
         for (int i = 0; i < 2; i++)
             lfos[i].setShape(current);
     }

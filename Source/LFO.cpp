@@ -40,6 +40,8 @@ void LFO::setIncrement() {
 float LFO::process() {
 	m_phase += m_increment;
 	m_phase = std::fmod(m_phase, 1.0f);
+	m_nextSample = (m_phase < m_lastPhase) ? m_random.nextFloat() * 2.0f - 1.0f : m_nextSample;
+	m_lastPhase = m_phase;
 	float offsetPhase = std::fmod(m_phase + m_offset, 1.0f);
 	switch (m_shape) {
 		case (LFOShape::Sine):
@@ -52,6 +54,8 @@ float LFO::process() {
 			return processSawDown(offsetPhase);
 		case (LFOShape::SawUp):
 			return processSawUp(offsetPhase);
+		case (LFOShape::SampleAndHold):
+			return processSampleAndHold(offsetPhase);
 		default:
 			return 0.0f;
 	}
@@ -75,4 +79,10 @@ float LFO::processSawUp(float phase) {
 
 float LFO::processSawDown(float phase) {
 	return phase * -2.0f + 1.0f;
+}
+
+float LFO::processSampleAndHold(float phase) {
+	float out = (phase < m_lastOffsetPhase) ? m_currentSample = m_nextSample : m_currentSample;
+	m_lastOffsetPhase = phase;
+	return out;
 }

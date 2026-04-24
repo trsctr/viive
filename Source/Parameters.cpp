@@ -122,6 +122,7 @@ const juce::StringArray Parameters::lfoShapes = {
 	"SQR",
 	"SAW+",
 	"SAW-",
+	"S&H",
 };
 
 

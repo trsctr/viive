@@ -13,10 +13,12 @@ public:
 	void setOffset(float offset);
 	void setShape(LFOShape shape);
 	void setPhase(float phase) { m_phase = std::fmod(phase, 1.0f); }
+	void setSeed(int seed) { m_random.setSeed(seed); }
 	float process();
 
 private:
 	LFOShape m_shape;
+	juce::Random m_random;
 
 	float m_sampleRate = 0.0f;
 
@@ -24,6 +26,11 @@ private:
 	float m_phase = 0.0f;
 	float m_offset = 0.0f;
 	float m_increment = 0.0f;
+	float m_lastPhase = 0.0f;
+	float m_lastOffsetPhase = 0.0f;
+	float m_currentSample = 0.0f;
+	float m_nextSample = 0.0f;
+
 
 	void setIncrement();
 	float processSine(float phase);
@@ -31,4 +38,5 @@ private:
 	float processSquare(float phase);
 	float processSawUp(float phase);
 	float processSawDown(float phase);
+	float processSampleAndHold(float phase);
 };
