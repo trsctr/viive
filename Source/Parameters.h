@@ -28,6 +28,7 @@ const juce::ParameterID highCutModDepthParamID{ "highCutModDepth", 1 };
 const juce::ParameterID highCutModPhaseParamID{ "highCutModPhase", 1 };
 const juce::ParameterID highCutModTempoSyncParamID{ "highCutModTempoSync", 1 };
 const juce::ParameterID highCutModNoteParamID{ "highCutModNote", 1 };
+const juce::ParameterID highCutModInvertParamID{ "highCutInvert", 1 };
 const juce::ParameterID chorusIntensityParamID{ "chorusIntensity", 1 };
 const juce::ParameterID chorusModRateParamID{ "chorusModRate", 1 };
 const juce::ParameterID chorusModDepthParamID{ "chorusModDepth", 1 };
@@ -83,6 +84,7 @@ public:
 	float highCutModPhase() const { return m_highCutModPhase; }
 	bool highCutModTempoSync() const { return m_highCutModTempoSync; }
 	int highCutModNote() const { return m_highCutModNote; }
+	bool highCutModInvert() const { return m_highCutModInvert; }
 	float chorusIntensity() const { return m_chorusIntensity; }
 	float chorusModRate() const { return m_chorusModRate; }
 	float chorusModDepth() const { return m_chorusModDepth; }
@@ -114,6 +116,7 @@ private:
 	juce::AudioParameterFloat* m_highCutModPhaseParam;
 	juce::AudioParameterBool* m_highCutModTempoSyncParam;
 	juce::AudioParameterChoice* m_highCutModNoteParam;
+	juce::AudioParameterBool* m_highCutModInvertParam;
 	juce::AudioParameterFloat* m_chorusIntensityParam;
 	juce::AudioParameterFloat* m_chorusModRateParam;
 	juce::AudioParameterFloat* m_chorusModDepthParam;
@@ -168,6 +171,7 @@ private:
 	float m_highCutModPhase = 0.0f;
 	bool m_highCutModTempoSync = false;
 	int m_highCutModNote = 0;
+	bool m_highCutModInvert = false;
 	float m_chorusIntensity = 0.0f;
 	float m_chorusModRate = defaultChorusModRate;
 	float m_chorusModDepth = defaultChorusModDepth;

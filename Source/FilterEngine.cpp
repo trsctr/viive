@@ -98,14 +98,18 @@ void FilterEngine::update(const Parameters& params)
 {
     setLowCutFilter(params);
     setHighCutFilter(params);
+    m_highCutModInvert = params.highCutModInvert();
 }
 
 void FilterEngine::processSample(const float& inL, const float& inR, float& outL, float& outR)
 {
     float lcL = m_lowCutLfos[Channel::Left].process();
     float lcR = m_lowCutLfos[Channel::Right].process();
-    float hcL = -m_highCutLfos[Channel::Left].process();
-    float hcR = -m_highCutLfos[Channel::Right].process();
+    float hcL = m_highCutLfos[Channel::Left].process();
+    float hcR = m_highCutLfos[Channel::Right].process();
+
+    hcL = m_highCutModInvert ? -hcL : hcL;
+    hcR = m_highCutModInvert ? -hcR : hcR;
 
 #if JUCE_DEBUG
     if (++m_scopeCounter >= scopeDownsample) {

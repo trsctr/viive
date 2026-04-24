@@ -146,6 +146,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, highCutModPhaseParamID, m_highCutModPhaseParam);
 	castParameter(apvts, highCutModTempoSyncParamID, m_highCutModTempoSyncParam);
 	castParameter(apvts, highCutModNoteParamID, m_highCutModNoteParam);
+	castParameter(apvts, highCutModInvertParamID, m_highCutModInvertParam);
 	castParameter(apvts, chorusModRateParamID, m_chorusModRateParam);
 	castParameter(apvts, chorusModDepthParamID, m_chorusModDepthParam);
 }
@@ -340,6 +341,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 			.withStringFromValueFunction(stringFromDegrees)
 			.withValueFromStringFunction(degreesFromString)
 	));
+	layout.add(std::make_unique<juce::AudioParameterBool>(
+		highCutModInvertParamID.getParamID(),
+		"High Cut Mod Invert",
+		true
+	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		chorusIntensityParamID.getParamID(),
 		"Chorus Intensity",
@@ -454,6 +460,7 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_lowCutModNote = m_lowCutModNoteParam->getIndex();
 	m_highCutModTempoSync = m_highCutModTempoSyncParam->get();
 	m_highCutModNote = m_highCutModNoteParam->getIndex();
+	m_highCutModInvert = m_highCutModInvertParam->get();
 	if (m_lowCutModTempoSync) {
 		float syncedHz = float(tempo.noteLengthToHz(m_lowCutModNote));
 		m_lowCutModRateParam->setValueNotifyingHost(m_lowCutModRateParam->convertTo0to1(syncedHz));

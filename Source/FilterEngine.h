@@ -46,6 +46,8 @@ private:
     float m_highCutModRate     = 0.0f;
     float m_highCutModPhase    = 0.0f;
 
+    bool m_highCutModInvert = false;
+
     float m_lowCutSmoothed[2]  = { Parameters::minFilterFreq, Parameters::minFilterFreq };
     float m_highCutSmoothed[2] = { Parameters::maxFilterFreq, Parameters::maxFilterFreq };
     float m_cutoffSmoothCoeff  = 0.0f;
