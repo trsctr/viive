@@ -105,14 +105,20 @@ const juce::StringArray Parameters::delayNoteLengths = {
 };
 
 const juce::StringArray Parameters::modNoteLengths = {
-	"1/16",
 	"1/8",
+	"1/8 dot",
 	"1/4",
 	"1/4 dot",
 	"1/2",
+	"1/2 dot",
 	"1/1",
+	"1/1 dot",
 	"2/1",
+	"3/1",
 	"4/1",
+	"5/1",
+	"6/1",
+	"7/1",
 	"8/1",
 };
 
@@ -270,7 +276,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutModRateParamID.getParamID(),
 		"Low Cut Mod Rate",
-		juce::NormalisableRange<float>(0.01f, 20.0f, 0.001f, 0.3f),
+		juce::NormalisableRange<float>(0.01f, 8.0f, 0.001f, 0.3f),
 		0.05f,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
@@ -280,7 +286,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		lowCutModNoteParamID,
 		"Low Cut Mod Note",
 		modNoteLengths,
-		5
+		6
 	));
 	layout.add(std::make_unique<juce::AudioParameterBool>(
 		lowCutModTempoSyncParamID.getParamID(),
@@ -326,7 +332,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		highCutModRateParamID.getParamID(),
 		"High Cut Mod Rate",
-		juce::NormalisableRange<float>(0.01f, 20.0f, 0.001f, 0.3f),
+		juce::NormalisableRange<float>(0.01f, 8.0f, 0.001f, 0.3f),
 		0.05f,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
@@ -336,7 +342,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		highCutModNoteParamID,
 		"High Cut Mod Note",
 		modNoteLengths,
-		5
+		6
 	));
 	layout.add(std::make_unique<juce::AudioParameterChoice>(
 		highCutModShapeParamID,

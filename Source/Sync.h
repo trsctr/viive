@@ -21,17 +21,23 @@ inline static std::array<double, 16> delayNoteLengthMultipliers =
 	4.0,			// 15 = 1/1
 };
 
-inline static std::array<double, 9> modNoteLengthMultipliers =
+inline static std::array<double, 15> modNoteLengthMultipliers =
 {
-	0.25,			// 0 = 1/16
-	0.5,			// 1 = 1/8
-	1.0,			// 2 = 1/4
-	1.5,			// 3 = 1/4 dotted
-	2.0,			// 4 = 1/2
-	4.0,			// 5 = 1/1
-	8.0,			// 6 = 2/1
-	16.0,			// 7 = 4/1
-	32.0,			// 8 = 8/1
+	0.5,			// 0  = 1/8
+	0.75,			// 1  = 1/8 dotted
+	1.0,			// 2  = 1/4
+	1.5,			// 3  = 1/4 dotted
+	2.0,			// 4  = 1/2
+	3.0,			// 5  = 1/2 dotted
+	4.0,			// 6  = 1/1
+	6.0,			// 7  = 1/1 dotted
+	8.0,			// 8  = 2/1
+	12.0,			// 9  = 3/1
+	16.0,			// 10 = 4/1
+	20.0,			// 11 = 5/1
+	24.0,			// 12 = 6/1
+	28.0,			// 13 = 7/1
+	32.0,			// 14 = 8/1
 };
 
 inline float getSyncedPhase(int index, double ppqPosition)
