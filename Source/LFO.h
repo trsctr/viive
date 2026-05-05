@@ -12,7 +12,7 @@ public:
 	void setFrequency(float frequency);
 	void setOffset(float offset);
 	void setShape(LFOShape shape);
-	void setPhase(float phase) { m_phase = std::fmod(phase, 1.0f); }
+	void setPhase(float phase);
 	void setSeed(int seed) { m_random.setSeed(seed); }
 	float process();
 

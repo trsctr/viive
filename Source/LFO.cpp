@@ -29,6 +29,11 @@ void LFO::setShape(LFOShape shape) {
 	m_shape = shape;
 }
 
+void LFO::setPhase(float phase) {
+	m_phase = std::fmod(phase, 1.0f);
+	m_lastOffsetPhase = std::fmod(m_phase + m_offset, 1.0f);
+}
+
 void LFO::setIncrement() {
 	if (m_sampleRate > 0.0f) {
 		m_increment = m_frequency / m_sampleRate;
