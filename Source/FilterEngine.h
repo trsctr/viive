@@ -25,6 +25,9 @@ public:
 
     void updateLFOs(const double ppqPosition) noexcept;
 
+    std::atomic<float>& getLowCutLfoValue()  { return m_lowCutLfoValue; }
+    std::atomic<float>& getHighCutLfoValue() { return m_highCutLfoValue; }
+
 #if JUCE_DEBUG
     LFOScopeBuffer m_scopeBuffer;
 #endif
@@ -56,6 +59,9 @@ private:
     int m_highCutModNote = 0;
 
     bool m_highCutModInvert = false;
+
+    std::atomic<float> m_lowCutLfoValue  { 0.0f };
+    std::atomic<float> m_highCutLfoValue { 0.0f };
 
     float m_lowCutSmoothed[2]  = { Parameters::minFilterFreq, Parameters::minFilterFreq };
     float m_highCutSmoothed[2] = { Parameters::maxFilterFreq, Parameters::maxFilterFreq };

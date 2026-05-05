@@ -149,6 +149,9 @@ void FilterEngine::processSample(const float& inL, const float& inR, float& outL
     hcL = m_highCutModInvert ? -hcL : hcL;
     hcR = m_highCutModInvert ? -hcR : hcR;
 
+    m_lowCutLfoValue.store(lcL, std::memory_order_relaxed);
+    m_highCutLfoValue.store(hcL, std::memory_order_relaxed);
+
 #if JUCE_DEBUG
     if (++m_scopeCounter >= scopeDownsample) {
         m_scopeCounter = 0;

@@ -7,6 +7,7 @@
 #include "SyncButton.h"
 #include "Selector.h"
 #include "LevelMeter.h"
+#include "LFOIndicator.h"
 #if JUCE_DEBUG
 #include "LFOScope.h"
 #endif
@@ -66,6 +67,9 @@ private:
     Selector m_modeSelector{ "Mode", m_audioProcessor.apvts, delayModeParamID.getParamID(), Parameters::delayModes, 130 };
     Selector m_lowCutModShapeSelector{ "", m_audioProcessor.apvts, lowCutModShapeParamID.getParamID(), Parameters::lfoShapes, 60, 12.0f };
     Selector m_highCutModShapeSelector{ "", m_audioProcessor.apvts, highCutModShapeParamID.getParamID(), Parameters::lfoShapes, 60, 12.0f };
+
+    LFOIndicator m_lowCutLfoIndicator  { m_audioProcessor.getLowCutLfoValue() };
+    LFOIndicator m_highCutLfoIndicator { m_audioProcessor.getHighCutLfoValue() };
 
     juce::Label m_modulationLabel;
 

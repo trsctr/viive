@@ -35,6 +35,8 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_filterModGroup.addAndMakeVisible(m_highCutModTempoSyncButton);
 	m_filterModGroup.addAndMakeVisible(m_lowCutModShapeSelector);
 	m_filterModGroup.addAndMakeVisible(m_highCutModShapeSelector);
+	m_filterModGroup.addAndMakeVisible(m_lowCutLfoIndicator);
+	m_filterModGroup.addAndMakeVisible(m_highCutLfoIndicator);
 
 	m_filterGroup.setText("Filter");
     m_filterGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
@@ -136,6 +138,11 @@ void ViiveAudioProcessorEditor::resized()
 	m_lowCutModPhaseKnob.setTopLeftPosition(m_lowCutModDepthKnob.getRight() + 10, 20);
 	m_lowCutModTempoSyncButton.setTopLeftPosition(20, m_lowCutModRateKnob.getBottom() + 5);
 	m_lowCutModShapeSelector.setTopLeftPosition(m_lowCutModDepthKnob.getX(), m_lowCutModTempoSyncButton.getY());
+
+	constexpr int indicatorSize = 8;
+	m_lowCutLfoIndicator.setSize(indicatorSize, indicatorSize);
+	m_lowCutLfoIndicator.setCentrePosition(m_lowCutModPhaseKnob.getBounds().getCentreX(),
+	                                        m_lowCutModPhaseKnob.getBottom() + 15);
 	m_highCutFreqKnob.setTopLeftPosition(m_lowCutQKnob.getRight() + 20, 20);
 	m_highCutQKnob.setTopLeftPosition(m_highCutFreqKnob.getRight() + 20, 20);
 	m_highCutModPhaseKnob.setTopRightPosition(m_highCutQKnob.getRight(), 20);
@@ -144,6 +151,10 @@ void ViiveAudioProcessorEditor::resized()
 	m_highCutModNoteKnob.setTopLeftPosition(m_highCutModRateKnob.getX(), m_highCutModRateKnob.getY());
 	m_highCutModTempoSyncButton.setTopLeftPosition(m_highCutModRateKnob.getX(), m_highCutModRateKnob.getBottom() + 5);
 	m_highCutModShapeSelector.setTopLeftPosition(m_highCutModDepthKnob.getX(), m_highCutModTempoSyncButton.getY());
+
+	m_highCutLfoIndicator.setSize(indicatorSize, indicatorSize);
+	m_highCutLfoIndicator.setCentrePosition(m_highCutModPhaseKnob.getBounds().getCentreX(),
+	                                         m_highCutModPhaseKnob.getBottom() + 15);
 	m_stereoKnob.setTopLeftPosition(20, 20);
 	m_mixKnob.setTopLeftPosition(m_stereoKnob.getRight() + 20, 20);
 	m_gainKnob.setTopLeftPosition(m_mixKnob.getRight() + 20, 20);

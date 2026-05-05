@@ -32,6 +32,9 @@ public:
 	void setDelayMode(const int modeIndex);
 	void updateSyncedModulators(const double ppqPosition);
 
+	std::atomic<float>& getLowCutLfoValue()  { return m_filterEngine.getLowCutLfoValue(); }
+	std::atomic<float>& getHighCutLfoValue() { return m_filterEngine.getHighCutLfoValue(); }
+
 #if JUCE_DEBUG
 	LFOScopeBuffer& getLFOScopeBuffer() { return m_filterEngine.m_scopeBuffer; }
 #endif
