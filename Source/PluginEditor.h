@@ -70,6 +70,7 @@ private:
 
     LFOIndicator m_lowCutLfoIndicator  { m_audioProcessor.getLowCutLfoValue() };
     LFOIndicator m_highCutLfoIndicator { m_audioProcessor.getHighCutLfoValue() };
+    SyncButton m_highCutModInvertButton{ juce::String::fromUTF8("\xC3\x98"), m_audioProcessor.apvts, highCutModInvertParamID.getParamID(), 20};
 
     juce::Label m_modulationLabel;
 

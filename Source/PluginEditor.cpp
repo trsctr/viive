@@ -37,6 +37,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_filterModGroup.addAndMakeVisible(m_highCutModShapeSelector);
 	m_filterModGroup.addAndMakeVisible(m_lowCutLfoIndicator);
 	m_filterModGroup.addAndMakeVisible(m_highCutLfoIndicator);
+	m_filterModGroup.addAndMakeVisible(m_highCutModInvertButton);
 
 	m_filterGroup.setText("Filter");
     m_filterGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
@@ -155,6 +156,8 @@ void ViiveAudioProcessorEditor::resized()
 	m_highCutLfoIndicator.setSize(indicatorSize, indicatorSize);
 	m_highCutLfoIndicator.setCentrePosition(m_highCutModPhaseKnob.getBounds().getCentreX(),
 	                                         m_highCutModPhaseKnob.getBottom() + 15);
+	m_highCutModInvertButton.setCentrePosition(m_highCutLfoIndicator.getBounds().getCentreX() + 25,
+	                                            m_highCutLfoIndicator.getBounds().getCentreY());
 	m_stereoKnob.setTopLeftPosition(20, 20);
 	m_mixKnob.setTopLeftPosition(m_stereoKnob.getRight() + 20, 20);
 	m_gainKnob.setTopLeftPosition(m_mixKnob.getRight() + 20, 20);
