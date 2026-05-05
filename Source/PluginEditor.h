@@ -5,6 +5,7 @@
 #include "Parameters.h"
 #include "RotaryKnob.h"
 #include "SyncButton.h"
+#include "Selector.h"
 #include "LevelMeter.h"
 #if JUCE_DEBUG
 #include "LFOScope.h"
@@ -62,8 +63,9 @@ private:
     SyncButton m_lowCutModTempoSyncButton{ "Sync", m_audioProcessor.apvts, lowCutModTempoSyncParamID.getParamID() };
     SyncButton m_highCutModTempoSyncButton{ "Sync", m_audioProcessor.apvts, highCutModTempoSyncParamID.getParamID() };
 
-    juce::Label m_delayModeLabel;
-    juce::ComboBox m_modeSelector;
+    Selector m_modeSelector{ "Mode", m_audioProcessor.apvts, delayModeParamID.getParamID(), Parameters::delayModes, 130 };
+    Selector m_lowCutModShapeSelector{ "", m_audioProcessor.apvts, lowCutModShapeParamID.getParamID(), Parameters::lfoShapes, 60, 12.0f };
+    Selector m_highCutModShapeSelector{ "", m_audioProcessor.apvts, highCutModShapeParamID.getParamID(), Parameters::lfoShapes, 60, 12.0f };
 
     juce::Label m_modulationLabel;
 
@@ -76,7 +78,6 @@ private:
 #endif
 
     virtual void parameterChanged(const juce::String& paramID, float newValue) override;
-    void modeSelectorChanged();
     void updateSyncedKnobs(bool syncLActive, bool syncRActive, bool lowCutSyncActive, bool highCutSyncActive);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)

@@ -17,17 +17,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_delayGroup.addAndMakeVisible(m_offsetKnob);
 	m_delayGroup.addAndMakeVisible(m_tempoSyncLButton);
 	m_delayGroup.addAndMakeVisible(m_tempoSyncRButton);
-	addAndMakeVisible(m_delayModeLabel);
-	m_delayModeLabel.setText("Delay Mode:", juce::NotificationType::dontSendNotification);
-	m_delayModeLabel.setEditable(false);
-	m_delayModeLabel.setSize(80, 25);
 	addAndMakeVisible(m_modeSelector);
-	m_modeSelector.addItemList(Parameters::delayModes, 1);
-	m_modeSelector.setEditableText(false);
-	m_modeSelector.setSize(130, 25);
-	m_modeSelector.onChange = [this] { modeSelectorChanged();};
-	auto* param = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(delayModeParamID.getParamID()));
-	m_modeSelector.setSelectedId(param->getIndex() + 1, juce::dontSendNotification);
 	addAndMakeVisible(m_delayGroup);
 
     m_filterModGroup.setText("Modulation");
@@ -43,6 +33,8 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_filterModGroup.addAndMakeVisible(m_highCutModPhaseKnob);
 	m_filterModGroup.addAndMakeVisible(m_lowCutModTempoSyncButton);
 	m_filterModGroup.addAndMakeVisible(m_highCutModTempoSyncButton);
+	m_filterModGroup.addAndMakeVisible(m_lowCutModShapeSelector);
+	m_filterModGroup.addAndMakeVisible(m_highCutModShapeSelector);
 
 	m_filterGroup.setText("Filter");
     m_filterGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
@@ -88,7 +80,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 #if JUCE_DEBUG
 	setSize(770, 670);
 #else
-	setSize(770, 480);
+	setSize(770, 490);
 #endif
 }
 
@@ -133,8 +125,7 @@ void ViiveAudioProcessorEditor::resized()
 	m_tempoSyncRButton.setCentrePosition(m_delayTimeRKnob.getRight() - 35, m_delayTimeRKnob.getBottom() + 15);
 	m_feedbackKnob.setTopLeftPosition(m_delayTimeRKnob.getRight() + 20, 20);
 	
-	m_delayModeLabel.setTopLeftPosition(10, y);
-	m_modeSelector.setTopLeftPosition(95, y);
+	m_modeSelector.setTopLeftPosition(10, y);
 
 	m_offsetKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
 	m_lowCutFreqKnob.setTopLeftPosition(20, 20);
@@ -144,6 +135,7 @@ void ViiveAudioProcessorEditor::resized()
 	m_lowCutModDepthKnob.setTopLeftPosition(m_lowCutModRateKnob.getRight() + 10, 20);
 	m_lowCutModPhaseKnob.setTopLeftPosition(m_lowCutModDepthKnob.getRight() + 10, 20);
 	m_lowCutModTempoSyncButton.setTopLeftPosition(20, m_lowCutModRateKnob.getBottom() + 5);
+	m_lowCutModShapeSelector.setTopLeftPosition(m_lowCutModDepthKnob.getX(), m_lowCutModTempoSyncButton.getY());
 	m_highCutFreqKnob.setTopLeftPosition(m_lowCutQKnob.getRight() + 20, 20);
 	m_highCutQKnob.setTopLeftPosition(m_highCutFreqKnob.getRight() + 20, 20);
 	m_highCutModPhaseKnob.setTopRightPosition(m_highCutQKnob.getRight(), 20);
@@ -151,6 +143,7 @@ void ViiveAudioProcessorEditor::resized()
 	m_highCutModRateKnob.setTopRightPosition(m_highCutModDepthKnob.getX() - 10, 20);
 	m_highCutModNoteKnob.setTopLeftPosition(m_highCutModRateKnob.getX(), m_highCutModRateKnob.getY());
 	m_highCutModTempoSyncButton.setTopLeftPosition(m_highCutModRateKnob.getX(), m_highCutModRateKnob.getBottom() + 5);
+	m_highCutModShapeSelector.setTopLeftPosition(m_highCutModDepthKnob.getX(), m_highCutModTempoSyncButton.getY());
 	m_stereoKnob.setTopLeftPosition(20, 20);
 	m_mixKnob.setTopLeftPosition(m_stereoKnob.getRight() + 20, 20);
 	m_gainKnob.setTopLeftPosition(m_mixKnob.getRight() + 20, 20);
@@ -191,8 +184,3 @@ void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, fl
 	}
 }
 
-void ViiveAudioProcessorEditor::modeSelectorChanged() {
-	int selectedID = m_modeSelector.getSelectedId();
-	auto* param = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(delayModeParamID.getParamID()));
-	param->setValueNotifyingHost(param->convertTo0to1(selectedID - 1));
-}
