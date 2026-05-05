@@ -10,7 +10,9 @@ public:
              const juce::ParameterID& parameterID,
              const juce::StringArray& items,
              int width = 60,
-             float fontSize = 0.0f);
+             float fontSize = 0.0f,
+             int leftLabelWidth = 0,
+             int height = 0);
     ~Selector() override;
 
     void resized() override;
@@ -33,6 +35,7 @@ private:
     juce::ComboBox m_comboBox;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> m_attachment;
     bool m_hasLabel;
+    int m_leftLabelWidth = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Selector)
 };

@@ -5,8 +5,10 @@ Selector::Selector(const juce::String& labelText,
                    const juce::ParameterID& parameterID,
                    const juce::StringArray& items,
                    int width,
-                   float fontSize)
-    : m_hasLabel(labelText.isNotEmpty())
+                   float fontSize,
+                   int leftLabelWidth,
+                   int height)
+    : m_hasLabel(labelText.isNotEmpty()), m_leftLabelWidth(leftLabelWidth)
 {
     if (fontSize > 0.0f)
     {
@@ -24,13 +26,11 @@ Selector::Selector(const juce::String& labelText,
     if (m_hasLabel)
     {
         m_label.setText(labelText, juce::NotificationType::dontSendNotification);
-        m_label.setFont(juce::Font(juce::FontOptions().withHeight(13.0f)));
-        m_label.setJustificationType(juce::Justification::horizontallyCentred);
-        m_label.setBorderSize(juce::BorderSize<int>(0));
         addAndMakeVisible(m_label);
     }
 
-    setSize(width, (m_hasLabel ? s_labelH : 0) + s_comboH);
+    const int autoH = (m_hasLabel && m_leftLabelWidth == 0 ? s_labelH : 0) + s_comboH;
+    setSize(width, height > 0 ? height : autoH);
 }
 
 Selector::~Selector()
@@ -40,8 +40,16 @@ Selector::~Selector()
 
 void Selector::resized()
 {
-    const int comboY = m_hasLabel ? s_labelH : 0;
-    if (m_hasLabel)
-        m_label.setBounds(0, 0, getWidth(), s_labelH);
-    m_comboBox.setBounds(0, comboY, getWidth(), s_comboH);
+    if (m_hasLabel && m_leftLabelWidth > 0)
+    {
+        m_label.setBounds(0, 0, m_leftLabelWidth, getHeight());
+        m_comboBox.setBounds(m_leftLabelWidth, 0, getWidth() - m_leftLabelWidth, getHeight());
+    }
+    else
+    {
+        const int comboY = m_hasLabel ? s_labelH : 0;
+        if (m_hasLabel)
+            m_label.setBounds(0, 0, getWidth(), s_labelH);
+        m_comboBox.setBounds(0, comboY, getWidth(), s_comboH);
+    }
 }

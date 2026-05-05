@@ -64,7 +64,7 @@ private:
     SyncButton m_lowCutModTempoSyncButton{ "Sync", m_audioProcessor.apvts, lowCutModTempoSyncParamID.getParamID() };
     SyncButton m_highCutModTempoSyncButton{ "Sync", m_audioProcessor.apvts, highCutModTempoSyncParamID.getParamID() };
 
-    Selector m_modeSelector{ "Mode", m_audioProcessor.apvts, delayModeParamID.getParamID(), Parameters::delayModes, 130 };
+    Selector m_modeSelector{ "Delay Mode:", m_audioProcessor.apvts, delayModeParamID.getParamID(), Parameters::delayModes, 215, 0.0f, 85, 25 };
     Selector m_lowCutModShapeSelector{ "", m_audioProcessor.apvts, lowCutModShapeParamID.getParamID(), Parameters::lfoShapes, 60, 12.0f };
     Selector m_highCutModShapeSelector{ "", m_audioProcessor.apvts, highCutModShapeParamID.getParamID(), Parameters::lfoShapes, 60, 12.0f };
 
