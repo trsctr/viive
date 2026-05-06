@@ -79,7 +79,11 @@ jobs:
         VALIDATE_IN_PROCESS: true
       run: |
         curl -LsS ${{ matrix.config.pluginval_link }} -o pluginval.zip
-        echo "${{ matrix.config.pluginval_sha256 }}  pluginval.zip" | shasum -a 256 -c || { echo "pluginval checksum verification failed"; exit 1; }
+        if [[ "$RUNNER_OS" == "macOS" ]]; then
+          echo "${{ matrix.config.pluginval_sha256 }}  pluginval.zip" | shasum -a 256 -c || { echo "pluginval checksum verification failed"; exit 1; }
+        else
+          echo "${{ matrix.config.pluginval_sha256 }}  pluginval.zip" | sha256sum -c || { echo "pluginval checksum verification failed"; exit 1; }
+        fi
         unzip -q pluginval
         ${{ matrix.config.pluginval_path }} --validate pluginval-input/*.vst3
 
