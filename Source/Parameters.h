@@ -147,11 +147,6 @@ private:
 	juce::LinearSmoothedValue<float> m_chorusModRateSmoother;
 	juce::LinearSmoothedValue<float> m_chorusModDepthSmoother;
 
-	float m_targetDelayTimeL = 0.0f;
-	float m_targetDelayTimeR = 0.0f;
-
-	float m_coeff = 0.0f;
-
 	float m_gain = 0.0f;
 	float m_delayTimeL = 0.0f;
 	float m_delayTimeR = 0.0f;
