@@ -494,11 +494,11 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_highCutModShape = m_highCutModShapeParam->getIndex();
 	if (m_lowCutModTempoSync) {
 		float syncedHz = float(tempo.noteLengthToHz(m_lowCutModNote));
-		m_lowCutModRateParam->setValueNotifyingHost(m_lowCutModRateParam->convertTo0to1(syncedHz));
+	    m_lowCutModRateSmoother.setTargetValue(syncedHz);
 	}
 	if (m_highCutModTempoSync) {
 		float syncedHz = float(tempo.noteLengthToHz(m_highCutModNote));
-		m_highCutModRateParam->setValueNotifyingHost(m_highCutModRateParam->convertTo0to1(syncedHz));
+		m_highCutModRateSmoother.setTargetValue(syncedHz);
 	}
 	if (m_tempoSyncL) {
 		float syncedMs = juce::jmin(float(tempo.noteLengthToMs(m_delayNoteL)), maxDelayTime);
