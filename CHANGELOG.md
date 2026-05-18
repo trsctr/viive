@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## \[0.2.0] - 2026-05-18
+
+### Added
+
+* Filter modulation for High and Low cuts with independent LFOs
+  * LFO rate control
+  * LFO Tempo sync linked to song position during playback
+  * LFO phase offset per filter
+  * LFO Shape selection
+  * Filter modulation depth control
+  * Phase invert switch for high cut lfo (on by default)
+* Square, Saw Up/Down and Sample&Hold LFO Shapes
+* Indicator lights for both LFOs to get visual idea of its current value
+
+### Changed
+
+* Refactored filters to StereoFilter primitive and FilterEngine class
+* Set maximum resonance for low and high cut filters to 1.5
+
 ## \[0.1.0] - 2026-04-17
 
 ### Added

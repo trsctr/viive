@@ -12,6 +12,7 @@ Currently developed and tested on Windows (JUCE AudioPluginHost, Ableton Live Su
 - Mix and feedback controls with feedback stabilization (0-140%)
 - Stereo width control with mid/side processing
 - Sculpting low/high-cut filters with adjustable resonance on delayed signal / feedback loop
+- Filter modulation section with separate LFOs for high and low cut filters with tempo sync, adjustable rate, modulation depth, stereo phase offset and selectable shapes: Sine, Triangle, Square, Saw Up/Down, Sample & Hold
 - Dual-voice chorus effect in feedback loop with intensity, modulation rate, and modulation depth controls
 - Feedback loop protection: HPF, compressor, soft clipping
 
@@ -31,8 +32,16 @@ Download the zip for your platform, extract it, and copy `viive.vst3` to your VS
 
 Then rescan plugins in your DAW.
 
+NOTE: macOS build is unsigned and unnotarized. If Gatekeeper blocks the plugin, run the following commands in Terminal after copying it to your VST3 folder:
+
+```bash
+xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/viive.vst3
+codesign --force --deep --sign - ~/Library/Audio/Plug-Ins/VST3/viive.vst3
+```
+
+Then rescan plugins in your DAW.
+
 ## Potential future features
-- LFO/modulation for general parameters (such as filter cutoffs)
 - Additional effects in feedback loop (bitcrush, phaser)
 - Preset manager
 - Single/dual delay mode switch
@@ -56,6 +65,8 @@ cmake --build Build --config Release
 ```
 
 JUCE 8.0.11 is downloaded automatically during configuration.
+
+NOTE: Linux builds are reportedly possible but untested and undocumented.
 
 ### Output
 The VST3 will be produced under `Build/viive_artefacts/Release/VST3/`.

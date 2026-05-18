@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(viive VERSION 0.1.0)
+project(viive VERSION 0.2.0)
 
 
 ### Dependency versions ###
@@ -41,6 +41,7 @@ set(VST3_DEV_COPY_DIR "" CACHE PATH "If set, copies the Debug VST3 build here af
 ### Plugin Project Setup ###
 
 juce_add_plugin(viive
+    VERSION 0.2.0
     FORMATS VST3 Standalone
     PRODUCT_NAME "viive"
     COMPANY_NAME "trsctr"
@@ -67,9 +68,12 @@ get_property(project_targets DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTY BUILDSYS
 set_target_properties(${project_targets} PROPERTIES CXX_EXTENSIONS OFF)
 
 target_sources(viive PRIVATE
+    Source/FilterEngine.cpp
     Source/Tempo.cpp
+    Source/Selector.cpp
     Source/SyncButton.cpp
     Source/StereoDelay.cpp
+    Source/StereoFilter.cpp
     Source/ChorusEngine.cpp
     Source/LFO.cpp
     Source/Chorus.cpp
@@ -78,7 +82,8 @@ target_sources(viive PRIVATE
     Source/DelayEngine.cpp
     Source/Parameters.cpp
     Source/PluginProcessor.cpp
-    Source/PluginEditor.cpp)
+    Source/PluginEditor.cpp
+    Source/LFOScope.cpp)
 
 juce_generate_juce_header(viive)
 

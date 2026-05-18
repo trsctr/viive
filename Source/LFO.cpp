@@ -29,6 +29,11 @@ void LFO::setShape(LFOShape shape) {
 	m_shape = shape;
 }
 
+void LFO::setPhase(float phase) {
+	m_phase = std::fmod(phase, 1.0f);
+	m_lastOffsetPhase = std::fmod(m_phase + m_offset, 1.0f);
+}
+
 void LFO::setIncrement() {
 	if (m_sampleRate > 0.0f) {
 		m_increment = m_frequency / m_sampleRate;
@@ -40,12 +45,22 @@ void LFO::setIncrement() {
 float LFO::process() {
 	m_phase += m_increment;
 	m_phase = std::fmod(m_phase, 1.0f);
+	m_nextSample = (m_phase < m_lastPhase) ? m_random.nextFloat() * 2.0f - 1.0f : m_nextSample;
+	m_lastPhase = m_phase;
 	float offsetPhase = std::fmod(m_phase + m_offset, 1.0f);
 	switch (m_shape) {
 		case (LFOShape::Sine):
 			return processSine(offsetPhase);
 		case (LFOShape::Triangle):
 			return processTriangle(offsetPhase);
+		case (LFOShape::Square):
+			return processSquare(offsetPhase);
+		case (LFOShape::SawDown):
+			return processSawDown(offsetPhase);
+		case (LFOShape::SawUp):
+			return processSawUp(offsetPhase);
+		case (LFOShape::SampleAndHold):
+			return processSampleAndHold(offsetPhase);
 		default:
 			return 0.0f;
 	}
@@ -57,4 +72,22 @@ float LFO::processSine(float phase) {
 
 float LFO::processTriangle(float phase) {
 	return 1.0f - 4.0f * std::abs(phase - 0.5f);
+}
+
+float LFO::processSquare(float phase) {
+	return (phase < 0.5f) ? 1.0f : -1.0f;
+}
+
+float LFO::processSawUp(float phase) {
+	return phase * 2.0f - 1.0f;
+}
+
+float LFO::processSawDown(float phase) {
+	return phase * -2.0f + 1.0f;
+}
+
+float LFO::processSampleAndHold(float phase) {
+	float out = (phase < m_lastOffsetPhase) ? m_currentSample = m_nextSample : m_currentSample;
+	m_lastOffsetPhase = phase;
+	return out;
 }

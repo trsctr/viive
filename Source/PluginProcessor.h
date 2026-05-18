@@ -4,6 +4,9 @@
 #include "Parameters.h"
 #include "DelayEngine.h"
 #include "Tempo.h"
+#if JUCE_DEBUG
+#include "LFOScopeBuffer.h"
+#endif
 
 //==============================================================================
 /**
@@ -43,6 +46,12 @@ public:
 
     std::atomic<float>& getOutputLevelL() { return m_outputLevelL; }
     std::atomic<float>& getOutputLevelR() { return m_outputLevelR; }
+    std::atomic<float>& getLowCutLfoValue()  { return m_delayEngine.getLowCutLfoValue(); }
+    std::atomic<float>& getHighCutLfoValue() { return m_delayEngine.getHighCutLfoValue(); }
+
+#if JUCE_DEBUG
+    LFOScopeBuffer& getLFOScopeBuffer() { return m_delayEngine.getLFOScopeBuffer(); }
+#endif
 
     //==============================================================================
     int getNumPrograms() override;

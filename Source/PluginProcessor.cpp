@@ -116,16 +116,9 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
 
     m_tempo.update(getPlayHead());
     m_params.update(m_tempo);
+    if (m_tempo.getIsPlaying())
+        m_delayEngine.updateSyncedModulators(m_tempo.getPpqPosition());
     m_delayEngine.setDelayMode(m_params.delayMode());
-
-    //float syncedTimeL = static_cast<float>(m_tempo.noteLengthToMs(m_params.delayNoteL()));
-    //float syncedTimeR = static_cast<float>(m_tempo.noteLengthToMs(m_params.delayNoteR()));
-    //if (syncedTimeL > Parameters::maxDelayTime)
-    //    syncedTimeL = Parameters::maxDelayTime;
-    //if (syncedTimeR > Parameters::maxDelayTime)
-    //    syncedTimeR = Parameters::maxDelayTime;
-
-    //float sampleRate = float(getSampleRate());
 
     auto mainInput = getBusBuffer(buffer, true, 0);
     const float* inputDataL = mainInput.getReadPointer(0);

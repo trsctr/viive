@@ -1,7 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-
-enum Channel { Left = 0, Right = 1 };
+#include "Types.h"
 
 class StereoDelay {
 public:
