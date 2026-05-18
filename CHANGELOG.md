@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## \[0.2.0-beta.1] - 2026-05-06
+## \[0.2.0] - 2026-05-18
 
 ### Added
 
@@ -20,10 +20,6 @@ All notable changes to this project will be documented in this file.
 
 * Refactored filters to StereoFilter primitive and FilterEngine class
 * Set maximum resonance for low and high cut filters to 1.5
-
-### Known limitations
-
-* Tempo synced LFOs might sync incorrectly to song playback positions in DAW on extreme settings (very high or very low BPMs)
 
 ## \[0.1.0] - 2026-04-17
 

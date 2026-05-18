@@ -32,9 +32,14 @@ Download the zip for your platform, extract it, and copy `viive.vst3` to your VS
 
 Then rescan plugins in your DAW.
 
-NOTE: MacOS build is untested and unsigned. May be blocked by Gatekeeper on 
-newer macOS versions and cannot be guaranteed to work without 
-code signing and notarization.
+NOTE: macOS build is unsigned and unnotarized. If Gatekeeper blocks the plugin, run the following commands in Terminal after copying it to your VST3 folder:
+
+```bash
+xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/viive.vst3
+codesign --force --deep --sign - ~/Library/Audio/Plug-Ins/VST3/viive.vst3
+```
+
+Then rescan plugins in your DAW.
 
 ## Potential future features
 - Additional effects in feedback loop (bitcrush, phaser)
