@@ -27,5 +27,5 @@ private:
     void setDownsampleRate(float downsampleRate);
     void setMixLevel(float mixLevel);
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BitCrusher)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LofiEngine)
 };
