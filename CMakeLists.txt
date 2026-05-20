@@ -68,6 +68,8 @@ get_property(project_targets DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTY BUILDSYS
 set_target_properties(${project_targets} PROPERTIES CXX_EXTENSIONS OFF)
 
 target_sources(viive PRIVATE
+    Source/BitCrusher.cpp
+    Source/LofiEngine.cpp
     Source/FilterEngine.cpp
     Source/Tempo.cpp
     Source/Selector.cpp

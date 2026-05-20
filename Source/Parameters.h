@@ -34,6 +34,9 @@ const juce::ParameterID highCutModInvertParamID{ "highCutModInvert", 1 };
 const juce::ParameterID chorusIntensityParamID{ "chorusIntensity", 1 };
 const juce::ParameterID chorusModRateParamID{ "chorusModRate", 1 };
 const juce::ParameterID chorusModDepthParamID{ "chorusModDepth", 1 };
+const juce::ParameterID lofiSampleRateParamID{ "lofiSampleRate", 1 };
+const juce::ParameterID lofiBitDepthParamID{ "lofiBitDepth", 1 };
+const juce::ParameterID lofiMixLevelParamID{ "lofiMixLevel", 1 };
 
 class Parameters {
 public:
@@ -51,6 +54,10 @@ public:
 	static constexpr float defaultChorusModRate = 0.2f;
 	static constexpr float defaultChorusModRate2 = 0.45f; // this is not a passed param but default value for 2nd chorus
 	static constexpr float defaultChorusModDepth = 4.0f;
+	static constexpr float maxLofiSampleRate = 22025.0f;
+	static constexpr float minLofiSampleRate = 100.0f;
+	static constexpr float maxLofiBitDepth = 12.0f;
+	static constexpr float minLofiBitDepth = 1.0f;
 	static const juce::StringArray delayModes;
 	static const juce::StringArray delayNoteLengths;
 	static const juce::StringArray modNoteLengths;
@@ -93,8 +100,10 @@ public:
 	float chorusIntensity() const { return m_chorusIntensity; }
 	float chorusModRate() const { return m_chorusModRate; }
 	float chorusModDepth() const { return m_chorusModDepth; }
-
-private:
+	float lofiSampleRate() const { return m_lofiSampleRate; }
+	float lofiBitDepth() const { return m_lofiBitDepth; }
+	float lofiMixLevel() const { return m_lofiMixLevel; }
+	private:
 	juce::AudioParameterFloat* m_gainParam;
 	juce::AudioParameterFloat* m_delayTimeLParam;
 	juce::AudioParameterFloat* m_delayTimeRParam;
@@ -127,6 +136,9 @@ private:
 	juce::AudioParameterFloat* m_chorusIntensityParam;
 	juce::AudioParameterFloat* m_chorusModRateParam;
 	juce::AudioParameterFloat* m_chorusModDepthParam;
+	juce::AudioParameterFloat* m_lofiSampleRateParam;
+	juce::AudioParameterFloat* m_lofiBitDepthParam;
+	juce::AudioParameterFloat* m_lofiMixLevelParam;
 
 	juce::LinearSmoothedValue<float> m_gainSmoother;
 	juce::LinearSmoothedValue<float> m_mixSmoother;
@@ -146,6 +158,9 @@ private:
 	juce::LinearSmoothedValue<float> m_chorusIntensitySmoother;
 	juce::LinearSmoothedValue<float> m_chorusModRateSmoother;
 	juce::LinearSmoothedValue<float> m_chorusModDepthSmoother;
+	juce::LinearSmoothedValue<float> m_lofiSampleRateSmoother;
+	juce::LinearSmoothedValue<float> m_lofiBitDepthSmoother;
+	juce::LinearSmoothedValue<float> m_lofiMixLevelSmoother;
 
 	float m_gain = 0.0f;
 	float m_delayTimeL = 0.0f;
@@ -179,6 +194,9 @@ private:
 	float m_chorusIntensity = 0.0f;
 	float m_chorusModRate = defaultChorusModRate;
 	float m_chorusModDepth = defaultChorusModDepth;
+	float m_lofiSampleRate = maxLofiSampleRate;
+	float m_lofiBitDepth = maxLofiBitDepth;
+	float m_lofiMixLevel = 1.0f;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Parameters)
 };
