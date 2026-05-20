@@ -9,7 +9,7 @@ public:
     LofiEngine();
     ~LofiEngine() = default;
 
-    void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept;
+    void prepareToPlay(double sampleRate) noexcept;
     void reset() noexcept;
     void processSample(const float& inL, const float& inR, float& outL, float& outR);
     void update(const Parameters& params);

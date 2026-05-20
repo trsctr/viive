@@ -51,7 +51,6 @@ void BitCrusher::setDownsampleRate(float downsampleRate)
     }
 }
 
-
 void BitCrusher::setBitDepth(float bitDepth)
 {
     m_bitDepth = bitDepth;
