@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## \[Unreleased]
+
+### Added
+
+* BitCrusher DSP primitive
+  * Performs first downsampling and then bit reduction
+* LofiEngine class which handles Left and Right channel BitCrushers and parameters
+* Lofi Mix, SampleRate and BitDepth parameters
+
 ## \[0.2.0] - 2026-05-18
 
 ### Added
