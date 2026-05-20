@@ -20,8 +20,8 @@ void BitCrusher::reset() noexcept
 
 float BitCrusher::processSample(const float& in)
 {
-    float out = bitReduce(in);
-    return downsample(out);
+    float out = downsample(in);
+    return bitReduce(out);
 }
 
 float BitCrusher::bitReduce(const float& sample)

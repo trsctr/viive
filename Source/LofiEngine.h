@@ -26,4 +26,6 @@ private:
     void setBitDepth(float bitDepth);
     void setDownsampleRate(float downsampleRate);
     void setMixLevel(float mixLevel);
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BitCrusher)
 };
