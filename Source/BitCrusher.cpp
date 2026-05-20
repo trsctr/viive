@@ -26,7 +26,7 @@ float BitCrusher::processSample(const float& in)
 
 float BitCrusher::bitReduce(const float& sample)
 {
-    float rounded = std::ceil(sample * m_steps);
+    float rounded = std::round(sample * m_steps);
     return rounded / m_steps;
 }
 
