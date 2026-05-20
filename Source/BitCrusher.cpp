@@ -5,11 +5,11 @@ BitCrusher::BitCrusher(float bitDepth, float downsampleRate)
 {
 }
 
-void BitCrusher::prepareToPlay(double sampleRate) noexcept
+void BitCrusher::prepareToPlay(float sampleRate) noexcept
 {
-    m_sampleRate = static_cast<float>(sampleRate);
-    setRatio();
-    setSteps();
+    m_sampleRate = sampleRate;
+    setBitDepth(m_bitDepth);
+    setDownsampleRate(m_downsampleRate);
 }
 
 void BitCrusher::reset() noexcept
@@ -24,6 +24,12 @@ float BitCrusher::processSample(const float& in)
     return downsample(out);
 }
 
+float BitCrusher::bitReduce(const float& sample)
+{
+    float rounded = std::ceil(sample * m_steps);
+    return rounded / m_steps;
+}
+
 float BitCrusher::downsample(const float& sample)
 {
     m_accumulator += m_ratio;
@@ -34,40 +40,21 @@ float BitCrusher::downsample(const float& sample)
     return m_currentSample;
 }
 
-void BitCrusher::update(const Parameters& params) noexcept
-{
-    setDownsampleRate(params.bitCrusherSampleRate());
-    setBitDepth(params.bitCrusherBitDepth());
-}
-
 void BitCrusher::setDownsampleRate(float downsampleRate)
 {
-    if (!juce::approximatelyEqual(downsampleRate, m_downsampleRate)) {
-        m_downsampleRate = downsampleRate;
-        setRatio();
+    m_downsampleRate = downsampleRate;
+    if (m_sampleRate > 0.0f) {
+        m_ratio = m_downsampleRate / m_sampleRate;
+    }
+    else {
+        m_ratio = 0.0f;
     }
 }
 
-float BitCrusher::bitReduce(const float& sample)
-{
-    float rounded = std::ceil(sample * m_steps);
-    return rounded / m_steps;
-}
 
 void BitCrusher::setBitDepth(float bitDepth)
 {
-    if (!juce::approximatelyEqual(bitDepth, m_bitDepth)) {
-        m_bitDepth = bitDepth;
-        setSteps();
-    }
-}
-
-void BitCrusher::setSteps()
-{
+    m_bitDepth = bitDepth;
     m_steps = std::floor((std::pow(2.0f, m_bitDepth)));
 }
 
-void BitCrusher::setRatio()
-{
-    m_ratio = m_downsampleRate / m_sampleRate;
-}
