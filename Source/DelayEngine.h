@@ -45,8 +45,6 @@ private:
 	FilterEngine m_filterEngine;
 	Filter m_feedbackHighpass;
 	juce::dsp::Compressor<float> m_feedbackCompressor;
-/* 	ChorusEngine m_chorusEngine;
-	LofiEngine m_lofiEngine; */
 	InsertEffectSelector m_insertEffectSelector;
 	InsertEffectType m_currentInsertEffect = InsertEffectType::Chorus;
 

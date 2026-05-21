@@ -31,6 +31,7 @@ const juce::ParameterID highCutModTempoSyncParamID{ "highCutModTempoSync", 1 };
 const juce::ParameterID highCutModNoteParamID{ "highCutModNote", 1 };
 const juce::ParameterID highCutModShapeParamID{ "highCutModShape", 1 };
 const juce::ParameterID highCutModInvertParamID{ "highCutModInvert", 1 };
+const juce::ParameterID effectTypeParamID{ "effectType", 1 };
 const juce::ParameterID chorusIntensityParamID{ "chorusIntensity", 1 };
 const juce::ParameterID chorusModRateParamID{ "chorusModRate", 1 };
 const juce::ParameterID chorusModDepthParamID{ "chorusModDepth", 1 };
@@ -62,6 +63,7 @@ public:
 	static const juce::StringArray delayNoteLengths;
 	static const juce::StringArray modNoteLengths;
 	static const juce::StringArray lfoShapes;
+	static const juce::StringArray insertEffects;
 	
 	void prepareToPlay(double sampleRate) noexcept;
 	void update(const Tempo& tempo) noexcept;
@@ -97,13 +99,15 @@ public:
 	int highCutModNote() const { return m_highCutModNote; }
 	int highCutModShape() const { return m_highCutModShape; }
 	bool highCutModInvert() const { return m_highCutModInvert; }
+	int effectType() const { return m_effectType; }
 	float chorusIntensity() const { return m_chorusIntensity; }
 	float chorusModRate() const { return m_chorusModRate; }
 	float chorusModDepth() const { return m_chorusModDepth; }
 	float lofiSampleRate() const { return m_lofiSampleRate; }
 	float lofiBitDepth() const { return m_lofiBitDepth; }
 	float lofiMixLevel() const { return m_lofiMixLevel; }
-	private:
+
+private:
 	juce::AudioParameterFloat* m_gainParam;
 	juce::AudioParameterFloat* m_delayTimeLParam;
 	juce::AudioParameterFloat* m_delayTimeRParam;
@@ -116,6 +120,7 @@ public:
 	juce::AudioParameterFloat* m_feedbackParam;
 	juce::AudioParameterFloat* m_stereoParam;
 	juce::AudioParameterFloat* m_offsetParam;
+	juce::AudioParameterChoice* m_effectTypeParam;
 	juce::AudioParameterFloat* m_lowCutFreqParam;
 	juce::AudioParameterFloat* m_lowCutQParam;
 	juce::AudioParameterFloat* m_lowCutModRateParam;
@@ -191,6 +196,7 @@ public:
 	int m_highCutModNote = 0;
 	int m_highCutModShape = 0;
 	bool m_highCutModInvert = false;
+	int m_effectType = 0;
 	float m_chorusIntensity = 0.0f;
 	float m_chorusModRate = defaultChorusModRate;
 	float m_chorusModDepth = defaultChorusModDepth;

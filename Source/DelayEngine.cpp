@@ -21,22 +21,18 @@ void DelayEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 	m_insertEffectSelector.prepareToPlay(sampleRate, samplesPerBlock);
 	m_filterEngine.prepareToPlay(sampleRate, samplesPerBlock);
 	m_feedbackHighpass.prepare(spec);
-	// m_chorusEngine.prepareToPlay(sampleRate, samplesPerBlock);
 	m_stereoDelay.prepareToPlay(sampleRate, samplesPerBlock);
 	m_coeff = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
-    // m_lofiEngine.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 void DelayEngine::reset() noexcept
 {
 	m_stereoDelay.reset();
-	// m_chorusEngine.reset();
 	m_filterEngine.reset();
 	m_feedbackHighpass.reset();
 	m_feedbackHighpass.setCutoffFrequency(60.0f); // just to remove rumble from fb loop
 	m_feedbackHighpass.setResonance(Parameters::defaultFilterQ);
 	m_feedbackCompressor.reset();
-    // m_lofiEngine.reset();
 	m_insertEffectSelector.reset();
 	m_feedbackL = 0.0f;
 	m_feedbackR = 0.0f;
@@ -86,8 +82,6 @@ void DelayEngine::update(const Parameters& params)
 	setDelayTimes(params.delayTimeL(), params.delayTimeR());
 	m_filterEngine.update(params);
 	m_insertEffectSelector.update(params);
-	// m_chorusEngine.update(params);
-	// m_lofiEngine.update(params);
 }
 
 void DelayEngine::updateSyncedModulators(const double ppqPosition)
