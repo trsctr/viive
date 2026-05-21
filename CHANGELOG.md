@@ -10,7 +10,9 @@ All notable changes to this project will be documented in this file.
   * Performs first downsampling and then bit reduction
 * LofiEngine class which handles Left and Right channel BitCrushers and parameters
 * Lofi Mix, SampleRate and BitDepth parameters
-
+* Insert effect selector
+  * Allows user to switch between chorus and lofi effect in the feedback loop
+ 
 ## \[0.2.0] - 2026-05-18
 
 ### Added
