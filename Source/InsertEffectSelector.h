@@ -20,7 +20,4 @@ private:
     ChorusEngine m_chorus;
     LofiEngine m_lofi;
     InsertEffect* m_active = nullptr;
-    InsertEffectType m_currentType;
-
-
 };

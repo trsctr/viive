@@ -2,7 +2,6 @@
 
 InsertEffectSelector::InsertEffectSelector()
 {
-    m_currentType = InsertEffectType::Chorus;
     m_active = &m_chorus;
 }
  
@@ -32,8 +31,16 @@ void InsertEffectSelector::update(const Parameters& params)
 
 void InsertEffectSelector::select(InsertEffectType type)
 {
-    InsertEffect* options[] = { &m_chorus, &m_lofi };
-    m_active = options[static_cast<int>(type)];
-    m_currentType = type;
+    switch(type) {
+        case InsertEffectType::Chorus:
+            m_active = &m_chorus;
+            break;
+        case InsertEffectType::Lofi:
+            m_active = &m_lofi;
+            break;
+        default:
+            jassertfalse; // this shouldn't happen unless the enum and string array get out of sync
+            return;
+    }
     m_active->reset();
 }
