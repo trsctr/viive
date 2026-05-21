@@ -127,7 +127,7 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     auto mainOutput = getBusBuffer(buffer, false, 0);
     float* outputDataL = mainOutput.getWritePointer(0);
     float* outputDataR = mainOutput.getWritePointer(1);
-
+    
     float maxL = 0.0f, maxR = 0.0f;
     
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
