@@ -4,7 +4,7 @@ LofiEngine::LofiEngine()
 {
 }
 
-void LofiEngine::prepareToPlay(double sampleRate) noexcept
+void LofiEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 {
     m_sampleRate = static_cast<float>(sampleRate);
     m_bitCrusherL.prepareToPlay(m_sampleRate);
