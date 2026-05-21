@@ -1,6 +1,5 @@
 #include "DelayEngine.h"
 #include "DSP.h"
-#include "Types.h"
 
 DelayEngine::DelayEngine()
 {
@@ -19,23 +18,26 @@ void DelayEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 	spec.numChannels = 2;
 	m_sampleRate = static_cast<float>(sampleRate);
 	m_feedbackCompressor.prepare(spec);
+	m_insertEffectSelector.prepareToPlay(sampleRate, samplesPerBlock);
 	m_filterEngine.prepareToPlay(sampleRate, samplesPerBlock);
 	m_feedbackHighpass.prepare(spec);
-	m_chorusEngine.prepareToPlay(sampleRate, samplesPerBlock);
+	// m_chorusEngine.prepareToPlay(sampleRate, samplesPerBlock);
 	m_stereoDelay.prepareToPlay(sampleRate, samplesPerBlock);
 	m_coeff = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
-
+    // m_lofiEngine.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 void DelayEngine::reset() noexcept
 {
 	m_stereoDelay.reset();
-	m_chorusEngine.reset();
+	// m_chorusEngine.reset();
 	m_filterEngine.reset();
 	m_feedbackHighpass.reset();
 	m_feedbackHighpass.setCutoffFrequency(60.0f); // just to remove rumble from fb loop
 	m_feedbackHighpass.setResonance(Parameters::defaultFilterQ);
 	m_feedbackCompressor.reset();
+    // m_lofiEngine.reset();
+	m_insertEffectSelector.reset();
 	m_feedbackL = 0.0f;
 	m_feedbackR = 0.0f;
 	m_baseDelayTimeMs = -1.0f;
@@ -49,6 +51,15 @@ void DelayEngine::setDelayMode(const int modeIndex)
 	DelayMode newMode = static_cast<DelayMode>(modeIndex);
 	if (newMode != m_delayMode) {
 		m_delayMode = newMode;
+	}
+}
+
+void DelayEngine::setInsertEffect(const int effectIndex)
+{
+	InsertEffectType newEffect = static_cast<InsertEffectType>(effectIndex);
+	if (newEffect != m_currentInsertEffect) {
+		m_currentInsertEffect = newEffect;
+		m_insertEffectSelector.select(m_currentInsertEffect);
 	}
 }
 
@@ -74,6 +85,9 @@ void DelayEngine::update(const Parameters& params)
 	setOffsetMs(params.offset());
 	setDelayTimes(params.delayTimeL(), params.delayTimeR());
 	m_filterEngine.update(params);
+	m_insertEffectSelector.update(params);
+	// m_chorusEngine.update(params);
+	// m_lofiEngine.update(params);
 }
 
 void DelayEngine::updateSyncedModulators(const double ppqPosition)
@@ -113,7 +127,7 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 	m_stereoDelay.processSample(delayInL, wetL, Channel::Left);
 	m_stereoDelay.processSample(delayInR, wetR, Channel::Right);
 	
-	m_chorusEngine.processSample(wetL, wetR, wetL, wetR, params);
+	m_insertEffectSelector.processSample(wetL, wetR, wetL, wetR);
 
 	m_filterEngine.processSample(wetL, wetR, wetL, wetR);
 
