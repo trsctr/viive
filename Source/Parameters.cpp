@@ -155,7 +155,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
 	castParameter(apvts, stereoParamID, m_stereoParam);
 	castParameter(apvts, offsetParamID, m_offsetParam);
-	castParameter(apvts, effectTypeParamID, m_effectTypeParam);
+	castParameter(apvts, insertEffectTypeParamID, m_insertEffectTypeParam);
 	castParameter(apvts, chorusIntensityParamID, m_chorusIntensityParam);
 	castParameter(apvts, chorusModRateParamID, m_chorusModRateParam);
 	castParameter(apvts, chorusModDepthParamID, m_chorusModDepthParam);
@@ -273,7 +273,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		.withStringFromValueFunction(stringFromDecibels)
 	));
 	layout.add(std::make_unique<juce::AudioParameterChoice>(
-		effectTypeParamID,
+		insertEffectTypeParamID,
 		"Effect Type",
 		insertEffects,
 		0
@@ -540,7 +540,7 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_delayNoteL = m_delayNoteLParam->getIndex();
 	m_delayNoteR = m_delayNoteRParam->getIndex();
 	m_delayMode = m_delayModeParam->getIndex();
-	m_effectType = m_effectTypeParam->getIndex();
+	m_insertEffectType = m_insertEffectTypeParam->getIndex();
 	m_lowCutModTempoSync = m_lowCutModTempoSyncParam->get();
 	m_lowCutModNote = m_lowCutModNoteParam->getIndex();
 	m_highCutModTempoSync = m_highCutModTempoSyncParam->get();

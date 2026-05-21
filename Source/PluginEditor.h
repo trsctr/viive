@@ -69,7 +69,7 @@ private:
     SyncButton m_highCutModTempoSyncButton{ "Sync", m_audioProcessor.apvts, highCutModTempoSyncParamID.getParamID() };
 
     Selector m_modeSelector{ "Delay Mode:", m_audioProcessor.apvts, delayModeParamID.getParamID(), Parameters::delayModes, 215, 0.0f, 85, 25 };
-    Selector m_effectTypeSelector{ "", m_audioProcessor.apvts, effectTypeParamID.getParamID(), Parameters::insertEffects, 100, 14.0f, 0, 30 };
+    Selector m_insertEffectTypeSelector{ "", m_audioProcessor.apvts, insertEffectTypeParamID.getParamID(), Parameters::insertEffects, 100, 14.0f, 0, 30 };
     Selector m_lowCutModShapeSelector{ "", m_audioProcessor.apvts, lowCutModShapeParamID.getParamID(), Parameters::lfoShapes, 60, 12.0f };
     Selector m_highCutModShapeSelector{ "", m_audioProcessor.apvts, highCutModShapeParamID.getParamID(), Parameters::lfoShapes, 60, 12.0f };
 
@@ -89,7 +89,7 @@ private:
 
     virtual void parameterChanged(const juce::String& paramID, float newValue) override;
     void updateSyncedKnobs(bool syncLActive, bool syncRActive, bool lowCutSyncActive, bool highCutSyncActive);
-    void updateEffectControls(int effectType);
+    void updateInsertEffectControls(int insertEffectType);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)
 };

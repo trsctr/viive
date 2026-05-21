@@ -69,7 +69,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_lofiGroup.addAndMakeVisible(m_lofiMixLevelKnob);
 	addChildComponent(m_lofiGroup);
 //	addAndMakeVisible(m_lofiGroup);
-	addAndMakeVisible(m_effectTypeSelector);
+	addAndMakeVisible(m_insertEffectTypeSelector);
 
 	addAndMakeVisible(m_meter);
 
@@ -89,7 +89,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_audioProcessor.apvts.addParameterListener(tempoSyncRParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(lowCutModTempoSyncParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(highCutModTempoSyncParamID.getParamID(), this);
-	m_audioProcessor.apvts.addParameterListener(effectTypeParamID.getParamID(), this);
+	m_audioProcessor.apvts.addParameterListener(insertEffectTypeParamID.getParamID(), this);
 #if JUCE_DEBUG
 	setSize(770, 670);
 #else
@@ -103,7 +103,7 @@ ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
 	m_audioProcessor.apvts.removeParameterListener(tempoSyncRParamID.getParamID(), this);
 	m_audioProcessor.apvts.removeParameterListener(lowCutModTempoSyncParamID.getParamID(), this);
 	m_audioProcessor.apvts.removeParameterListener(highCutModTempoSyncParamID.getParamID(), this);
-	m_audioProcessor.apvts.removeParameterListener(effectTypeParamID.getParamID(), this);
+	m_audioProcessor.apvts.removeParameterListener(insertEffectTypeParamID.getParamID(), this);
 }
 
 //==============================================================================
@@ -143,7 +143,7 @@ void ViiveAudioProcessorEditor::resized()
 	
 	m_modeSelector.setTopLeftPosition(10, y);
 
-	m_effectTypeSelector.setCentrePosition(m_chorusGroup.getX()+m_chorusGroup.getWidth()/2, m_chorusGroup.getY() + 15);
+	m_insertEffectTypeSelector.setCentrePosition(m_chorusGroup.getX()+m_chorusGroup.getWidth()/2, m_chorusGroup.getY() + 15);
 
 	m_offsetKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
 	m_lowCutFreqKnob.setTopLeftPosition(20, 20);
@@ -204,24 +204,26 @@ void ViiveAudioProcessorEditor::updateSyncedKnobs(bool syncLActive, bool syncRAc
 	m_highCutModNoteKnob.setVisible(highCutSyncActive);
 }
 
-void ViiveAudioProcessorEditor::updateEffectControls(int effectType)
+void ViiveAudioProcessorEditor::updateInsertEffectControls(int insertEffectType)
 {
-	bool isChorus = (effectType == 0);
-	bool isLofi = (effectType == 1);
+	DBG("Insert effect type changed: " << insertEffectType);
+	bool isChorus = (insertEffectType == 0);
+	bool isLofi = (insertEffectType == 1);
 
 	m_chorusGroup.setVisible(isChorus);
 	m_lofiGroup.setVisible(isLofi);
 }
 
 void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, float newValue) {
-	if (paramID == tempoSyncLParamID.getParamID() || paramID == tempoSyncRParamID.getParamID() || paramID == lowCutModTempoSyncParamID.getParamID() || paramID == highCutModTempoSyncParamID.getParamID() || paramID == effectTypeParamID.getParamID()){
+	if (paramID == tempoSyncLParamID.getParamID() || paramID == tempoSyncRParamID.getParamID() || paramID == lowCutModTempoSyncParamID.getParamID() || paramID == highCutModTempoSyncParamID.getParamID() || paramID == insertEffectTypeParamID.getParamID()){
 		juce::MessageManager::callAsync([this] {
 			bool syncL = m_audioProcessor.apvts.getParameter(tempoSyncLParamID.getParamID())->getValue() > 0.5f;
 			bool syncR = m_audioProcessor.apvts.getParameter(tempoSyncRParamID.getParamID())->getValue() > 0.5f;
 			bool lowCutSync = m_audioProcessor.apvts.getParameter(lowCutModTempoSyncParamID.getParamID())->getValue() > 0.5f;
 			bool highCutSync = m_audioProcessor.apvts.getParameter(highCutModTempoSyncParamID.getParamID())->getValue() > 0.5f;
 			updateSyncedKnobs(syncL, syncR, lowCutSync, highCutSync);
-			updateEffectControls(m_audioProcessor.apvts.getParameter(effectTypeParamID.getParamID())->getValue());
+			auto* param = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(insertEffectTypeParamID.getParamID()));
+			updateInsertEffectControls(param->getIndex());
 			});
 	}
 }
