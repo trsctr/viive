@@ -78,13 +78,7 @@ static float degreesFromString(const juce::String& text)
 	return text.getFloatValue();
 }
 
-const juce::StringArray Parameters::delayModes = {
-	"Stereo",
-	"Cross Fb",
-	"Ping Pong LR",
-	"Ping Pong RL",
-};
-
+// keep this syncronized with delayNoteLengthMultipliers in Sync.h
 const juce::StringArray Parameters::delayNoteLengths = {
 	"1/32",
 	"1/16 trip",
@@ -104,6 +98,7 @@ const juce::StringArray Parameters::delayNoteLengths = {
 	"1/1",
 };
 
+// keep this syncronized with modNoteLengthMultipliers in Sync.h
 const juce::StringArray Parameters::modNoteLengths = {
 	"1/8",
 	"1/8 dot",
@@ -122,6 +117,15 @@ const juce::StringArray Parameters::modNoteLengths = {
 	"8/1",
 };
 
+// keep this syncronized with the DelayMode enum in Types.h
+const juce::StringArray Parameters::delayModes = {
+	"Stereo",
+	"Cross Fb",
+	"Ping Pong LR",
+	"Ping Pong RL",
+};
+
+// keep this syncronized with the LFOShape enum in Types.h
 const juce::StringArray Parameters::lfoShapes = {
 	"SIN",
 	"TRI",
@@ -131,6 +135,11 @@ const juce::StringArray Parameters::lfoShapes = {
 	"S&H",
 };
 
+// keep this syncronized with the InsertEffectType enum in Types.h
+const juce::StringArray Parameters::insertEffects = {
+	"Chorus",
+	"Lofi",
+};
 
 Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 {
@@ -146,7 +155,13 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
 	castParameter(apvts, stereoParamID, m_stereoParam);
 	castParameter(apvts, offsetParamID, m_offsetParam);
+	castParameter(apvts, insertEffectTypeParamID, m_insertEffectTypeParam);
 	castParameter(apvts, chorusIntensityParamID, m_chorusIntensityParam);
+	castParameter(apvts, chorusModRateParamID, m_chorusModRateParam);
+	castParameter(apvts, chorusModDepthParamID, m_chorusModDepthParam);
+	castParameter(apvts, lofiSampleRateParamID, m_lofiSampleRateParam);
+	castParameter(apvts, lofiBitDepthParamID, m_lofiBitDepthParam);
+	castParameter(apvts, lofiMixLevelParamID, m_lofiMixLevelParam);
 	castParameter(apvts, lowCutFreqParamID, m_lowCutFreqParam);
 	castParameter(apvts, lowCutQParamID, m_lowCutQParam);
 	castParameter(apvts, lowCutModRateParamID, m_lowCutModRateParam);
@@ -164,11 +179,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, highCutModNoteParamID, m_highCutModNoteParam);
 	castParameter(apvts, highCutModShapeParamID, m_highCutModShapeParam);
 	castParameter(apvts, highCutModInvertParamID, m_highCutModInvertParam);
-	castParameter(apvts, chorusModRateParamID, m_chorusModRateParam);
-	castParameter(apvts, chorusModDepthParamID, m_chorusModDepthParam);
-	castParameter(apvts, lofiSampleRateParamID, m_lofiSampleRateParam);
-	castParameter(apvts, lofiBitDepthParamID, m_lofiBitDepthParam);
-	castParameter(apvts, lofiMixLevelParamID, m_lofiMixLevelParam);
+
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
@@ -260,6 +271,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		0.0f,
 		juce::AudioParameterFloatAttributes()
 		.withStringFromValueFunction(stringFromDecibels)
+	));
+	layout.add(std::make_unique<juce::AudioParameterChoice>(
+		insertEffectTypeParamID,
+		"Effect Type",
+		insertEffects,
+		0
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutFreqParamID.getParamID(),
@@ -523,6 +540,7 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_delayNoteL = m_delayNoteLParam->getIndex();
 	m_delayNoteR = m_delayNoteRParam->getIndex();
 	m_delayMode = m_delayModeParam->getIndex();
+	m_insertEffectType = m_insertEffectTypeParam->getIndex();
 	m_lowCutModTempoSync = m_lowCutModTempoSyncParam->get();
 	m_lowCutModNote = m_lowCutModNoteParam->getIndex();
 	m_highCutModTempoSync = m_highCutModTempoSyncParam->get();

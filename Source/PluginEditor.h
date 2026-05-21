@@ -59,12 +59,17 @@ private:
 	RotaryKnob m_chorusModRateKnob{ "Mod Rate", m_audioProcessor.apvts, chorusModRateParamID.getParamID() };
 	RotaryKnob m_chorusModDepthKnob{ "Mod Depth", m_audioProcessor.apvts, chorusModDepthParamID.getParamID() };
 
+    RotaryKnob m_lofiMixLevelKnob{ "Mix", m_audioProcessor.apvts, lofiMixLevelParamID.getParamID() };
+    RotaryKnob m_lofiSampleRateKnob{ "Sample Rate", m_audioProcessor.apvts, lofiSampleRateParamID.getParamID() };
+    RotaryKnob m_lofiBitDepthKnob{ "Bit Depth", m_audioProcessor.apvts, lofiBitDepthParamID.getParamID() };
+
     SyncButton m_tempoSyncLButton{ "Sync", m_audioProcessor.apvts, tempoSyncLParamID.getParamID() };
     SyncButton m_tempoSyncRButton{ "Sync", m_audioProcessor.apvts, tempoSyncRParamID.getParamID() };
     SyncButton m_lowCutModTempoSyncButton{ "Sync", m_audioProcessor.apvts, lowCutModTempoSyncParamID.getParamID() };
     SyncButton m_highCutModTempoSyncButton{ "Sync", m_audioProcessor.apvts, highCutModTempoSyncParamID.getParamID() };
 
     Selector m_modeSelector{ "Delay Mode:", m_audioProcessor.apvts, delayModeParamID.getParamID(), Parameters::delayModes, 215, 0.0f, 85, 25 };
+    Selector m_insertEffectTypeSelector{ "", m_audioProcessor.apvts, insertEffectTypeParamID.getParamID(), Parameters::insertEffects, 100, 14.0f, 0, 30 };
     Selector m_lowCutModShapeSelector{ "", m_audioProcessor.apvts, lowCutModShapeParamID.getParamID(), Parameters::lfoShapes, 60, 12.0f };
     Selector m_highCutModShapeSelector{ "", m_audioProcessor.apvts, highCutModShapeParamID.getParamID(), Parameters::lfoShapes, 60, 12.0f };
 
@@ -76,7 +81,7 @@ private:
 
     juce::HashMap<juce::String, juce::String> m_linkedParams;
 
-    juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup, m_filterModGroup;
+    juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup, m_lofiGroup, m_filterModGroup;
 
 #if JUCE_DEBUG
     std::unique_ptr<LFOScope> m_lfoScope;
@@ -84,6 +89,7 @@ private:
 
     virtual void parameterChanged(const juce::String& paramID, float newValue) override;
     void updateSyncedKnobs(bool syncLActive, bool syncRActive, bool lowCutSyncActive, bool highCutSyncActive);
+    void updateInsertEffectControls(int insertEffectType);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessorEditor)
 };

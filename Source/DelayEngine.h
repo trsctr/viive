@@ -1,16 +1,15 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Parameters.h"
-#include "ChorusEngine.h"
 #include "StereoDelay.h"
 #include "FilterEngine.h"
+#include "InsertEffectSelector.h"
+#include "Types.h"
 #if JUCE_DEBUG
 #include "LFOScopeBuffer.h"
 #endif
 
 using Filter = juce::dsp::StateVariableTPTFilter<float>;
-
-enum class DelayMode { Stereo, Cross, PingPongLR, PingPongRL};
 
 class DelayEngine
 {
@@ -30,6 +29,7 @@ public:
 	void setWidthLevel(const float value) { m_widthLevel = value; }
 	void setOffsetMs(const float value) { m_offsetMs = value * .5f; }
 	void setDelayMode(const int modeIndex);
+	void setInsertEffect(const int effectIndex);
 	void updateSyncedModulators(const double ppqPosition);
 
 	std::atomic<float>& getLowCutLfoValue()  { return m_filterEngine.getLowCutLfoValue(); }
@@ -45,8 +45,9 @@ private:
 	FilterEngine m_filterEngine;
 	Filter m_feedbackHighpass;
 	juce::dsp::Compressor<float> m_feedbackCompressor;
-	ChorusEngine m_chorusEngine;
-	
+	InsertEffectSelector m_insertEffectSelector;
+	InsertEffectType m_currentInsertEffect = InsertEffectType::Chorus;
+
 	float m_sampleRate = 0.0f;
 	
 	float m_coeff = 0.0f;

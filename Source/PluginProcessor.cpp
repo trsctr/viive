@@ -119,6 +119,7 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     if (m_tempo.getIsPlaying())
         m_delayEngine.updateSyncedModulators(m_tempo.getPpqPosition());
     m_delayEngine.setDelayMode(m_params.delayMode());
+    m_delayEngine.setInsertEffect(m_params.insertEffectType());
 
     auto mainInput = getBusBuffer(buffer, true, 0);
     const float* inputDataL = mainInput.getReadPointer(0);
@@ -126,7 +127,7 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     auto mainOutput = getBusBuffer(buffer, false, 0);
     float* outputDataL = mainOutput.getWritePointer(0);
     float* outputDataR = mainOutput.getWritePointer(1);
-
+    
     float maxL = 0.0f, maxR = 0.0f;
     
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample)

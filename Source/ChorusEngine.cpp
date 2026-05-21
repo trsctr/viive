@@ -59,12 +59,15 @@ void ChorusEngine::setModDepth(float modDepth)
 	}
 }
 
-void ChorusEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
+void ChorusEngine::update(const Parameters& params)
 {
 	setIntensity(params.chorusIntensity());
 	setModRate(params.chorusModRate());
 	setModDepth(params.chorusModDepth());
+}
 
+void ChorusEngine::processSample(const float& inL, const float& inR, float& outL, float& outR)
+{
 	// Dual chorus intensity mapping: c1 peaks early (at ~0.6 intensity),
 	// c2 ramps exponentially, staying subtle until higher intensities.
 	// This creates a smooth character progression: barely audible -> chorus1 dominant

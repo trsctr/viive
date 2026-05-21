@@ -2,17 +2,19 @@
 
 #include <JuceHeader.h>
 #include "BitCrusher.h"
+#include "Parameters.h"
+#include "InsertEffect.h"
 
-class LofiEngine
+class LofiEngine : public InsertEffect
 {
 public:
     LofiEngine();
     ~LofiEngine() = default;
 
-    void prepareToPlay(double sampleRate) noexcept;
-    void reset() noexcept;
-    void processSample(const float& inL, const float& inR, float& outL, float& outR);
-    void update(const Parameters& params);
+    void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept override;
+    void reset() noexcept override;
+    void processSample(const float& inL, const float& inR, float& outL, float& outR) override;
+    void update(const Parameters& params) override;
 
 private:
     BitCrusher m_bitCrusherL{ 12.0f, 22050.0f };
