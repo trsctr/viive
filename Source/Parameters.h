@@ -56,7 +56,7 @@ public:
 	static constexpr float defaultChorusModRate2 = 0.45f; // this is not a passed param but default value for 2nd chorus
 	static constexpr float defaultChorusModDepth = 4.0f;
 	static constexpr float maxLofiSampleRate = 22050.0f;
-	static constexpr float minLofiSampleRate = 100.0f;
+	static constexpr float minLofiSampleRate = 1500.0f;
 	static constexpr float maxLofiBitDepth = 12.0f;
 	static constexpr float minLofiBitDepth = 1.0f;
 	static const juce::StringArray delayModes;

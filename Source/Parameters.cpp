@@ -416,7 +416,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lofiSampleRateParamID.getParamID(),
 		"Lofi Sample Rate",
-		juce::NormalisableRange<float>(minLofiSampleRate, maxLofiSampleRate, 1.0f),
+		juce::NormalisableRange<float>(minLofiSampleRate, maxLofiSampleRate, 1.0f, 0.3f),
 		maxLofiSampleRate,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
@@ -425,7 +425,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lofiBitDepthParamID.getParamID(),
 		"Lofi Bit Depth",
-		juce::NormalisableRange<float>(minLofiBitDepth, maxLofiBitDepth, 1.0f),
+		juce::NormalisableRange<float>(minLofiBitDepth, maxLofiBitDepth, 0.1f),
 		maxLofiBitDepth
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
