@@ -61,7 +61,7 @@ private:
 
     RotaryKnob m_lofiMixLevelKnob{ "Mix", m_audioProcessor.apvts, lofiMixLevelParamID.getParamID() };
     RotaryKnob m_lofiSampleRateKnob{ "Sample Rate", m_audioProcessor.apvts, lofiSampleRateParamID.getParamID() };
-    RotaryKnob m_lofiBitDepthKnob{ "Bit Depth", m_audioProcessor.apvts, lofiBitDepthParamID.getParamID() };
+    RotaryKnob m_lofiDampenFreqKnob{ "Dampen", m_audioProcessor.apvts, lofiDampenFreqParamID.getParamID() };
 
     SyncButton m_tempoSyncLButton{ "Sync", m_audioProcessor.apvts, tempoSyncLParamID.getParamID() };
     SyncButton m_tempoSyncRButton{ "Sync", m_audioProcessor.apvts, tempoSyncRParamID.getParamID() };

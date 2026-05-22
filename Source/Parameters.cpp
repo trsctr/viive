@@ -160,7 +160,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, chorusModRateParamID, m_chorusModRateParam);
 	castParameter(apvts, chorusModDepthParamID, m_chorusModDepthParam);
 	castParameter(apvts, lofiSampleRateParamID, m_lofiSampleRateParam);
-	castParameter(apvts, lofiBitDepthParamID, m_lofiBitDepthParam);
+	castParameter(apvts, lofiDampenFreqParamID, m_lofiDampenFreqParam);
 	castParameter(apvts, lofiMixLevelParamID, m_lofiMixLevelParam);
 	castParameter(apvts, lowCutFreqParamID, m_lowCutFreqParam);
 	castParameter(apvts, lowCutQParamID, m_lowCutQParam);
@@ -179,7 +179,6 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, highCutModNoteParamID, m_highCutModNoteParam);
 	castParameter(apvts, highCutModShapeParamID, m_highCutModShapeParam);
 	castParameter(apvts, highCutModInvertParamID, m_highCutModInvertParam);
-
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
@@ -414,6 +413,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		defaultChorusModDepth
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		lofiMixLevelParamID.getParamID(),
+		"Lofi Mix Level",
+		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
+		100.0f,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromPercent)
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lofiSampleRateParamID.getParamID(),
 		"Lofi Sample Rate",
 		juce::NormalisableRange<float>(minLofiSampleRate, maxLofiSampleRate, 1.0f, 0.3f),
@@ -423,18 +430,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 			.withValueFromStringFunction(hzFromString)
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		lofiBitDepthParamID.getParamID(),
-		"Lofi Bit Depth",
-		juce::NormalisableRange<float>(minLofiBitDepth, maxLofiBitDepth, 0.1f),
-		maxLofiBitDepth
-	));
-	layout.add(std::make_unique<juce::AudioParameterFloat>(
-		lofiMixLevelParamID.getParamID(),
-		"Lofi Mix Level",
-		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
-		100.0f,
+		lofiDampenFreqParamID.getParamID(),
+		"Lofi Dampen Freq",
+		juce::NormalisableRange<float>(minLofiDampenFreq, maxLofiDampenFreq, 1.0f),
+		maxLofiDampenFreq,
 		juce::AudioParameterFloatAttributes()
-			.withStringFromValueFunction(stringFromPercent)
+			.withStringFromValueFunction(stringFromHertz)
+			.withValueFromStringFunction(hzFromString)
 	));
 	return layout;
 }
@@ -461,8 +463,8 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_chorusModRateSmoother.reset(sampleRate, duration);
 	m_chorusModDepthSmoother.reset(sampleRate, duration);
 	m_lofiSampleRateSmoother.reset(sampleRate, duration);
-	m_lofiBitDepthSmoother.reset(sampleRate, duration);
 	m_lofiMixLevelSmoother.reset(sampleRate, duration);
+	m_lofiDampenFreqSmoother.reset(sampleRate, duration);
 }
 
 void Parameters::reset() noexcept
@@ -488,8 +490,8 @@ void Parameters::reset() noexcept
 	m_chorusModRate = defaultChorusModRate;
 	m_chorusModDepth = defaultChorusModDepth;
 	m_lofiSampleRate = maxLofiSampleRate;
-	m_lofiBitDepth = maxLofiBitDepth;
 	m_lofiMixLevel = 1.0f;
+	m_lofiDampenFreq = maxLofiDampenFreq;
 	m_gainSmoother.setCurrentAndTargetValue(juce::Decibels::decibelsToGain(m_gainParam->get()));
 	m_mixSmoother.setCurrentAndTargetValue(m_mixParam->get() * 0.01f);
 	m_feedbackSmoother.setCurrentAndTargetValue(m_feedbackParam->get() * 0.01f);
@@ -508,8 +510,8 @@ void Parameters::reset() noexcept
 	m_chorusModRateSmoother.setCurrentAndTargetValue(m_chorusModRateParam->get());
 	m_chorusModDepthSmoother.setCurrentAndTargetValue(m_chorusModDepthParam->get());
 	m_lofiSampleRateSmoother.setCurrentAndTargetValue(m_lofiSampleRateParam->get());
-	m_lofiBitDepthSmoother.setCurrentAndTargetValue(m_lofiBitDepthParam->get());
 	m_lofiMixLevelSmoother.setCurrentAndTargetValue(m_lofiMixLevelParam->get() * 0.01f);
+	m_lofiDampenFreqSmoother.setCurrentAndTargetValue(m_lofiDampenFreqParam->get());
 }
 
 void Parameters::update(const Tempo& tempo) noexcept
@@ -533,8 +535,8 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_chorusModRateSmoother.setTargetValue(m_chorusModRateParam->get());
 	m_chorusModDepthSmoother.setTargetValue(m_chorusModDepthParam->get());
 	m_lofiSampleRateSmoother.setTargetValue(m_lofiSampleRateParam->get());
-	m_lofiBitDepthSmoother.setTargetValue(m_lofiBitDepthParam->get());
 	m_lofiMixLevelSmoother.setTargetValue(m_lofiMixLevelParam->get() * 0.01f);
+	m_lofiDampenFreqSmoother.setTargetValue(m_lofiDampenFreqParam->get());
 	m_tempoSyncL = m_tempoSyncLParam->get();
 	m_tempoSyncR = m_tempoSyncRParam->get();
 	m_delayNoteL = m_delayNoteLParam->getIndex();
@@ -589,6 +591,6 @@ void Parameters::smoothen() noexcept
 	m_chorusModRate = m_chorusModRateSmoother.getNextValue();
 	m_chorusModDepth = m_chorusModDepthSmoother.getNextValue();
 	m_lofiSampleRate = m_lofiSampleRateSmoother.getNextValue();
-	m_lofiBitDepth = m_lofiBitDepthSmoother.getNextValue();
 	m_lofiMixLevel = m_lofiMixLevelSmoother.getNextValue();
+	m_lofiDampenFreq = m_lofiDampenFreqSmoother.getNextValue();
 }
