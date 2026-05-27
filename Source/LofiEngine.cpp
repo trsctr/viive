@@ -30,7 +30,7 @@ void LofiEngine::reset() noexcept
 
 void LofiEngine::update(const Parameters& params)
 {
-    setDownsampleRate(params.lofiSampleRate());
+    setDownsampleRate(params.lofiResampleFreq());
     setMixLevel(params.lofiMixLevel());
     setDampenFreq(params.lofiDampenFreq());
 }
