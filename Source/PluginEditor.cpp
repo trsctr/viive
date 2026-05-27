@@ -85,6 +85,9 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	updateSyncedKnobs(syncL, syncR, lowCutSync, highCutSync);
 
+	auto* insertEffectParam = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(insertEffectTypeParamID.getParamID()));
+	updateInsertEffectControls(insertEffectParam->getIndex());
+	
 	m_audioProcessor.apvts.addParameterListener(tempoSyncLParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(tempoSyncRParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(lowCutModTempoSyncParamID.getParamID(), this);
