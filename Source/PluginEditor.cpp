@@ -64,7 +64,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	m_lofiGroup.setText("");
 	m_lofiGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
-	m_lofiGroup.addAndMakeVisible(m_lofiSampleRateKnob);
+	m_lofiGroup.addAndMakeVisible(m_lofiResampleFreqKnob);
 	m_lofiGroup.addAndMakeVisible(m_lofiDampenFreqKnob);
 	m_lofiGroup.addAndMakeVisible(m_lofiMixLevelKnob);
 	addChildComponent(m_lofiGroup);
@@ -185,8 +185,8 @@ void ViiveAudioProcessorEditor::resized()
 	m_chorusModDepthKnob.setTopLeftPosition(m_chorusModRateKnob.getRight() + 20, 20);
 
 	m_lofiMixLevelKnob.setTopLeftPosition(20, 20);
-	m_lofiSampleRateKnob.setTopLeftPosition(m_lofiMixLevelKnob.getRight() + 20, 20);
-	m_lofiDampenFreqKnob.setTopLeftPosition(m_lofiSampleRateKnob.getRight() + 20, 20);
+	m_lofiResampleFreqKnob.setTopLeftPosition(m_lofiMixLevelKnob.getRight() + 20, 20);
+	m_lofiDampenFreqKnob.setTopLeftPosition(m_lofiResampleFreqKnob.getRight() + 20, 20);
 
 	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
 

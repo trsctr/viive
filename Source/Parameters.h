@@ -35,8 +35,8 @@ const juce::ParameterID insertEffectTypeParamID{ "insertEffectType", 1 };
 const juce::ParameterID chorusIntensityParamID{ "chorusIntensity", 1 };
 const juce::ParameterID chorusModRateParamID{ "chorusModRate", 1 };
 const juce::ParameterID chorusModDepthParamID{ "chorusModDepth", 1 };
-const juce::ParameterID lofiSampleRateParamID{ "lofiSampleRate", 1 };
 const juce::ParameterID lofiMixLevelParamID{ "lofiMixLevel", 1 };
+const juce::ParameterID lofiResampleFreqParamID{ "lofiResampleFreq", 1 };
 const juce::ParameterID lofiDampenFreqParamID{ "lofiDampenFreq", 1 };
 
 class Parameters {
@@ -55,10 +55,8 @@ public:
 	static constexpr float defaultChorusModRate = 0.2f;
 	static constexpr float defaultChorusModRate2 = 0.45f; // this is not a passed param but default value for 2nd chorus
 	static constexpr float defaultChorusModDepth = 4.0f;
-	static constexpr float maxLofiSampleRate = 22050.0f;
-	static constexpr float minLofiSampleRate = 1500.0f;
-	static constexpr float maxLofiBitDepth = 12.0f;
-	static constexpr float minLofiBitDepth = 1.0f;
+	static constexpr float maxLofiResampleFreq = 22050.0f;
+	static constexpr float minLofiResampleFreq = 4000.0f;
 	static constexpr float maxLofiDampenFreq = 20000.0f;
 	static constexpr float minLofiDampenFreq = 10000.0f;
 	
@@ -106,7 +104,7 @@ public:
 	float chorusIntensity() const { return m_chorusIntensity; }
 	float chorusModRate() const { return m_chorusModRate; }
 	float chorusModDepth() const { return m_chorusModDepth; }
-	float lofiSampleRate() const { return m_lofiSampleRate; }
+	float lofiResampleFreq() const { return m_lofiResampleFreq; }
 	float lofiMixLevel() const { return m_lofiMixLevel; }
 	float lofiDampenFreq() const { return m_lofiDampenFreq; }
 
@@ -144,10 +142,8 @@ private:
 	juce::AudioParameterFloat* m_chorusIntensityParam;
 	juce::AudioParameterFloat* m_chorusModRateParam;
 	juce::AudioParameterFloat* m_chorusModDepthParam;
-	juce::AudioParameterFloat* m_lofiSampleRateParam;
-	juce::AudioParameterFloat* m_lofiBitDepthParam;
 	juce::AudioParameterFloat* m_lofiMixLevelParam;
-	juce::AudioParameterBool* m_lofiHPParam;
+	juce::AudioParameterFloat* m_lofiResampleFreqParam;
 	juce::AudioParameterFloat* m_lofiDampenFreqParam;
 
 	juce::LinearSmoothedValue<float> m_gainSmoother;
@@ -168,7 +164,7 @@ private:
 	juce::LinearSmoothedValue<float> m_chorusIntensitySmoother;
 	juce::LinearSmoothedValue<float> m_chorusModRateSmoother;
 	juce::LinearSmoothedValue<float> m_chorusModDepthSmoother;
-	juce::LinearSmoothedValue<float> m_lofiSampleRateSmoother;
+	juce::LinearSmoothedValue<float> m_lofiResampleFreqSmoother;
 	juce::LinearSmoothedValue<float> m_lofiMixLevelSmoother;
 	juce::LinearSmoothedValue<float> m_lofiDampenFreqSmoother;
 	
@@ -205,7 +201,7 @@ private:
 	float m_chorusIntensity = 0.0f;
 	float m_chorusModRate = defaultChorusModRate;
 	float m_chorusModDepth = defaultChorusModDepth;
-	float m_lofiSampleRate = maxLofiSampleRate;
+	float m_lofiResampleFreq = maxLofiResampleFreq;
 	float m_lofiMixLevel = 1.0f;
 	float m_lofiDampenFreq = maxLofiDampenFreq;
 
