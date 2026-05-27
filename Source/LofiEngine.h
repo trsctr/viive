@@ -26,10 +26,10 @@ private:
 
     float m_sampleRate = 0.0f;
     float m_mixLevel = 1.0f;
-    float m_downsampleRate = -1.0f;
+    float m_resampleFreq = -1.0f;
     float m_dampenFreq = -1.0f;
 
-    void setDownsampleRate(float downsampleRate);
+    void setResampleFreq(float resampleFreq);
     void setMixLevel(float mixLevel);
     void setDampenFreq(float dampenFreq);
 

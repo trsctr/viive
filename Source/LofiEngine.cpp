@@ -24,13 +24,13 @@ void LofiEngine::reset() noexcept
     m_highpass.reset();
     m_lowpass.reset();
     m_mixLevel = 1.0f;
-    m_downsampleRate = -1.0f;
+    m_resampleFreq = -1.0f;
     m_dampenFreq = -1.0f;
 }
 
 void LofiEngine::update(const Parameters& params)
 {
-    setDownsampleRate(params.lofiResampleFreq());
+    setResampleFreq(params.lofiResampleFreq());
     setMixLevel(params.lofiMixLevel());
     setDampenFreq(params.lofiDampenFreq());
 }
@@ -47,12 +47,12 @@ void LofiEngine::processSample(const float& inL, const float& inR, float& outL, 
     outR = inR * (1.0f - m_mixLevel) + processedR * m_mixLevel;
 }
 
-void LofiEngine::setDownsampleRate(float downsampleRate)
+void LofiEngine::setResampleFreq(float resampleFreq)
 {
-    if (!juce::approximatelyEqual(downsampleRate, m_downsampleRate)) {
-        m_downsampleRate = downsampleRate;
-        m_bitCrusherL.setDownsampleRate(m_downsampleRate);
-        m_bitCrusherR.setDownsampleRate(m_downsampleRate);
+    if (!juce::approximatelyEqual(resampleFreq, m_resampleFreq)) {
+        m_resampleFreq = resampleFreq;
+        m_bitCrusherL.setDownsampleRate(m_resampleFreq);
+        m_bitCrusherR.setDownsampleRate(m_resampleFreq);
     }
 }
 
