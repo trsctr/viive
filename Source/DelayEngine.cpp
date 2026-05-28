@@ -66,6 +66,8 @@ void DelayEngine::setDelayTimes(const float targetL, const float targetR) {
 	if (std::abs(m_delayTimeMsR) < 1e-4f) m_delayTimeMsR = targetRightMs;
 	m_delayTimeMsL = onePoleLowpass(targetLeftMs, m_delayTimeMsL, m_coeff);
 	m_delayTimeMsR = onePoleLowpass(targetRightMs, m_delayTimeMsR, m_coeff);
+	if (std::abs(m_delayTimeMsL - targetLeftMs) < 0.01f) m_delayTimeMsL = targetLeftMs;
+	if (std::abs(m_delayTimeMsR - targetRightMs) < 0.01f) m_delayTimeMsR = targetRightMs;
 	float leftMs = juce::jlimit(Parameters::minDelayTime, Parameters::maxDelayTime, m_delayTimeMsL);
 	float rightMs = juce::jlimit(Parameters::minDelayTime, Parameters::maxDelayTime, m_delayTimeMsR);
 	m_stereoDelay.setDelayTime(leftMs, Channel::Left);
