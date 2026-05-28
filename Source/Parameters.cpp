@@ -179,6 +179,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, highCutModNoteParamID, m_highCutModNoteParam);
 	castParameter(apvts, highCutModShapeParamID, m_highCutModShapeParam);
 	castParameter(apvts, highCutModInvertParamID, m_highCutModInvertParam);
+	castParameter(apvts, lofiNoiseEnabledParamID, m_lofiNoiseEnabledParam);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
@@ -438,6 +439,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 			.withStringFromValueFunction(stringFromHertz)
 			.withValueFromStringFunction(hzFromString)
 	));
+	layout.add(std::make_unique<juce::AudioParameterBool>(
+		lofiNoiseEnabledParamID.getParamID(),
+		"Lofi Noise",
+		true
+	));
 	return layout;
 }
 
@@ -537,6 +543,7 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_lofiResampleFreqSmoother.setTargetValue(m_lofiResampleFreqParam->get());
 	m_lofiMixLevelSmoother.setTargetValue(m_lofiMixLevelParam->get() * 0.01f);
 	m_lofiDampenFreqSmoother.setTargetValue(m_lofiDampenFreqParam->get());
+	m_lofiNoiseEnabled = m_lofiNoiseEnabledParam->get();
 	m_tempoSyncL = m_tempoSyncLParam->get();
 	m_tempoSyncR = m_tempoSyncRParam->get();
 	m_delayNoteL = m_delayNoteLParam->getIndex();

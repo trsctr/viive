@@ -26,17 +26,24 @@ private:
     juce::Random m_random;
     
     float m_sampleRate = 0.0f;
+
     float m_mixLevel = 1.0f;
     float m_resampleFreq = -1.0f;
     float m_dampenFreq = -1.0f;
+    bool m_noiseEnabled = true;
+
+    float m_noiseScale = 0.002f;
+    float m_attackMs = 30.0f;
+    float m_releaseMs = 1000.0f;
+    float m_attackCoeff = 0.0f;
+    float m_releaseCoeff = 0.0f;
     float m_envL = 0.0f;
     float m_envR = 0.0f;
-    float m_envCoeff = 0.0f;
-    float m_noiseScale = 0.001f;
 
     void setResampleFreq(float resampleFreq);
     void setMixLevel(float mixLevel);
     void setDampenFreq(float dampenFreq);
+    void setNoiseEnabled(bool enabled) { m_noiseEnabled = enabled; }
     void addNoise(float& sampleL, float& sampleR);
     float noise();
 

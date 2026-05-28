@@ -15,7 +15,8 @@ void LofiEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
     m_highpass.setQ(0.3f);
     m_lowpass.setCutoff(Parameters::maxLofiDampenFreq);
     m_lowpass.setQ(0.2f);
-    m_envCoeff = onePoleLowpassCoeff(200.0f, m_sampleRate);
+    m_attackCoeff = onePoleLowpassCoeff(m_attackMs, m_sampleRate);
+    m_releaseCoeff = onePoleLowpassCoeff(m_releaseMs, m_sampleRate);
 }
 
 void LofiEngine::reset() noexcept
@@ -36,6 +37,7 @@ void LofiEngine::update(const Parameters& params)
     setResampleFreq(params.lofiResampleFreq());
     setMixLevel(params.lofiMixLevel());
     setDampenFreq(params.lofiDampenFreq());
+    setNoiseEnabled(params.lofiNoiseEnabled());
 }
 
 void LofiEngine::processSample(const float& inL, const float& inR, float& outL, float& outR)
@@ -77,8 +79,11 @@ void LofiEngine::addNoise(float& sampleL, float& sampleR)
 {
     float absL = std::abs(sampleL);
     float absR = std::abs(sampleR);
-    m_envL = onePoleLowpass(absL > 1e-4f ? 1.0f : 0.0f, m_envL, m_envCoeff);
-    m_envR = onePoleLowpass(absR > 1e-4f ? 1.0f : 0.0f, m_envR, m_envCoeff);
+    float gateL = (absL > 1e-4f && m_noiseEnabled) ? 1.0f : 0.0f;
+    float gateR = (absR > 1e-4f && m_noiseEnabled) ? 1.0f : 0.0f;
+    m_envL = onePoleLowpass(gateL, m_envL, gateL > m_envL ? m_attackCoeff : m_releaseCoeff);
+    m_envR = onePoleLowpass(gateR, m_envR, gateR > m_envR ? m_attackCoeff : m_releaseCoeff);
+
     sampleL += noise() * m_noiseScale * m_envL;
     sampleR += noise() * m_noiseScale * m_envR;
 }
