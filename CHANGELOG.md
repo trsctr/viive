@@ -17,7 +17,10 @@ All notable changes to this project will be documented in this file.
   * Ranges finetuned for usability and musicality, subject to change
 * Insert effect selector
   * Allows user to switch between chorus and lofi effect in the feedback loop
- 
+
+### Fixed
+  * Delay time offset bug where offset never truly returned to zero once modified
+
 ## \[0.2.0] - 2026-05-18
 
 ### Added
