@@ -8,8 +8,13 @@ All notable changes to this project will be documented in this file.
 
 * BitCrusher DSP primitive
   * Performs first downsampling and then bit reduction
-* LofiEngine class which handles Left and Right channel BitCrushers and parameters
-* Lofi Mix, SampleRate and BitDepth parameters
+* Lofi effect which processes signal through bitcrushing, filtering and adding noise
+  * Bit depth locked to 8 bits
+  * signal chain: gentle highpass -> bitcrusher -> noise -> lowpass filter/dampen
+* Lofi Mix, Resample, Dampen and Noise on/off parameters
+  * Resample range: 4kHz - 22050 Hz, controls audio quality
+  * Dampen range: 10kHz - 22050 Hz, low pass filter gently filtering out high frequencies
+  * Ranges finetuned for usability and musicality, subject to change
 * Insert effect selector
   * Allows user to switch between chorus and lofi effect in the feedback loop
  

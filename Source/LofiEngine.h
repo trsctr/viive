@@ -4,6 +4,8 @@
 #include "BitCrusher.h"
 #include "Parameters.h"
 #include "InsertEffect.h"
+#include "StereoFilter.h"
+
 
 class LofiEngine : public InsertEffect
 {
@@ -17,17 +19,33 @@ public:
     void update(const Parameters& params) override;
 
 private:
-    BitCrusher m_bitCrusherL{ 12.0f, 22050.0f };
-    BitCrusher m_bitCrusherR{ 12.0f, 22050.0f };
-
+    BitCrusher m_bitCrusherL{ 8.0f, 22050.0f };
+    BitCrusher m_bitCrusherR{ 8.0f, 22050.0f };
+    StereoFilter m_highpass { FilterType::highpass };
+    StereoFilter m_lowpass { FilterType::lowpass };
+    juce::Random m_random;
+    
     float m_sampleRate = 0.0f;
-    float m_mixLevel = 1.0f;
-    float m_bitDepth = 0.0f;
-    float m_downsampleRate = 0.0f;
 
-    void setBitDepth(float bitDepth);
-    void setDownsampleRate(float downsampleRate);
+    float m_mixLevel = 1.0f;
+    float m_resampleFreq = -1.0f;
+    float m_dampenFreq = -1.0f;
+    bool m_noiseEnabled = true;
+
+    float m_noiseScale = 0.002f;
+    float m_attackMs = 30.0f;
+    float m_releaseMs = 1000.0f;
+    float m_attackCoeff = 0.0f;
+    float m_releaseCoeff = 0.0f;
+    float m_envL = 0.0f;
+    float m_envR = 0.0f;
+
+    void setResampleFreq(float resampleFreq);
     void setMixLevel(float mixLevel);
+    void setDampenFreq(float dampenFreq);
+    void setNoiseEnabled(bool enabled) { m_noiseEnabled = enabled; }
+    void addNoise(float& sampleL, float& sampleR);
+    float noise();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LofiEngine)
 };

@@ -64,9 +64,10 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	m_lofiGroup.setText("");
 	m_lofiGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
-	m_lofiGroup.addAndMakeVisible(m_lofiSampleRateKnob);
-	m_lofiGroup.addAndMakeVisible(m_lofiBitDepthKnob);
+	m_lofiGroup.addAndMakeVisible(m_lofiResampleFreqKnob);
+	m_lofiGroup.addAndMakeVisible(m_lofiDampenFreqKnob);
 	m_lofiGroup.addAndMakeVisible(m_lofiMixLevelKnob);
+	m_lofiGroup.addAndMakeVisible(m_lofiNoiseEnabledButton);
 	addChildComponent(m_lofiGroup);
 //	addAndMakeVisible(m_lofiGroup);
 	addAndMakeVisible(m_insertEffectTypeSelector);
@@ -85,6 +86,9 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	updateSyncedKnobs(syncL, syncR, lowCutSync, highCutSync);
 
+	auto* insertEffectParam = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(insertEffectTypeParamID.getParamID()));
+	updateInsertEffectControls(insertEffectParam->getIndex());
+	
 	m_audioProcessor.apvts.addParameterListener(tempoSyncLParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(tempoSyncRParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(lowCutModTempoSyncParamID.getParamID(), this);
@@ -182,8 +186,9 @@ void ViiveAudioProcessorEditor::resized()
 	m_chorusModDepthKnob.setTopLeftPosition(m_chorusModRateKnob.getRight() + 20, 20);
 
 	m_lofiMixLevelKnob.setTopLeftPosition(20, 20);
-	m_lofiSampleRateKnob.setTopLeftPosition(m_lofiMixLevelKnob.getRight() + 20, 20);
-	m_lofiBitDepthKnob.setTopLeftPosition(m_lofiSampleRateKnob.getRight() + 20, 20);
+	m_lofiResampleFreqKnob.setTopLeftPosition(m_lofiMixLevelKnob.getRight() + 20, 20);
+	m_lofiDampenFreqKnob.setTopLeftPosition(m_lofiResampleFreqKnob.getRight() + 20, 20);
+	m_lofiNoiseEnabledButton.setCentrePosition(m_lofiDampenFreqKnob.getRight() - 35, m_lofiDampenFreqKnob.getBottom() + 15);
 
 	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
 
