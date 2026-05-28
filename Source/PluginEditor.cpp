@@ -67,6 +67,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_lofiGroup.addAndMakeVisible(m_lofiResampleFreqKnob);
 	m_lofiGroup.addAndMakeVisible(m_lofiDampenFreqKnob);
 	m_lofiGroup.addAndMakeVisible(m_lofiMixLevelKnob);
+	m_lofiGroup.addAndMakeVisible(m_lofiNoiseEnabledButton);
 	addChildComponent(m_lofiGroup);
 //	addAndMakeVisible(m_lofiGroup);
 	addAndMakeVisible(m_insertEffectTypeSelector);
@@ -187,6 +188,7 @@ void ViiveAudioProcessorEditor::resized()
 	m_lofiMixLevelKnob.setTopLeftPosition(20, 20);
 	m_lofiResampleFreqKnob.setTopLeftPosition(m_lofiMixLevelKnob.getRight() + 20, 20);
 	m_lofiDampenFreqKnob.setTopLeftPosition(m_lofiResampleFreqKnob.getRight() + 20, 20);
+	m_lofiNoiseEnabledButton.setCentrePosition(m_lofiDampenFreqKnob.getRight() - 35, m_lofiDampenFreqKnob.getBottom() + 15);
 
 	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
 
