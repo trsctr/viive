@@ -58,8 +58,6 @@ private:
 	float m_feedbackL = 0.0f;
 	float m_feedbackR = 0.0f;
 
-	void resetAfterKill();
-
 	float m_baseDelayTimeMs = -1.0f;
 	float m_delayTimeMsL = -1.0f;
 	float m_delayTimeMsR = -1.0f;
@@ -73,6 +71,8 @@ private:
 
 	bool m_isKilling = false;
 	bool m_killButtonHeld = false;
+
+	void resetAfterKill();
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayEngine)
 };
