@@ -21,7 +21,7 @@ public:
 	void reset() noexcept;
 
 	void update(const Parameters& params);
-	void processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params);
+	void processSample(const float& inL, const float& inR, float& outL, float& outR);
 	void setDelayTimes(const float delayInMsL, const float delayInMsR);
 	void setFeedbackLevel(const float value) { m_feedbackLevel = value; }
 	void setMixLevel(const float value) { m_mixLevel = value; }
@@ -30,6 +30,8 @@ public:
 	void setOffsetMs(const float value) { m_offsetMs = value * .5f; }
 	void setDelayMode(const int modeIndex);
 	void setInsertEffect(const int effectIndex);
+	void setKill(bool shouldKill);
+	void triggerKill();
 	void updateSyncedModulators(const double ppqPosition);
 
 	std::atomic<float>& getLowCutLfoValue()  { return m_filterEngine.getLowCutLfoValue(); }
@@ -52,6 +54,7 @@ private:
 	
 	float m_coeff = 0.0f;
 
+	float m_killCoeff = 0.0f;
 	float m_feedbackL = 0.0f;
 	float m_feedbackR = 0.0f;
 
@@ -64,6 +67,12 @@ private:
 	float m_gainLevel = 1.0f;
 	float m_widthLevel = 1.0f;
 	float m_offsetMs = 0.0f;
+	float m_killGain = 1.0f;
+
+	bool m_isKilling = false;
+	bool m_killButtonHeld = false;
+
+	void resetAfterKill();
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayEngine)
 };

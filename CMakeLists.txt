@@ -74,6 +74,7 @@ target_sources(viive PRIVATE
     Source/FilterEngine.cpp
     Source/Tempo.cpp
     Source/Selector.cpp
+    Source/KillButton.cpp
     Source/SyncButton.cpp
     Source/StereoDelay.cpp
     Source/StereoFilter.cpp

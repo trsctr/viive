@@ -12,6 +12,7 @@ const juce::ParameterID tempoSyncRParamID{ "tempoSyncR", 1 };
 const juce::ParameterID delayModeParamID{ "delayMode", 1 };
 const juce::ParameterID mixParamID{ "mix", 1 };
 const juce::ParameterID feedbackParamID{ "feedback", 1 };
+const juce::ParameterID feedbackKillParamID{ "feedbackKill", 1 };
 const juce::ParameterID stereoParamID{ "stereo", 1 };
 const juce::ParameterID offsetParamID{ "offset", 1 };
 const juce::ParameterID lowCutFreqParamID{ "lowCutFreq", 1 };
@@ -109,6 +110,7 @@ public:
 	float lofiMixLevel() const { return m_lofiMixLevel; }
 	float lofiDampenFreq() const { return m_lofiDampenFreq; }
 	bool lofiNoiseEnabled() const { return m_lofiNoiseEnabled; }
+	bool feedbackKill() const { return m_feedbackKill; }
 
 private:
 	juce::AudioParameterFloat* m_gainParam;
@@ -121,6 +123,7 @@ private:
 	juce::AudioParameterChoice* m_delayModeParam;
 	juce::AudioParameterFloat* m_mixParam;
 	juce::AudioParameterFloat* m_feedbackParam;
+	juce::AudioParameterBool* m_feedbackKillParam;
 	juce::AudioParameterFloat* m_stereoParam;
 	juce::AudioParameterFloat* m_offsetParam;
 	juce::AudioParameterChoice* m_insertEffectTypeParam;
@@ -170,7 +173,6 @@ private:
 	juce::LinearSmoothedValue<float> m_lofiResampleFreqSmoother;
 	juce::LinearSmoothedValue<float> m_lofiMixLevelSmoother;
 	juce::LinearSmoothedValue<float> m_lofiDampenFreqSmoother;
-	; // for tempo-synced offset modulation
 	
 	float m_gain = 0.0f;
 	float m_delayTimeL = 0.0f;
@@ -182,6 +184,7 @@ private:
 	int m_delayMode = 0;
 	float m_mix = 0.5f;
 	float m_feedback = 0.0f;
+	bool m_feedbackKill = false;
 	float m_stereo = 0.0f;
 	float m_offset = 0.0f;
 	float m_lowCutFreq = 20.0f;

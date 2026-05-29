@@ -70,6 +70,7 @@ private:
     Tempo m_tempo;
 
     std::atomic<float> m_outputLevelL, m_outputLevelR;
+    double m_lastPpqPosition = 0.0;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessor)
 };

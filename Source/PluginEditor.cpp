@@ -72,6 +72,7 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 //	addAndMakeVisible(m_lofiGroup);
 	addAndMakeVisible(m_insertEffectTypeSelector);
 
+	addAndMakeVisible(m_feedbackKillButton);
 	addAndMakeVisible(m_meter);
 
 #if JUCE_DEBUG
@@ -190,6 +191,8 @@ void ViiveAudioProcessorEditor::resized()
 	m_lofiDampenFreqKnob.setTopLeftPosition(m_lofiResampleFreqKnob.getRight() + 20, 20);
 	m_lofiNoiseEnabledButton.setCentrePosition(m_lofiDampenFreqKnob.getRight() - 35, m_lofiDampenFreqKnob.getBottom() + 15);
 
+	m_feedbackKillButton.setCentrePosition(m_outputGroup.getX() + m_outputGroup.getWidth() / 2,
+	                                        m_outputGroup.getBottom() + 20);
 	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
 
 #if JUCE_DEBUG

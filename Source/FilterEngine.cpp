@@ -38,6 +38,12 @@ void FilterEngine::reset() noexcept
 	m_highCutSmoothed[0] = m_highCutSmoothed[1] = Parameters::maxFilterFreq;
 }
 
+void FilterEngine::kill()
+{
+	m_lowCut.reset();
+	m_highCut.reset();
+}
+
 float FilterEngine::modulatedCutoff(float base, float lfoValue, float modDepth)
 {
 	return juce::jlimit(Parameters::minFilterFreq, Parameters::maxFilterFreq, base * std::pow(2.0f, lfoValue * modDepth));

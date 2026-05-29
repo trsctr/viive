@@ -5,6 +5,7 @@
 #include "Parameters.h"
 #include "RotaryKnob.h"
 #include "SyncButton.h"
+#include "KillButton.h"
 #include "Selector.h"
 #include "LevelMeter.h"
 #include "LFOIndicator.h"
@@ -77,6 +78,8 @@ private:
     LFOIndicator m_lowCutLfoIndicator  { m_audioProcessor.getLowCutLfoValue() };
     LFOIndicator m_highCutLfoIndicator { m_audioProcessor.getHighCutLfoValue() };
     SyncButton m_highCutModInvertButton{ juce::String::fromUTF8("\xC3\x98"), m_audioProcessor.apvts, highCutModInvertParamID.getParamID(), 20};
+
+    KillButton m_feedbackKillButton{ "Kill", m_audioProcessor.apvts, feedbackKillParamID };
 
     juce::Label m_modulationLabel;
 

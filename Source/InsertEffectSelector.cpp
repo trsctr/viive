@@ -29,6 +29,12 @@ void InsertEffectSelector::update(const Parameters& params)
         m_active->update(params);
 }
 
+void InsertEffectSelector::kill()
+{
+    if (m_active)
+        m_active->kill();
+}
+
 void InsertEffectSelector::select(InsertEffectType type)
 {
     switch(type) {
