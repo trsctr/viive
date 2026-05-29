@@ -153,6 +153,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, delayModeParamID, m_delayModeParam);
 	castParameter(apvts, mixParamID, m_mixParam);
 	castParameter(apvts, feedbackParamID, m_feedbackParam);
+	castParameter(apvts, feedbackKillParamID, m_feedbackKillParam);
 	castParameter(apvts, stereoParamID, m_stereoParam);
 	castParameter(apvts, offsetParamID, m_offsetParam);
 	castParameter(apvts, insertEffectTypeParamID, m_insertEffectTypeParam);
@@ -444,6 +445,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		"Lofi Noise",
 		true
 	));
+	layout.add(std::make_unique<juce::AudioParameterBool>(
+		feedbackKillParamID.getParamID(),
+		"Feedback Kill",
+		false
+	));
 	return layout;
 }
 
@@ -544,6 +550,7 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_lofiMixLevelSmoother.setTargetValue(m_lofiMixLevelParam->get() * 0.01f);
 	m_lofiDampenFreqSmoother.setTargetValue(m_lofiDampenFreqParam->get());
 	m_lofiNoiseEnabled = m_lofiNoiseEnabledParam->get();
+	m_feedbackKill = m_feedbackKillParam->get();
 	m_tempoSyncL = m_tempoSyncLParam->get();
 	m_tempoSyncR = m_tempoSyncRParam->get();
 	m_delayNoteL = m_delayNoteLParam->getIndex();

@@ -36,6 +36,17 @@ void ChorusEngine::reset() noexcept
 	m_modDepth = -1.0f;
 }
 
+void ChorusEngine::kill()
+{
+	m_chorus1L.kill();
+	m_chorus1R.kill();
+	m_chorus2L.kill();
+	m_chorus2R.kill();
+	m_highpass.reset();
+	m_dcBlockStateL = 0.0f;
+	m_dcBlockStateR = 0.0f;
+}
+
 void ChorusEngine::setModRate(float newRate)
 {
 	if (!juce::approximatelyEqual(newRate, m_modRate)) {

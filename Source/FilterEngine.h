@@ -20,7 +20,7 @@ public:
 
 	void update(const Parameters& params);
 	void processSample(const float& inL, const float& inR, float& outL, float& outR);
-
+	void kill();
 	void updateLFOs(const double ppqPosition) noexcept;
 
 	std::atomic<float>& getLowCutLfoValue()  { return m_lowCutLfoValue; }

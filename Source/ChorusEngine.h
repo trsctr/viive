@@ -18,6 +18,7 @@ public:
 
 	void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept override;
 	void reset() noexcept override;
+	void kill() override;
 
 	void processSample(const float& inL, const float& inR, float& outL, float& outR) override;
 	void update(const Parameters& params) override;

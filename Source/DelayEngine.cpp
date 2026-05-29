@@ -22,7 +22,8 @@ void DelayEngine::prepareToPlay(double sampleRate, int samplesPerBlock) noexcept
 	m_filterEngine.prepareToPlay(sampleRate, samplesPerBlock);
 	m_feedbackHighpass.prepare(spec);
 	m_stereoDelay.prepareToPlay(sampleRate, samplesPerBlock);
-	m_coeff = onePoleLowpassCoeff(100.0f, static_cast<float>(sampleRate));
+	m_coeff = onePoleLowpassCoeff(100.0f, m_sampleRate);
+	m_killCoeff = onePoleLowpassCoeff(10.0f, m_sampleRate);
 }
 
 void DelayEngine::reset() noexcept
@@ -82,8 +83,35 @@ void DelayEngine::update(const Parameters& params)
 	setWidthLevel(params.stereo());
 	setOffsetMs(params.offset());
 	setDelayTimes(params.delayTimeL(), params.delayTimeR());
+	setKill(params.feedbackKill());
 	m_filterEngine.update(params);
 	m_insertEffectSelector.update(params);
+}
+
+void DelayEngine::setKill(bool shouldKill)
+{
+	bool risingEdge = shouldKill && !m_killButtonHeld;
+	m_killButtonHeld = shouldKill;
+	if (risingEdge)
+		triggerKill();
+}
+
+void DelayEngine::triggerKill()
+{
+	m_isKilling = true;
+}
+
+void DelayEngine::resetAfterKill()
+{
+	m_stereoDelay.kill();
+	m_insertEffectSelector.kill();
+	m_filterEngine.kill();
+	m_feedbackHighpass.reset();
+	m_feedbackCompressor.reset();
+	m_feedbackL = 0.0f;
+	m_feedbackR = 0.0f;
+	m_killGain = 1.0f;
+	m_isKilling = false;
 }
 
 void DelayEngine::updateSyncedModulators(const double ppqPosition)
@@ -91,10 +119,16 @@ void DelayEngine::updateSyncedModulators(const double ppqPosition)
 	m_filterEngine.updateLFOs(ppqPosition);
 }
 
-void DelayEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
+void DelayEngine::processSample(const float& inL, const float& inR, float& outL, float& outR)
 {
 	float dryL = inL;
 	float dryR = inR;
+
+	if (m_isKilling) {
+		m_killGain = onePoleLowpass(0.0f, m_killGain, m_killCoeff);
+		if (m_killGain < 0.001f)
+			resetAfterKill();
+	}
 
 	float mono = (dryL + dryR) * .5f;
 	float delayInL = 0.0f, delayInR = 0.0f, wetL = 0.0f, wetR = 0.0f;
@@ -107,7 +141,7 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 			delayInL = m_feedbackR;
 			delayInR = mono + m_feedbackL;
 			break;
-		case DelayMode::Cross: 
+		case DelayMode::Cross:
 			delayInL = dryL + m_feedbackR;
 			delayInR = dryR + m_feedbackL;
 			break;
@@ -122,7 +156,8 @@ void DelayEngine::processSample(const float& inL, const float& inR, float& outL,
 
 	m_stereoDelay.processSample(delayInL, wetL, Channel::Left);
 	m_stereoDelay.processSample(delayInR, wetR, Channel::Right);
-	
+	wetL *= m_killGain;
+	wetR *= m_killGain;
 	m_insertEffectSelector.processSample(wetL, wetR, wetL, wetR);
 
 	m_filterEngine.processSample(wetL, wetR, wetL, wetR);

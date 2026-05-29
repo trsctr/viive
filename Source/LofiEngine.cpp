@@ -32,6 +32,16 @@ void LofiEngine::reset() noexcept
     m_envR = 0.0f;
 }
 
+void LofiEngine::kill()
+{
+    m_bitCrusherL.reset();
+    m_bitCrusherR.reset();
+    m_highpass.reset();
+    m_lowpass.reset();
+    m_envL = 0.0f;
+    m_envR = 0.0f;
+}
+
 void LofiEngine::update(const Parameters& params)
 {
     setResampleFreq(params.lofiResampleFreq());

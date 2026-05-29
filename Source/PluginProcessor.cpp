@@ -51,7 +51,7 @@ bool ViiveAudioProcessor::isMidiEffect() const
 
 double ViiveAudioProcessor::getTailLengthSeconds() const
 {
-    return 0.0;
+    return 5.0;
 }
 
 int ViiveAudioProcessor::getNumPrograms()
@@ -115,6 +115,12 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
         buffer.clear(i, 0, buffer.getNumSamples());
 
     m_tempo.update(getPlayHead());
+
+    double ppqPos = m_tempo.getPpqPosition();
+    if (!m_tempo.getIsPlaying() && ppqPos < m_lastPpqPosition - 0.01)
+        m_delayEngine.triggerKill();
+    m_lastPpqPosition = ppqPos;
+
     m_params.update(m_tempo);
     if (m_tempo.getIsPlaying())
         m_delayEngine.updateSyncedModulators(m_tempo.getPpqPosition());
@@ -136,7 +142,7 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
         m_params.smoothen();
         m_delayEngine.update(m_params);
 		m_delayEngine.processSample(inputDataL[sample], inputDataR[sample],
-			outL, outR, m_params);
+			outL, outR);
         outputDataL[sample] = outL;
         outputDataR[sample] = outR;
 

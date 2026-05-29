@@ -15,6 +15,7 @@ public:
     void processSample(const float& inL, const float& inR, float& outL, float& outR);
     void update(const Parameters& params);
     void select(InsertEffectType type);
+    void kill();
 
 private:
     ChorusEngine m_chorus;

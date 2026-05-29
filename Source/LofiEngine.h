@@ -17,6 +17,7 @@ public:
     void reset() noexcept override;
     void processSample(const float& inL, const float& inR, float& outL, float& outR) override;
     void update(const Parameters& params) override;
+    void kill () override;
 
 private:
     BitCrusher m_bitCrusherL{ 8.0f, 22050.0f };

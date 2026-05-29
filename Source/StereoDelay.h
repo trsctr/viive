@@ -10,7 +10,7 @@ public:
 	void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept;
 	void reset() noexcept;
 	void processSample(const float &in, float &out, Channel channel);
-
+	void kill();
 	void setDelayTime(float ms, Channel channel);
 
 private:
