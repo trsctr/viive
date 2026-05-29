@@ -17,6 +17,11 @@ All notable changes to this project will be documented in this file.
   * Ranges finetuned for usability and musicality, subject to change
 * Insert effect selector
   * Allows user to switch between chorus and lofi effect in the feedback loop
+* Feedback loop kill
+  * fades wet signal out and clears delay line buffers, feedback and any audio processor states
+  * Automatable param
+  * Button in GUI
+  * Triggered with position rewind when playback stop (ie pressing stop twice during playback)
 
 ### Fixed
   * Delay time offset bug where offset never truly returned to zero once modified
