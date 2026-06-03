@@ -10,4 +10,4 @@ enum class DelayMode { Stereo, Cross, PingPongLR, PingPongRL};
 enum class LFOShape { Sine, Triangle, Square, SawUp, SawDown, SampleAndHold };
 
 // Parameters::insertEffects
-enum class InsertEffectType { Chorus, Lofi };
+enum class InsertEffectType { Chorus, Lofi, RingMod };
