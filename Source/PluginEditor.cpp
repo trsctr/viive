@@ -70,8 +70,15 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_lofiGroup.addAndMakeVisible(m_lofiNoiseEnabledButton);
 	addChildComponent(m_lofiGroup);
 //	addAndMakeVisible(m_lofiGroup);
-	addAndMakeVisible(m_insertEffectTypeSelector);
 
+	m_ringModGroup.setText("");
+	m_ringModGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
+	m_ringModGroup.addAndMakeVisible(m_ringModFreqKnob);
+	m_ringModGroup.addAndMakeVisible(m_ringModMixLevelKnob);
+	m_ringModGroup.addAndMakeVisible(m_ringModDriftAmtKnob);
+	addChildComponent(m_ringModGroup);
+
+	addAndMakeVisible(m_insertEffectTypeSelector);
 	addAndMakeVisible(m_feedbackKillButton);
 	addAndMakeVisible(m_meter);
 
@@ -132,6 +139,7 @@ void ViiveAudioProcessorEditor::resized()
 #endif
     m_chorusGroup.setBounds(bounds.getWidth() - 360, y + 35, 300, 165);
     m_lofiGroup.setBounds(bounds.getWidth() - 360, y + 35, 300, 165);
+	m_ringModGroup.setBounds(bounds.getWidth() - 360, y + 35, 300, 165);
 
     m_delayGroup.setBounds(10, y + 35, m_chorusGroup.getX() - 20, 165);
 	m_outputGroup.setBounds(bounds.getWidth() - 360, m_delayGroup.getBottom() + 10, 300, 155);
@@ -191,6 +199,10 @@ void ViiveAudioProcessorEditor::resized()
 	m_lofiDampenFreqKnob.setTopLeftPosition(m_lofiResampleFreqKnob.getRight() + 20, 20);
 	m_lofiNoiseEnabledButton.setCentrePosition(m_lofiDampenFreqKnob.getRight() - 35, m_lofiDampenFreqKnob.getBottom() + 15);
 
+	m_ringModMixLevelKnob.setTopLeftPosition(20, 20);
+	m_ringModFreqKnob.setTopLeftPosition(m_ringModMixLevelKnob.getRight() + 20, 20);
+	m_ringModDriftAmtKnob.setTopLeftPosition(m_ringModFreqKnob.getRight() + 20, 20);
+
 	m_feedbackKillButton.setCentrePosition(m_outputGroup.getX() + m_outputGroup.getWidth() / 2,
 	                                        m_outputGroup.getBottom() + 20);
 	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
@@ -217,9 +229,11 @@ void ViiveAudioProcessorEditor::updateInsertEffectControls(int insertEffectType)
 	DBG("Insert effect type changed: " << insertEffectType);
 	bool isChorus = (insertEffectType == 0);
 	bool isLofi = (insertEffectType == 1);
+	bool isRingMod = (insertEffectType == 2);
 
 	m_chorusGroup.setVisible(isChorus);
 	m_lofiGroup.setVisible(isLofi);
+	m_ringModGroup.setVisible(isRingMod);
 }
 
 void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, float newValue) {

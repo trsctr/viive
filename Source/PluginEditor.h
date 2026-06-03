@@ -65,6 +65,10 @@ private:
     RotaryKnob m_lofiDampenFreqKnob{ "Dampen", m_audioProcessor.apvts, lofiDampenFreqParamID.getParamID() };
     SyncButton m_lofiNoiseEnabledButton{ "Noise", m_audioProcessor.apvts, lofiNoiseEnabledParamID.getParamID() };
 
+    RotaryKnob m_ringModMixLevelKnob{ "Mix", m_audioProcessor.apvts, ringModMixLevelParamID.getParamID() };
+    RotaryKnob m_ringModFreqKnob{ "Freq", m_audioProcessor.apvts, ringModFreqParamID.getParamID() };
+    RotaryKnob m_ringModDriftAmtKnob{ "Drift", m_audioProcessor.apvts, ringModDriftAmtParamID.getParamID() };
+
     SyncButton m_tempoSyncLButton{ "Sync", m_audioProcessor.apvts, tempoSyncLParamID.getParamID() };
     SyncButton m_tempoSyncRButton{ "Sync", m_audioProcessor.apvts, tempoSyncRParamID.getParamID() };
     SyncButton m_lowCutModTempoSyncButton{ "Sync", m_audioProcessor.apvts, lowCutModTempoSyncParamID.getParamID() };
@@ -85,7 +89,7 @@ private:
 
     juce::HashMap<juce::String, juce::String> m_linkedParams;
 
-    juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup, m_lofiGroup, m_filterModGroup;
+    juce::GroupComponent m_delayGroup, m_filterGroup, m_outputGroup, m_chorusGroup, m_lofiGroup, m_ringModGroup, m_filterModGroup;
 
 #if JUCE_DEBUG
     std::unique_ptr<LFOScope> m_lfoScope;
