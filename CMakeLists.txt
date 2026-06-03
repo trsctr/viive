@@ -75,6 +75,8 @@ target_sources(viive PRIVATE
     Source/Tempo.cpp
     Source/Selector.cpp
     Source/KillButton.cpp
+    Source/RingModEngine.cpp
+    Source/RingModulator.cpp
     Source/SyncButton.cpp
     Source/StereoDelay.cpp
     Source/StereoFilter.cpp
