@@ -20,14 +20,18 @@ public:
 private:
     RingModulator m_ringModL, m_ringModR;
 
-    LFO m_lfoL { .3f, 0.0f, LFOShape::Sine };
-    LFO m_lfoR { .3f, 0.5f, LFOShape::Sine };
+    LFO m_lfoL { .05f, 0.0f, LFOShape::Sine };
+    LFO m_lfoR { .05f, 0.5f, LFOShape::Sine };
 
     float m_sampleRate = 0.0f;
 
     float m_mixLevel = 1.0f;
-    float m_baseFrequency = 440.0f;
-    float m_driftAmount = 0.0f;
+    float m_baseFrequency = 1000.0f;
+    float m_driftAmt = 0.0f;
+
+    void setBaseFrequency(float frequency) { m_baseFrequency = frequency; }
+    void setMixLevel(float mix) { m_mixLevel = mix; }
+    void setDriftAmt(float drift) { m_driftAmt = drift; }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RingModEngine)
 };

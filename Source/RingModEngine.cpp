@@ -23,6 +23,9 @@ void RingModEngine::reset() noexcept
 
 void RingModEngine::update(const Parameters& params)
 {
+    setBaseFrequency(params.ringModFreq());
+    setMixLevel(params.ringModMixLevel());
+    setDriftAmt(params.ringModDriftAmt());
 }
 
 void RingModEngine::kill()
@@ -35,11 +38,11 @@ void RingModEngine::kill()
 
 void RingModEngine::processSample(const float& inL, const float& inR, float& outL, float& outR)
 {
-    float modSignalL = m_lfoL.process();
-    float modSignalR = m_lfoR.process();
+    float driftL = m_lfoL.process() * m_driftAmt;
+    float driftR = m_lfoR.process() * m_driftAmt;
 
-    m_ringModL.setFrequency(m_baseFrequency + modSignalL * m_driftAmount);
-    m_ringModR.setFrequency(m_baseFrequency + modSignalR * m_driftAmount);
+    m_ringModL.setFrequency(m_baseFrequency + driftL);
+    m_ringModR.setFrequency(m_baseFrequency + driftR);
 
     float processedL = m_ringModL.processSample(inL);
     float processedR = m_ringModR.processSample(inR);
