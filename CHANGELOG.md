@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## \[unreleased]
+
+### Changed
+
+* Removed the playback position detecting kill trigger as it caused inconsistencies across DAWs
+
 ## \[0.3.0-beta.1] - 2026-05-29
 
 ### Added
