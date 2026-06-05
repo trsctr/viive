@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## \[unreleased]
+## \[0.3.0-beta.2] - 2026-06-05
 
 ### Changed
 
