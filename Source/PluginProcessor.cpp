@@ -116,11 +116,6 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
 
     m_tempo.update(getPlayHead());
 
-    double ppqPos = m_tempo.getPpqPosition();
-    if (!m_tempo.getIsPlaying() && ppqPos < m_lastPpqPosition - 0.01)
-        m_delayEngine.triggerKill();
-    m_lastPpqPosition = ppqPos;
-
     m_params.update(m_tempo);
     if (m_tempo.getIsPlaying())
         m_delayEngine.updateSyncedModulators(m_tempo.getPpqPosition());
