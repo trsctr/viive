@@ -15,6 +15,8 @@ public:
 	void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept;
 	void reset() noexcept;
 	void update();
+	void kill();
+	
 	float processSample(const float& in);
 	void setBaseDelay(float delayInMs);
 	void setModRate(float rate) { m_lfo.setFrequency(rate); }

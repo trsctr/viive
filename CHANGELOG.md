@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-06-10
+
+### Added
+
+* Lofi insert effect: bitcrushing, noise, and filtering in the feedback loop
+  * Mix, Resample (4kHz–22050Hz), Dampen (10kHz–22050Hz), and Noise toggle
+* Insert effect selector: switch between Chorus and Lofi in the feedback loop
+* Feedback loop kill: fades wet signal, clears delay buffers and processor state; automatable
+
+### Fixed
+
+* Delay time offset not returning to zero correctly
+
 ## \[0.2.0] - 2026-05-18
 
 ### Added

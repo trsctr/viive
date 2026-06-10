@@ -51,7 +51,7 @@ bool ViiveAudioProcessor::isMidiEffect() const
 
 double ViiveAudioProcessor::getTailLengthSeconds() const
 {
-    return 0.0;
+    return 5.0;
 }
 
 int ViiveAudioProcessor::getNumPrograms()
@@ -115,10 +115,12 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
         buffer.clear(i, 0, buffer.getNumSamples());
 
     m_tempo.update(getPlayHead());
+
     m_params.update(m_tempo);
     if (m_tempo.getIsPlaying())
         m_delayEngine.updateSyncedModulators(m_tempo.getPpqPosition());
     m_delayEngine.setDelayMode(m_params.delayMode());
+    m_delayEngine.setInsertEffect(m_params.insertEffectType());
 
     auto mainInput = getBusBuffer(buffer, true, 0);
     const float* inputDataL = mainInput.getReadPointer(0);
@@ -126,7 +128,7 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     auto mainOutput = getBusBuffer(buffer, false, 0);
     float* outputDataL = mainOutput.getWritePointer(0);
     float* outputDataR = mainOutput.getWritePointer(1);
-
+    
     float maxL = 0.0f, maxR = 0.0f;
     
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
@@ -135,7 +137,7 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
         m_params.smoothen();
         m_delayEngine.update(m_params);
 		m_delayEngine.processSample(inputDataL[sample], inputDataR[sample],
-			outL, outR, m_params);
+			outL, outR);
         outputDataL[sample] = outL;
         outputDataR[sample] = outR;
 

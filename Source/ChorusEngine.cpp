@@ -36,6 +36,17 @@ void ChorusEngine::reset() noexcept
 	m_modDepth = -1.0f;
 }
 
+void ChorusEngine::kill()
+{
+	m_chorus1L.kill();
+	m_chorus1R.kill();
+	m_chorus2L.kill();
+	m_chorus2R.kill();
+	m_highpass.reset();
+	m_dcBlockStateL = 0.0f;
+	m_dcBlockStateR = 0.0f;
+}
+
 void ChorusEngine::setModRate(float newRate)
 {
 	if (!juce::approximatelyEqual(newRate, m_modRate)) {
@@ -59,12 +70,15 @@ void ChorusEngine::setModDepth(float modDepth)
 	}
 }
 
-void ChorusEngine::processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params)
+void ChorusEngine::update(const Parameters& params)
 {
 	setIntensity(params.chorusIntensity());
 	setModRate(params.chorusModRate());
 	setModDepth(params.chorusModDepth());
+}
 
+void ChorusEngine::processSample(const float& inL, const float& inR, float& outL, float& outR)
+{
 	// Dual chorus intensity mapping: c1 peaks early (at ~0.6 intensity),
 	// c2 ramps exponentially, staying subtle until higher intensities.
 	// This creates a smooth character progression: barely audible -> chorus1 dominant

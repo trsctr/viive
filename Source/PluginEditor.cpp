@@ -55,13 +55,24 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	m_outputGroup.addAndMakeVisible(m_gainKnob);
     addAndMakeVisible(m_outputGroup);
 
-    m_chorusGroup.setText("Chorus");
+    m_chorusGroup.setText("");
 	m_chorusGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
 	m_chorusGroup.addAndMakeVisible(m_chorusIntensityKnob);
 	m_chorusGroup.addAndMakeVisible(m_chorusModRateKnob);
 	m_chorusGroup.addAndMakeVisible(m_chorusModDepthKnob);
 	addAndMakeVisible(m_chorusGroup);
 
+	m_lofiGroup.setText("");
+	m_lofiGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
+	m_lofiGroup.addAndMakeVisible(m_lofiResampleFreqKnob);
+	m_lofiGroup.addAndMakeVisible(m_lofiDampenFreqKnob);
+	m_lofiGroup.addAndMakeVisible(m_lofiMixLevelKnob);
+	m_lofiGroup.addAndMakeVisible(m_lofiNoiseEnabledButton);
+	addChildComponent(m_lofiGroup);
+//	addAndMakeVisible(m_lofiGroup);
+	addAndMakeVisible(m_insertEffectTypeSelector);
+
+	addAndMakeVisible(m_feedbackKillButton);
 	addAndMakeVisible(m_meter);
 
 #if JUCE_DEBUG
@@ -76,10 +87,14 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 
 	updateSyncedKnobs(syncL, syncR, lowCutSync, highCutSync);
 
+	auto* insertEffectParam = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(insertEffectTypeParamID.getParamID()));
+	updateInsertEffectControls(insertEffectParam->getIndex());
+	
 	m_audioProcessor.apvts.addParameterListener(tempoSyncLParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(tempoSyncRParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(lowCutModTempoSyncParamID.getParamID(), this);
 	m_audioProcessor.apvts.addParameterListener(highCutModTempoSyncParamID.getParamID(), this);
+	m_audioProcessor.apvts.addParameterListener(insertEffectTypeParamID.getParamID(), this);
 #if JUCE_DEBUG
 	setSize(770, 670);
 #else
@@ -93,6 +108,7 @@ ViiveAudioProcessorEditor::~ViiveAudioProcessorEditor()
 	m_audioProcessor.apvts.removeParameterListener(tempoSyncRParamID.getParamID(), this);
 	m_audioProcessor.apvts.removeParameterListener(lowCutModTempoSyncParamID.getParamID(), this);
 	m_audioProcessor.apvts.removeParameterListener(highCutModTempoSyncParamID.getParamID(), this);
+	m_audioProcessor.apvts.removeParameterListener(insertEffectTypeParamID.getParamID(), this);
 }
 
 //==============================================================================
@@ -115,6 +131,8 @@ void ViiveAudioProcessorEditor::resized()
 	int height = bounds.getHeight() - 20;
 #endif
     m_chorusGroup.setBounds(bounds.getWidth() - 360, y + 35, 300, 165);
+    m_lofiGroup.setBounds(bounds.getWidth() - 360, y + 35, 300, 165);
+
     m_delayGroup.setBounds(10, y + 35, m_chorusGroup.getX() - 20, 165);
 	m_outputGroup.setBounds(bounds.getWidth() - 360, m_delayGroup.getBottom() + 10, 300, 155);
 	m_filterGroup.setBounds(10, m_delayGroup.getBottom() + 10, m_outputGroup.getX() - 20, 265);
@@ -129,6 +147,8 @@ void ViiveAudioProcessorEditor::resized()
 	m_feedbackKnob.setTopLeftPosition(m_delayTimeRKnob.getRight() + 20, 20);
 	
 	m_modeSelector.setTopLeftPosition(10, y);
+
+	m_insertEffectTypeSelector.setCentrePosition(m_chorusGroup.getX()+m_chorusGroup.getWidth()/2, m_chorusGroup.getY() + 15);
 
 	m_offsetKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
 	m_lowCutFreqKnob.setTopLeftPosition(20, 20);
@@ -161,10 +181,18 @@ void ViiveAudioProcessorEditor::resized()
 	m_stereoKnob.setTopLeftPosition(20, 20);
 	m_mixKnob.setTopLeftPosition(m_stereoKnob.getRight() + 20, 20);
 	m_gainKnob.setTopLeftPosition(m_mixKnob.getRight() + 20, 20);
+
 	m_chorusIntensityKnob.setTopLeftPosition(20, 20);
 	m_chorusModRateKnob.setTopLeftPosition(m_chorusIntensityKnob.getRight() + 20, 20);
 	m_chorusModDepthKnob.setTopLeftPosition(m_chorusModRateKnob.getRight() + 20, 20);
 
+	m_lofiMixLevelKnob.setTopLeftPosition(20, 20);
+	m_lofiResampleFreqKnob.setTopLeftPosition(m_lofiMixLevelKnob.getRight() + 20, 20);
+	m_lofiDampenFreqKnob.setTopLeftPosition(m_lofiResampleFreqKnob.getRight() + 20, 20);
+	m_lofiNoiseEnabledButton.setCentrePosition(m_lofiDampenFreqKnob.getRight() - 35, m_lofiDampenFreqKnob.getBottom() + 15);
+
+	m_feedbackKillButton.setCentrePosition(m_outputGroup.getX() + m_outputGroup.getWidth() / 2,
+	                                        m_outputGroup.getBottom() + 20);
 	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
 
 #if JUCE_DEBUG
@@ -182,18 +210,28 @@ void ViiveAudioProcessorEditor::updateSyncedKnobs(bool syncLActive, bool syncRAc
 	m_lowCutModNoteKnob.setVisible(lowCutSyncActive);
 	m_highCutModRateKnob.setVisible(!highCutSyncActive);
 	m_highCutModNoteKnob.setVisible(highCutSyncActive);
-	DBG("Updated synced knobs: " << (syncLActive ? "Sync L active, " : "Sync L inactive, ") << (syncRActive ? "Sync R active, " : "Sync R inactive, ") << (lowCutSyncActive ? "Low Cut Sync active, " : "Low Cut Sync inactive, ") << (highCutSyncActive ? "High Cut Sync active" : "High Cut Sync inactive"));
+}
 
+void ViiveAudioProcessorEditor::updateInsertEffectControls(int insertEffectType)
+{
+	DBG("Insert effect type changed: " << insertEffectType);
+	bool isChorus = (insertEffectType == 0);
+	bool isLofi = (insertEffectType == 1);
+
+	m_chorusGroup.setVisible(isChorus);
+	m_lofiGroup.setVisible(isLofi);
 }
 
 void ViiveAudioProcessorEditor::parameterChanged(const juce::String& paramID, float newValue) {
-	if (paramID == tempoSyncLParamID.getParamID() || paramID == tempoSyncRParamID.getParamID() || paramID == lowCutModTempoSyncParamID.getParamID() || paramID == highCutModTempoSyncParamID.getParamID()){
+	if (paramID == tempoSyncLParamID.getParamID() || paramID == tempoSyncRParamID.getParamID() || paramID == lowCutModTempoSyncParamID.getParamID() || paramID == highCutModTempoSyncParamID.getParamID() || paramID == insertEffectTypeParamID.getParamID()){
 		juce::MessageManager::callAsync([this] {
 			bool syncL = m_audioProcessor.apvts.getParameter(tempoSyncLParamID.getParamID())->getValue() > 0.5f;
 			bool syncR = m_audioProcessor.apvts.getParameter(tempoSyncRParamID.getParamID())->getValue() > 0.5f;
 			bool lowCutSync = m_audioProcessor.apvts.getParameter(lowCutModTempoSyncParamID.getParamID())->getValue() > 0.5f;
 			bool highCutSync = m_audioProcessor.apvts.getParameter(highCutModTempoSyncParamID.getParamID())->getValue() > 0.5f;
 			updateSyncedKnobs(syncL, syncR, lowCutSync, highCutSync);
+			auto* param = dynamic_cast<juce::AudioParameterChoice*>(m_audioProcessor.apvts.getParameter(insertEffectTypeParamID.getParamID()));
+			updateInsertEffectControls(param->getIndex());
 			});
 	}
 }

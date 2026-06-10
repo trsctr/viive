@@ -1,13 +1,13 @@
 #pragma once
 #include <JuceHeader.h>
+#include "InsertEffect.h"
 #include "Chorus.h"
 #include "Parameters.h"
 
 using Filter = juce::dsp::StateVariableTPTFilter<float>;
 
-
-
-class ChorusEngine {
+class ChorusEngine : public InsertEffect
+{
 public:
 	ChorusEngine();
 	~ChorusEngine() = default;
@@ -16,10 +16,12 @@ public:
 	static constexpr float chorus2DefaultTime = 11.0f;
 
 
-	void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept;
-	void reset() noexcept;
+	void prepareToPlay(double sampleRate, int samplesPerBlock) noexcept override;
+	void reset() noexcept override;
+	void kill() override;
 
-	void processSample(const float& inL, const float& inR, float& outL, float& outR, const Parameters& params);
+	void processSample(const float& inL, const float& inR, float& outL, float& outR) override;
+	void update(const Parameters& params) override;
 
 private:
 	Chorus m_chorus1L{ chorus1DefaultTime, Parameters::defaultChorusModRate, Parameters::defaultChorusModDepth, 0.0f };
@@ -43,4 +45,6 @@ private:
 	void setIntensity(float value) { m_intensity = value; }
 	void setModDepth(float newModDepth);
 	void setModRate(float newRate);
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChorusEngine)
 };

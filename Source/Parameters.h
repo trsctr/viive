@@ -12,6 +12,7 @@ const juce::ParameterID tempoSyncRParamID{ "tempoSyncR", 1 };
 const juce::ParameterID delayModeParamID{ "delayMode", 1 };
 const juce::ParameterID mixParamID{ "mix", 1 };
 const juce::ParameterID feedbackParamID{ "feedback", 1 };
+const juce::ParameterID feedbackKillParamID{ "feedbackKill", 1 };
 const juce::ParameterID stereoParamID{ "stereo", 1 };
 const juce::ParameterID offsetParamID{ "offset", 1 };
 const juce::ParameterID lowCutFreqParamID{ "lowCutFreq", 1 };
@@ -31,9 +32,14 @@ const juce::ParameterID highCutModTempoSyncParamID{ "highCutModTempoSync", 1 };
 const juce::ParameterID highCutModNoteParamID{ "highCutModNote", 1 };
 const juce::ParameterID highCutModShapeParamID{ "highCutModShape", 1 };
 const juce::ParameterID highCutModInvertParamID{ "highCutModInvert", 1 };
+const juce::ParameterID insertEffectTypeParamID{ "insertEffectType", 1 };
 const juce::ParameterID chorusIntensityParamID{ "chorusIntensity", 1 };
 const juce::ParameterID chorusModRateParamID{ "chorusModRate", 1 };
 const juce::ParameterID chorusModDepthParamID{ "chorusModDepth", 1 };
+const juce::ParameterID lofiMixLevelParamID{ "lofiMixLevel", 1 };
+const juce::ParameterID lofiResampleFreqParamID{ "lofiResampleFreq", 1 };
+const juce::ParameterID lofiDampenFreqParamID{ "lofiDampenFreq", 1 };
+const juce::ParameterID lofiNoiseEnabledParamID{ "lofiNoiseEnabled", 1 };
 
 class Parameters {
 public:
@@ -51,10 +57,16 @@ public:
 	static constexpr float defaultChorusModRate = 0.2f;
 	static constexpr float defaultChorusModRate2 = 0.45f; // this is not a passed param but default value for 2nd chorus
 	static constexpr float defaultChorusModDepth = 4.0f;
+	static constexpr float maxLofiResampleFreq = 22050.0f;
+	static constexpr float minLofiResampleFreq = 4000.0f;
+	static constexpr float maxLofiDampenFreq = 20000.0f;
+	static constexpr float minLofiDampenFreq = 10000.0f;
+	
 	static const juce::StringArray delayModes;
 	static const juce::StringArray delayNoteLengths;
 	static const juce::StringArray modNoteLengths;
 	static const juce::StringArray lfoShapes;
+	static const juce::StringArray insertEffects;
 	
 	void prepareToPlay(double sampleRate) noexcept;
 	void update(const Tempo& tempo) noexcept;
@@ -90,9 +102,15 @@ public:
 	int highCutModNote() const { return m_highCutModNote; }
 	int highCutModShape() const { return m_highCutModShape; }
 	bool highCutModInvert() const { return m_highCutModInvert; }
+	int insertEffectType() const { return m_insertEffectType; }
 	float chorusIntensity() const { return m_chorusIntensity; }
 	float chorusModRate() const { return m_chorusModRate; }
 	float chorusModDepth() const { return m_chorusModDepth; }
+	float lofiResampleFreq() const { return m_lofiResampleFreq; }
+	float lofiMixLevel() const { return m_lofiMixLevel; }
+	float lofiDampenFreq() const { return m_lofiDampenFreq; }
+	bool lofiNoiseEnabled() const { return m_lofiNoiseEnabled; }
+	bool feedbackKill() const { return m_feedbackKill; }
 
 private:
 	juce::AudioParameterFloat* m_gainParam;
@@ -105,8 +123,10 @@ private:
 	juce::AudioParameterChoice* m_delayModeParam;
 	juce::AudioParameterFloat* m_mixParam;
 	juce::AudioParameterFloat* m_feedbackParam;
+	juce::AudioParameterBool* m_feedbackKillParam;
 	juce::AudioParameterFloat* m_stereoParam;
 	juce::AudioParameterFloat* m_offsetParam;
+	juce::AudioParameterChoice* m_insertEffectTypeParam;
 	juce::AudioParameterFloat* m_lowCutFreqParam;
 	juce::AudioParameterFloat* m_lowCutQParam;
 	juce::AudioParameterFloat* m_lowCutModRateParam;
@@ -127,6 +147,10 @@ private:
 	juce::AudioParameterFloat* m_chorusIntensityParam;
 	juce::AudioParameterFloat* m_chorusModRateParam;
 	juce::AudioParameterFloat* m_chorusModDepthParam;
+	juce::AudioParameterFloat* m_lofiMixLevelParam;
+	juce::AudioParameterFloat* m_lofiResampleFreqParam;
+	juce::AudioParameterFloat* m_lofiDampenFreqParam;
+	juce::AudioParameterBool* m_lofiNoiseEnabledParam;
 
 	juce::LinearSmoothedValue<float> m_gainSmoother;
 	juce::LinearSmoothedValue<float> m_mixSmoother;
@@ -146,7 +170,10 @@ private:
 	juce::LinearSmoothedValue<float> m_chorusIntensitySmoother;
 	juce::LinearSmoothedValue<float> m_chorusModRateSmoother;
 	juce::LinearSmoothedValue<float> m_chorusModDepthSmoother;
-
+	juce::LinearSmoothedValue<float> m_lofiResampleFreqSmoother;
+	juce::LinearSmoothedValue<float> m_lofiMixLevelSmoother;
+	juce::LinearSmoothedValue<float> m_lofiDampenFreqSmoother;
+	
 	float m_gain = 0.0f;
 	float m_delayTimeL = 0.0f;
 	float m_delayTimeR = 0.0f;
@@ -157,6 +184,7 @@ private:
 	int m_delayMode = 0;
 	float m_mix = 0.5f;
 	float m_feedback = 0.0f;
+	bool m_feedbackKill = false;
 	float m_stereo = 0.0f;
 	float m_offset = 0.0f;
 	float m_lowCutFreq = 20.0f;
@@ -176,9 +204,14 @@ private:
 	int m_highCutModNote = 0;
 	int m_highCutModShape = 0;
 	bool m_highCutModInvert = false;
+	int m_insertEffectType = 0;
 	float m_chorusIntensity = 0.0f;
 	float m_chorusModRate = defaultChorusModRate;
 	float m_chorusModDepth = defaultChorusModDepth;
+	float m_lofiResampleFreq = maxLofiResampleFreq;
+	float m_lofiMixLevel = 1.0f;
+	float m_lofiDampenFreq = maxLofiDampenFreq;
+	bool m_lofiNoiseEnabled = true;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Parameters)
 };

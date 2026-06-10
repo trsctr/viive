@@ -29,6 +29,12 @@ void Chorus::reset() noexcept
 	m_modDepthMs = -1.0f;
 }
 
+void Chorus::kill()
+{
+	m_delayLine.reset();
+	m_lpState = 0.0f;
+}
+
 void Chorus::setBaseDelay(float delayInMs)
 {
 	if (!juce::approximatelyEqual(delayInMs, m_baseDelayMs)) {

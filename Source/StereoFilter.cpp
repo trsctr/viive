@@ -27,6 +27,12 @@ void StereoFilter::setCutoff(float freq, Channel channel)
 	m_filters[channel].setCutoffFrequency(freq);
 }
 
+void StereoFilter::setCutoff(float freq)
+{
+	for (auto& f : m_filters)
+		f.setCutoffFrequency(freq);
+}
+
 void StereoFilter::setQ(float q)
 {
 	for (auto& f : m_filters)

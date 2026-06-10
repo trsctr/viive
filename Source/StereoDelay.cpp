@@ -38,6 +38,13 @@ void StereoDelay::setDelayTime(float ms, Channel channel)
 	}
 }
 
+void StereoDelay::kill()
+{
+	for (int i = 0; i < 2; i++) {
+		m_delayLines[i].reset();
+	}
+}
+
 void StereoDelay::processSample(const float& in, float& out, Channel channel)
 {
 	m_delayLines[channel].pushSample(0, in);

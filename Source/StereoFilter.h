@@ -15,6 +15,8 @@ public:
 	void reset() noexcept;
 
 	void processSample(const float& inL, const float& inR, float& outL, float& outR);
+	
+	void setCutoff(float freq);
 	void setCutoff(float freq, Channel channel);
 	void setQ(float q);
 
