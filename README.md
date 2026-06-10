@@ -9,12 +9,15 @@ Currently developed and tested on Windows (JUCE AudioPluginHost, Ableton Live Su
 - Functional GUI with parameter controls and output level metering
 - Saves and retrieves plugin state
 - Separate L/R delay times (5ms - 5000ms) with tempo sync and L/R offset
-- Mix and feedback controls with feedback stabilization (0-140%)
+- Mix and feedback controls with feedback stabilization (fb range: 0-140%)
 - Stereo width control with mid/side processing
 - Sculpting low/high-cut filters with adjustable resonance on delayed signal / feedback loop
 - Filter modulation section with separate LFOs for high and low cut filters with tempo sync, adjustable rate, modulation depth, stereo phase offset and selectable shapes: Sine, Triangle, Square, Saw Up/Down, Sample & Hold
-- Dual-voice chorus effect in feedback loop with intensity, modulation rate, and modulation depth controls
+- Two effects insert effects for the feedback loop:
+    - Dual-voice chorus effect with intensity, modulation rate, and modulation depth controls
+    - Lofi effect with mix, resample, dampen controls and noise toggle
 - Feedback loop protection: HPF, compressor, soft clipping
+- Automatable feedback loop kill button
 
 Despite the feedback protection, it can get quite loud and nasty. High feedback settings may produce interesting noise artifacts.
 
@@ -40,12 +43,6 @@ codesign --force --deep --sign - ~/Library/Audio/Plug-Ins/VST3/viive.vst3
 ```
 
 Then rescan plugins in your DAW.
-
-## Potential future features
-- Additional effects in feedback loop (bitcrush, phaser)
-- Preset manager
-- Single/dual delay mode switch
-- Ducking
 
 ## Building
 ### Requirements

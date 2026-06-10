@@ -2,35 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## \[0.3.0-beta.2] - 2026-06-05
-
-### Changed
-
-* Removed the playback position detecting kill trigger as it caused inconsistencies across DAWs
-
-## \[0.3.0-beta.1] - 2026-05-29
+## [0.3.0] - 2026-06-10
 
 ### Added
 
-* BitCrusher DSP primitive
-  * Performs first downsampling and then bit reduction
-* Lofi effect which processes signal through bitcrushing, filtering and adding noise
-  * Bit depth locked to 8 bits
-  * signal chain: gentle highpass -> bitcrusher -> noise -> lowpass filter/dampen
-* Lofi Mix, Resample, Dampen and Noise on/off parameters
-  * Resample range: 4kHz - 22050 Hz, controls audio quality
-  * Dampen range: 10kHz - 22050 Hz, low pass filter gently filtering out high frequencies
-  * Ranges finetuned for usability and musicality, subject to change
-* Insert effect selector
-  * Allows user to switch between chorus and lofi effect in the feedback loop
-* Feedback loop kill
-  * fades wet signal out and clears delay line buffers, feedback and any audio processor states
-  * Automatable param
-  * Button in GUI
-  * Triggered with position rewind when playback stop (ie pressing stop twice during playback)
+* Lofi insert effect: bitcrushing, noise, and filtering in the feedback loop
+  * Mix, Resample (4kHz–22050Hz), Dampen (10kHz–22050Hz), and Noise toggle
+* Insert effect selector: switch between Chorus and Lofi in the feedback loop
+* Feedback loop kill: fades wet signal, clears delay buffers and processor state; automatable
 
 ### Fixed
-  * Delay time offset bug where offset never truly returned to zero once modified
+
+* Delay time offset not returning to zero correctly
 
 ## \[0.2.0] - 2026-05-18
 
