@@ -143,6 +143,10 @@ source_group(TREE "${PROJECT_SOURCE_DIR}/Source" FILES ${project_sources})
 
 ### Test Target ###
 
+option(VIIVE_BUILD_TESTS "Build unit tests" OFF)
+
+if(VIIVE_BUILD_TESTS)
+
 juce_add_console_app(viive_tests PRODUCT_NAME "viive_tests")
 
 target_sources(viive_tests PRIVATE
@@ -174,3 +178,5 @@ target_link_libraries(viive_tests PRIVATE
     PUBLIC
     juce::juce_recommended_config_flags
     juce::juce_recommended_warning_flags)
+
+endif() # VIIVE_BUILD_TESTS
