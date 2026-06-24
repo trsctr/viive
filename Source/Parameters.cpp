@@ -33,7 +33,7 @@ static juce::String stringFromPercent(float value, int)
 
 static juce::String stringFromHertz(float value, int)
 {
-	if (value < 20) {
+	if (value < 25) {
 		return juce::String(value, 2) + " Hz";
 	}
 	if (value < 1000.0f) {
@@ -67,7 +67,7 @@ static float millisecondsFromString(const juce::String& text)
 static float hzFromString(const juce::String& text)
 {
 	float value = text.getFloatValue();
-	if (value < 20.0f) {
+	if (value < 25.0f) {
 		return value * 1000.0f;
 	}
 	return value;
@@ -469,7 +469,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		ringModDriftAmtParamID.getParamID(),
 		"Ring Mod Drift Amount",
-		juce::NormalisableRange<float>(0.0f, 25.0f, 0.1f),
+		juce::NormalisableRange<float>(0.0f, 25.0f, 0.01f),
 		0.0f,
 		juce::AudioParameterFloatAttributes()
 			.withStringFromValueFunction(stringFromHertz)
