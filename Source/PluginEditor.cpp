@@ -125,7 +125,8 @@ void ViiveAudioProcessorEditor::paint (juce::Graphics& g)
     g.fillAll(juce::Colours::darkgrey);
 	g.setColour(juce::Colours::white);
 	g.setFont(12.0f);
-	g.drawText("viive " JucePlugin_VersionString, getLocalBounds().reduced(5), juce::Justification::topRight);
+	g.drawText("viive 0.4.0-beta.1", getLocalBounds().reduced(5), juce::Justification::topRight);
+	//g.drawText("viive " JucePlugin_VersionString, getLocalBounds().reduced(5), juce::Justification::topRight);
 }
 
 void ViiveAudioProcessorEditor::resized()
