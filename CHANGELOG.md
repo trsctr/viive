@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## \[unreleased]
+
+### Added
+
+* Ring modulator insert effect, selectable alongside Chorus and Lofi
+  * Carrier frequency control
+  * Mix control
+  * Stereo drift: independent LFOs on L and R carriers create stereo width; setting drift to zero freezes the stereo image at its current phase offset
+  * Kill resets both oscillators back to identical phase
+
+
 ## [0.3.0] - 2026-06-10
 
 ### Added
