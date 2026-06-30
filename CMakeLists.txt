@@ -75,6 +75,8 @@ target_sources(viive PRIVATE
     Source/Tempo.cpp
     Source/Selector.cpp
     Source/KillButton.cpp
+    Source/RingModEngine.cpp
+    Source/RingModulator.cpp
     Source/SyncButton.cpp
     Source/StereoDelay.cpp
     Source/StereoFilter.cpp
@@ -137,3 +139,44 @@ list(REMOVE_ITEM project_sources "${juce_header}")
 source_group("JUCE Library Code" FILES "${juce_header}")
 source_group("JUCE Library Code/CMake Rules" FILES "${juce_header}.rule")
 source_group(TREE "${PROJECT_SOURCE_DIR}/Source" FILES ${project_sources})
+
+
+### Test Target ###
+
+option(VIIVE_BUILD_TESTS "Build unit tests" OFF)
+
+if(VIIVE_BUILD_TESTS)
+
+juce_add_console_app(viive_tests PRODUCT_NAME "viive_tests")
+
+target_sources(viive_tests PRIVATE
+    Tests/Main.cpp
+    Tests/RingModEngineTest.cpp
+    Source/RingModEngine.cpp
+    Source/RingModulator.cpp
+    Source/LFO.cpp
+    Source/Parameters.cpp
+    Source/Tempo.cpp)
+
+juce_generate_juce_header(viive_tests)
+
+target_compile_features(viive_tests PRIVATE cxx_std_20)
+
+set_target_properties(viive_tests PROPERTIES
+    CXX_EXTENSIONS OFF
+    FOLDER "Targets")
+
+target_compile_definitions(viive_tests PRIVATE
+    JUCE_WEB_BROWSER=0
+    JUCE_USE_CURL=0
+    JUCE_STRICT_REFCOUNTEDPOINTER=1)
+
+target_link_libraries(viive_tests PRIVATE
+    juce::juce_core
+    juce::juce_dsp
+    juce::juce_audio_processors
+    PUBLIC
+    juce::juce_recommended_config_flags
+    juce::juce_recommended_warning_flags)
+
+endif() # VIIVE_BUILD_TESTS

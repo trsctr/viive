@@ -2,6 +2,7 @@
 #include "InsertEffect.h"
 #include "ChorusEngine.h"
 #include "LofiEngine.h"
+#include "RingModEngine.h"
 #include "Types.h"
 
 class InsertEffectSelector
@@ -20,5 +21,7 @@ public:
 private:
     ChorusEngine m_chorus;
     LofiEngine m_lofi;
+    RingModEngine m_ringMod;
+
     InsertEffect* m_active = nullptr;
 };

@@ -9,12 +9,14 @@ void InsertEffectSelector::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     m_chorus.prepareToPlay(sampleRate, samplesPerBlock);
     m_lofi.prepareToPlay(sampleRate, samplesPerBlock);
+    m_ringMod.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 void InsertEffectSelector::reset() noexcept
 {
     m_chorus.reset();
     m_lofi.reset();
+    m_ringMod.reset();
 }
 
 void InsertEffectSelector::processSample(const float& inL, const float& inR, float& outL, float& outR)
@@ -43,6 +45,9 @@ void InsertEffectSelector::select(InsertEffectType type)
             break;
         case InsertEffectType::Lofi:
             m_active = &m_lofi;
+            break;
+        case InsertEffectType::RingMod:
+            m_active = &m_ringMod;
             break;
         default:
             jassertfalse; // this shouldn't happen unless the enum and string array get out of sync

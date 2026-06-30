@@ -40,6 +40,9 @@ const juce::ParameterID lofiMixLevelParamID{ "lofiMixLevel", 1 };
 const juce::ParameterID lofiResampleFreqParamID{ "lofiResampleFreq", 1 };
 const juce::ParameterID lofiDampenFreqParamID{ "lofiDampenFreq", 1 };
 const juce::ParameterID lofiNoiseEnabledParamID{ "lofiNoiseEnabled", 1 };
+const juce::ParameterID ringModMixLevelParamID{ "ringModMixLevel", 1 };
+const juce::ParameterID ringModFreqParamID{ "ringModFreq", 1 };
+const juce::ParameterID ringModDriftAmtParamID{ "ringModDriftAmt", 1 };
 
 class Parameters {
 public:
@@ -61,6 +64,7 @@ public:
 	static constexpr float minLofiResampleFreq = 4000.0f;
 	static constexpr float maxLofiDampenFreq = 20000.0f;
 	static constexpr float minLofiDampenFreq = 10000.0f;
+	static constexpr float defaultRingModFreq = 1000.0f;
 	
 	static const juce::StringArray delayModes;
 	static const juce::StringArray delayNoteLengths;
@@ -111,6 +115,9 @@ public:
 	float lofiDampenFreq() const { return m_lofiDampenFreq; }
 	bool lofiNoiseEnabled() const { return m_lofiNoiseEnabled; }
 	bool feedbackKill() const { return m_feedbackKill; }
+	float ringModMixLevel() const { return m_ringModMixLevel; }
+	float ringModFreq() const { return m_ringModFreq; }
+	float ringModDriftAmt() const { return m_ringModDriftAmt; }
 
 private:
 	juce::AudioParameterFloat* m_gainParam;
@@ -151,7 +158,10 @@ private:
 	juce::AudioParameterFloat* m_lofiResampleFreqParam;
 	juce::AudioParameterFloat* m_lofiDampenFreqParam;
 	juce::AudioParameterBool* m_lofiNoiseEnabledParam;
-
+	juce::AudioParameterFloat* m_ringModMixLevelParam;
+	juce::AudioParameterFloat* m_ringModFreqParam;
+	juce::AudioParameterFloat* m_ringModDriftAmtParam;
+	
 	juce::LinearSmoothedValue<float> m_gainSmoother;
 	juce::LinearSmoothedValue<float> m_mixSmoother;
 	juce::LinearSmoothedValue<float> m_feedbackSmoother;
@@ -173,7 +183,10 @@ private:
 	juce::LinearSmoothedValue<float> m_lofiResampleFreqSmoother;
 	juce::LinearSmoothedValue<float> m_lofiMixLevelSmoother;
 	juce::LinearSmoothedValue<float> m_lofiDampenFreqSmoother;
-	
+	juce::LinearSmoothedValue<float> m_ringModMixLevelSmoother;
+	juce::LinearSmoothedValue<float> m_ringModFreqSmoother;
+	juce::LinearSmoothedValue<float> m_ringModDriftAmtSmoother;
+
 	float m_gain = 0.0f;
 	float m_delayTimeL = 0.0f;
 	float m_delayTimeR = 0.0f;
@@ -212,6 +225,9 @@ private:
 	float m_lofiMixLevel = 1.0f;
 	float m_lofiDampenFreq = maxLofiDampenFreq;
 	bool m_lofiNoiseEnabled = true;
+	float m_ringModMixLevel = 1.0f;
+	float m_ringModFreq = defaultRingModFreq;
+	float m_ringModDriftAmt = 0.0f;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Parameters)
 };

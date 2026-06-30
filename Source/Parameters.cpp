@@ -33,7 +33,7 @@ static juce::String stringFromPercent(float value, int)
 
 static juce::String stringFromHertz(float value, int)
 {
-	if (value < 20) {
+	if (value < 25) {
 		return juce::String(value, 2) + " Hz";
 	}
 	if (value < 1000.0f) {
@@ -67,7 +67,7 @@ static float millisecondsFromString(const juce::String& text)
 static float hzFromString(const juce::String& text)
 {
 	float value = text.getFloatValue();
-	if (value < 20.0f) {
+	if (value < 25.0f) {
 		return value * 1000.0f;
 	}
 	return value;
@@ -139,6 +139,7 @@ const juce::StringArray Parameters::lfoShapes = {
 const juce::StringArray Parameters::insertEffects = {
 	"Chorus",
 	"Lofi",
+	"Ring Mod",
 };
 
 Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
@@ -181,6 +182,9 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, highCutModShapeParamID, m_highCutModShapeParam);
 	castParameter(apvts, highCutModInvertParamID, m_highCutModInvertParam);
 	castParameter(apvts, lofiNoiseEnabledParamID, m_lofiNoiseEnabledParam);
+	castParameter(apvts, ringModMixLevelParamID, m_ringModMixLevelParam);
+	castParameter(apvts, ringModFreqParamID, m_ringModFreqParam);
+	castParameter(apvts, ringModDriftAmtParamID, m_ringModDriftAmtParam);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
@@ -445,12 +449,39 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		"Lofi Noise",
 		true
 	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		ringModMixLevelParamID.getParamID(),
+		"Ring Mod Mix Level",
+		juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
+		100.0f,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromPercent)
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		ringModFreqParamID.getParamID(),
+		"Ring Mod Freq",
+		juce::NormalisableRange<float>(100.0f, 4000.0f, .1f, .3f),
+		defaultRingModFreq,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromHertz)
+			.withValueFromStringFunction(hzFromString)
+	));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(
+		ringModDriftAmtParamID.getParamID(),
+		"Ring Mod Drift Amount",
+		juce::NormalisableRange<float>(0.0f, 25.0f, 0.01f),
+		0.0f,
+		juce::AudioParameterFloatAttributes()
+			.withStringFromValueFunction(stringFromHertz)
+			.withValueFromStringFunction(hzFromString)
+	));
 	layout.add(std::make_unique<juce::AudioParameterBool>(
 		feedbackKillParamID.getParamID(),
 		"Feedback Kill",
 		false
 	));
 	return layout;
+
 }
 
 void Parameters::prepareToPlay(double sampleRate) noexcept
@@ -477,6 +508,9 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
 	m_lofiResampleFreqSmoother.reset(sampleRate, duration);
 	m_lofiMixLevelSmoother.reset(sampleRate, duration);
 	m_lofiDampenFreqSmoother.reset(sampleRate, duration);
+	m_ringModMixLevelSmoother.reset(sampleRate, duration);
+	m_ringModFreqSmoother.reset(sampleRate, duration);
+	m_ringModDriftAmtSmoother.reset(sampleRate, duration);
 }
 
 void Parameters::reset() noexcept
@@ -524,6 +558,9 @@ void Parameters::reset() noexcept
 	m_lofiResampleFreqSmoother.setCurrentAndTargetValue(m_lofiResampleFreqParam->get());
 	m_lofiMixLevelSmoother.setCurrentAndTargetValue(m_lofiMixLevelParam->get() * 0.01f);
 	m_lofiDampenFreqSmoother.setCurrentAndTargetValue(m_lofiDampenFreqParam->get());
+	m_ringModMixLevelSmoother.setCurrentAndTargetValue(m_ringModMixLevelParam->get() * 0.01f);
+	m_ringModFreqSmoother.setCurrentAndTargetValue(m_ringModFreqParam->get());
+	m_ringModDriftAmtSmoother.setCurrentAndTargetValue(m_ringModDriftAmtParam->get());
 }
 
 void Parameters::update(const Tempo& tempo) noexcept
@@ -549,6 +586,9 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_lofiResampleFreqSmoother.setTargetValue(m_lofiResampleFreqParam->get());
 	m_lofiMixLevelSmoother.setTargetValue(m_lofiMixLevelParam->get() * 0.01f);
 	m_lofiDampenFreqSmoother.setTargetValue(m_lofiDampenFreqParam->get());
+	m_ringModMixLevelSmoother.setTargetValue(m_ringModMixLevelParam->get() * 0.01f);
+	m_ringModFreqSmoother.setTargetValue(m_ringModFreqParam->get());
+	m_ringModDriftAmtSmoother.setTargetValue(m_ringModDriftAmtParam->get());
 	m_lofiNoiseEnabled = m_lofiNoiseEnabledParam->get();
 	m_feedbackKill = m_feedbackKillParam->get();
 	m_tempoSyncL = m_tempoSyncLParam->get();
@@ -607,4 +647,7 @@ void Parameters::smoothen() noexcept
 	m_lofiResampleFreq = m_lofiResampleFreqSmoother.getNextValue();
 	m_lofiMixLevel = m_lofiMixLevelSmoother.getNextValue();
 	m_lofiDampenFreq = m_lofiDampenFreqSmoother.getNextValue();
+	m_ringModMixLevel = m_ringModMixLevelSmoother.getNextValue();
+	m_ringModFreq = m_ringModFreqSmoother.getNextValue();
+	m_ringModDriftAmt = m_ringModDriftAmtSmoother.getNextValue();
 }
