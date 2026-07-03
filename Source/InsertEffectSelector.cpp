@@ -1,4 +1,5 @@
 #include "InsertEffectSelector.h"
+#include "DSP.h"
 
 InsertEffectSelector::InsertEffectSelector()
 {
@@ -10,6 +11,7 @@ void InsertEffectSelector::prepareToPlay(double sampleRate, int samplesPerBlock)
     m_chorus.prepareToPlay(sampleRate, samplesPerBlock);
     m_lofi.prepareToPlay(sampleRate, samplesPerBlock);
     m_ringMod.prepareToPlay(sampleRate, samplesPerBlock);
+    m_coeff = onePoleLowpassCoeff(5.0f, static_cast<float>(sampleRate));
 }
 
 void InsertEffectSelector::reset() noexcept
@@ -21,14 +23,13 @@ void InsertEffectSelector::reset() noexcept
 
 void InsertEffectSelector::processSample(const float& inL, const float& inR, float& outL, float& outR)
 {
-
+    float wetL = 0.0f, wetR = 0.0f;
     if (m_active)
-        m_active->processSample(inL, inR, outL, outR);
-    if (!m_fxEnabled)
-    {
-        outL = inL;
-        outR = inR;
-    }
+        m_active->processSample(inL, inR, wetL, wetR);
+    m_wetGain = onePoleLowpass(m_fxEnabled ? 1.0f : 0.0f, m_wetGain, m_coeff);
+    float dry = 1.0f - m_wetGain;
+    outL = (wetL * m_wetGain) + (inL * dry);
+    outR = (wetR * m_wetGain) + (inR * dry);
 }
 
 void InsertEffectSelector::update(const Parameters& params)

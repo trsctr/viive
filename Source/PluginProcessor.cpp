@@ -1,6 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "ProtectYourEars.h"
+#include "DSP.h"
 
 //==============================================================================
 ViiveAudioProcessor::ViiveAudioProcessor()
@@ -88,6 +89,7 @@ void ViiveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     m_tempo.reset();
     m_outputLevelL.store(0.0f);
     m_outputLevelR.store(0.0f);
+    m_coeff = onePoleLowpassCoeff(5.0f, static_cast<float>(sampleRate));
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 }
@@ -138,11 +140,11 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
         m_delayEngine.update(m_params);
 		m_delayEngine.processSample(inputDataL[sample], inputDataR[sample],
 			outL, outR);
-        if(m_params.mainBypass())
-        {
-            outL = inputDataL[sample];
-            outR = inputDataR[sample];
-        }
+        m_wetGain = onePoleLowpass(!m_params.mainBypass() ? 1.0f : 0.0f, m_wetGain, m_coeff);
+        float dry = 1.0f - m_wetGain;
+        outL = (outL * m_wetGain) + (inputDataL[sample] * dry);
+        outR = (outR * m_wetGain) + (inputDataR[sample] * dry);
+
         outputDataL[sample] = outL;
         outputDataR[sample] = outR;
 

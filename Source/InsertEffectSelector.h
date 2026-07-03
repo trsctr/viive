@@ -28,4 +28,6 @@ private:
     void setFxEnabled(bool enabled);
 
     bool m_fxEnabled = true;
+    float m_wetGain = 1.0f;
+    float m_coeff = 0.0f;
 };

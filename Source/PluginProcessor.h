@@ -72,6 +72,9 @@ private:
     Tempo m_tempo;
 
     std::atomic<float> m_outputLevelL, m_outputLevelR;
+
+    float m_wetGain = 1.0f;
+    float m_coeff = 0.0f;
 //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViiveAudioProcessor)
 };
