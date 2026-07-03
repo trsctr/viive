@@ -138,6 +138,11 @@ void ViiveAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
         m_delayEngine.update(m_params);
 		m_delayEngine.processSample(inputDataL[sample], inputDataR[sample],
 			outL, outR);
+        if(m_params.mainBypass())
+        {
+            outL = inputDataL[sample];
+            outR = inputDataR[sample];
+        }
         outputDataL[sample] = outL;
         outputDataR[sample] = outR;
 
@@ -188,4 +193,9 @@ void ViiveAudioProcessor::setStateInformation (const void* data, int sizeInBytes
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new ViiveAudioProcessor();
+}
+
+juce::AudioProcessorParameter* ViiveAudioProcessor::getBypassParameter() const
+{
+    return m_params.getMainBypassParam();
 }

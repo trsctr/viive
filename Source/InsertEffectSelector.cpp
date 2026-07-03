@@ -21,14 +21,26 @@ void InsertEffectSelector::reset() noexcept
 
 void InsertEffectSelector::processSample(const float& inL, const float& inR, float& outL, float& outR)
 {
+
     if (m_active)
         m_active->processSample(inL, inR, outL, outR);
+    if (!m_fxEnabled)
+    {
+        outL = inL;
+        outR = inR;
+    }
 }
 
 void InsertEffectSelector::update(const Parameters& params)
 {
     if (m_active)
         m_active->update(params);
+    setFxEnabled(params.fxEnabled());
+}
+
+void InsertEffectSelector::setFxEnabled(bool enabled)
+{
+    m_fxEnabled = enabled;
 }
 
 void InsertEffectSelector::kill()

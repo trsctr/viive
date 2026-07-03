@@ -24,4 +24,8 @@ private:
     RingModEngine m_ringMod;
 
     InsertEffect* m_active = nullptr;
+
+    void setFxEnabled(bool enabled);
+
+    bool m_fxEnabled = true;
 };
