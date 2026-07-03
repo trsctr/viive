@@ -145,6 +145,7 @@ const juce::StringArray Parameters::insertEffects = {
 Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 {
 	castParameter(apvts, gainParamID, m_gainParam);
+	castParameter(apvts, mainBypassParamID, m_mainBypassParam);
 	castParameter(apvts, delayTimeLParamID, m_delayTimeLParam);
 	castParameter(apvts, delayTimeRParamID, m_delayTimeRParam);
 	castParameter(apvts, delayNoteLParamID, m_delayNoteLParam);
@@ -158,6 +159,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 	castParameter(apvts, stereoParamID, m_stereoParam);
 	castParameter(apvts, offsetParamID, m_offsetParam);
 	castParameter(apvts, insertEffectTypeParamID, m_insertEffectTypeParam);
+	castParameter(apvts, fxEnabledParamID, m_fxEnabledParam);
 	castParameter(apvts, chorusIntensityParamID, m_chorusIntensityParam);
 	castParameter(apvts, chorusModRateParamID, m_chorusModRateParam);
 	castParameter(apvts, chorusModDepthParamID, m_chorusModDepthParam);
@@ -190,6 +192,11 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
 {
 	juce::AudioProcessorValueTreeState::ParameterLayout layout;
+	layout.add(std::make_unique<juce::AudioParameterBool>(
+		mainBypassParamID.getParamID(),
+		"Bypass",
+		false
+	));
 	layout.add(std::make_unique<juce::AudioParameterChoice>(
 		delayModeParamID.getParamID(),
 		"Delay Mode",
@@ -282,6 +289,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 		"Effect Type",
 		insertEffects,
 		0
+	));
+	layout.add(std::make_unique<juce::AudioParameterBool>(
+		fxEnabledParamID.getParamID(),
+		"Effect",
+		true
 	));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(
 		lowCutFreqParamID.getParamID(),
@@ -589,6 +601,8 @@ void Parameters::update(const Tempo& tempo) noexcept
 	m_ringModMixLevelSmoother.setTargetValue(m_ringModMixLevelParam->get() * 0.01f);
 	m_ringModFreqSmoother.setTargetValue(m_ringModFreqParam->get());
 	m_ringModDriftAmtSmoother.setTargetValue(m_ringModDriftAmtParam->get());
+	m_mainBypass = m_mainBypassParam->get();
+	m_fxEnabled = m_fxEnabledParam->get();
 	m_lofiNoiseEnabled = m_lofiNoiseEnabledParam->get();
 	m_feedbackKill = m_feedbackKillParam->get();
 	m_tempoSyncL = m_tempoSyncLParam->get();

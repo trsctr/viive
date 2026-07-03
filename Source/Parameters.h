@@ -3,6 +3,7 @@
 #include "Tempo.h"
 
 const juce::ParameterID gainParamID{ "gain", 1 };
+const juce::ParameterID mainBypassParamID{ "mainBypass", 1};
 const juce::ParameterID delayTimeLParamID{ "delayTimeL", 1 };
 const juce::ParameterID delayTimeRParamID{ "delayTimeR", 1 };
 const juce::ParameterID delayNoteLParamID{ "delayNoteL", 1 };
@@ -33,6 +34,7 @@ const juce::ParameterID highCutModNoteParamID{ "highCutModNote", 1 };
 const juce::ParameterID highCutModShapeParamID{ "highCutModShape", 1 };
 const juce::ParameterID highCutModInvertParamID{ "highCutModInvert", 1 };
 const juce::ParameterID insertEffectTypeParamID{ "insertEffectType", 1 };
+const juce::ParameterID fxEnabledParamID{ "fxEnabled", 1};
 const juce::ParameterID chorusIntensityParamID{ "chorusIntensity", 1 };
 const juce::ParameterID chorusModRateParamID{ "chorusModRate", 1 };
 const juce::ParameterID chorusModDepthParamID{ "chorusModDepth", 1 };
@@ -78,6 +80,7 @@ public:
 	void smoothen() noexcept;
 
 	float gain() const { return m_gain; }
+	bool mainBypass() const { return m_mainBypass; }
 	float delayTimeL() const { return m_delayTimeL; }
 	float delayTimeR() const { return m_delayTimeR; }
 	int delayNoteL() const { return m_delayNoteL; }
@@ -107,6 +110,7 @@ public:
 	int highCutModShape() const { return m_highCutModShape; }
 	bool highCutModInvert() const { return m_highCutModInvert; }
 	int insertEffectType() const { return m_insertEffectType; }
+	bool fxEnabled() const { return m_fxEnabled; }
 	float chorusIntensity() const { return m_chorusIntensity; }
 	float chorusModRate() const { return m_chorusModRate; }
 	float chorusModDepth() const { return m_chorusModDepth; }
@@ -119,8 +123,11 @@ public:
 	float ringModFreq() const { return m_ringModFreq; }
 	float ringModDriftAmt() const { return m_ringModDriftAmt; }
 
+	juce::AudioParameterBool* getMainBypassParam() const { return m_mainBypassParam; }
+
 private:
 	juce::AudioParameterFloat* m_gainParam;
+	juce::AudioParameterBool* m_mainBypassParam;
 	juce::AudioParameterFloat* m_delayTimeLParam;
 	juce::AudioParameterFloat* m_delayTimeRParam;
 	juce::AudioParameterChoice* m_delayNoteLParam;
@@ -134,6 +141,7 @@ private:
 	juce::AudioParameterFloat* m_stereoParam;
 	juce::AudioParameterFloat* m_offsetParam;
 	juce::AudioParameterChoice* m_insertEffectTypeParam;
+	juce::AudioParameterBool* m_fxEnabledParam;
 	juce::AudioParameterFloat* m_lowCutFreqParam;
 	juce::AudioParameterFloat* m_lowCutQParam;
 	juce::AudioParameterFloat* m_lowCutModRateParam;
@@ -188,6 +196,7 @@ private:
 	juce::LinearSmoothedValue<float> m_ringModDriftAmtSmoother;
 
 	float m_gain = 0.0f;
+	bool m_mainBypass = false;
 	float m_delayTimeL = 0.0f;
 	float m_delayTimeR = 0.0f;
 	int m_delayNoteL = 0;
@@ -218,6 +227,7 @@ private:
 	int m_highCutModShape = 0;
 	bool m_highCutModInvert = false;
 	int m_insertEffectType = 0;
+	bool m_fxEnabled = true;
 	float m_chorusIntensity = 0.0f;
 	float m_chorusModRate = defaultChorusModRate;
 	float m_chorusModDepth = defaultChorusModDepth;
