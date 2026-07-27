@@ -9,6 +9,7 @@ public:
     ~SyncButton() override;
 
     void resized() override;
+    void setInactiveColour(juce::Colour colour);
 
 private:
     juce::TextButton m_button;

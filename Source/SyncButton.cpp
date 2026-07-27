@@ -25,3 +25,8 @@ void SyncButton::resized()
 {
     m_button.setTopLeftPosition(0, 0);
 }
+
+void SyncButton::setInactiveColour(juce::Colour colour)
+{
+    m_button.setColour(juce::TextButton::ColourIds::buttonColourId, colour);
+}

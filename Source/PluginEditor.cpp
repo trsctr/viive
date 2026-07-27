@@ -79,6 +79,10 @@ ViiveAudioProcessorEditor::ViiveAudioProcessorEditor(ViiveAudioProcessor& p)
 	addChildComponent(m_ringModGroup);
 
 	addAndMakeVisible(m_insertEffectTypeSelector);
+	addAndMakeVisible(m_fxEnabledButton);
+	m_fxEnabledButton.setInactiveColour(juce::Colours::darkgrey);
+	addAndMakeVisible(m_bypassButton);
+	m_bypassButton.setInactiveColour(juce::Colours::darkgrey);
 	addAndMakeVisible(m_feedbackKillButton);
 	addAndMakeVisible(m_meter);
 
@@ -158,6 +162,7 @@ void ViiveAudioProcessorEditor::resized()
 	m_modeSelector.setTopLeftPosition(10, y);
 
 	m_insertEffectTypeSelector.setCentrePosition(m_chorusGroup.getX()+m_chorusGroup.getWidth()/2, m_chorusGroup.getY() + 15);
+	m_fxEnabledButton.setCentrePosition(m_chorusGroup.getX() + m_chorusModDepthKnob.getBounds().getCentreX(), m_insertEffectTypeSelector.getY() + m_fxEnabledButton.getHeight() / 2);
 
 	m_offsetKnob.setTopLeftPosition(m_feedbackKnob.getRight() + 20, 20);
 	m_lowCutFreqKnob.setTopLeftPosition(20, 20);
@@ -206,6 +211,7 @@ void ViiveAudioProcessorEditor::resized()
 
 	m_feedbackKillButton.setCentrePosition(m_outputGroup.getX() + m_outputGroup.getWidth() / 2,
 	                                        m_outputGroup.getBottom() + 20);
+	m_bypassButton.setCentrePosition(m_outputGroup.getX() + m_stereoKnob.getBounds().getCentreX(), m_outputGroup.getBottom() + 20);
 	m_meter.setBounds(m_outputGroup.getRight() + 15, y + 45, 35, height - 45);
 
 #if JUCE_DEBUG

@@ -83,6 +83,8 @@ private:
     LFOIndicator m_highCutLfoIndicator { m_audioProcessor.getHighCutLfoValue() };
     SyncButton m_highCutModInvertButton{ juce::String::fromUTF8("\xC3\x98"), m_audioProcessor.apvts, highCutModInvertParamID.getParamID(), 20};
 
+    SyncButton m_fxEnabledButton { "FX on", m_audioProcessor.apvts, fxEnabledParamID.getParamID() };
+    SyncButton m_bypassButton { "Bypass", m_audioProcessor.apvts, mainBypassParamID.getParamID(), 60, 25 };
     KillButton m_feedbackKillButton{ "Kill", m_audioProcessor.apvts, feedbackKillParamID };
 
     juce::Label m_modulationLabel;
